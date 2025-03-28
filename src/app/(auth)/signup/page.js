@@ -11,7 +11,7 @@ export default function SignupPage() {
     password: "",
   });
 
-  
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,9 +36,10 @@ export default function SignupPage() {
       });
 
       if (response.ok) {
-        alert("Signup Successful!");
+        localStorage.setItem("userEmail", email);
+        alert("Confirmational Code sent to your Email!");
         setTimeout(() => {
-            router.push("/login"); 
+            router.push("/verify"); 
           }, 1000);
       } else {
         alert("Signup Failed!");
