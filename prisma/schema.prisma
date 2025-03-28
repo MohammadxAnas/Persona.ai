@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  email            String   @unique
+  password         String
+  sessionToken     String?  // Optional session token
+  confirmationCode String
+  isVerified       Boolean  @default(false) // Fixed spelling of Boolean
+  codeExpiresAt    DateTime
+  posts           Post[]    @relation("UserPosts") // Fixed relation
+}
+
+
+model Post {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId // Fix: Use ObjectId
+  title     String
+  content   String?
+  createdAt DateTime @default(now())
+  authorId  String   @db.ObjectId
+  author    User     @relation("UserPosts", fields: [authorId], references: [id]) // Fix: Add relation field
+}
