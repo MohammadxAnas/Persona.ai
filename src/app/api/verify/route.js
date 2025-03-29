@@ -10,9 +10,9 @@ export async function POST(req) {
     if (!email || !code) {
       console.log("1")
       return Response.json({ message: "Email and confirmation code required!" }, { status: 400 });
-    
+     
     }
-
+    console.log(tempUsers);
     if (!tempUsers[email]) {
         console.log("2")
       return Response.json({ message: "Invalid or expired confirmation code" }, { status: 400 });

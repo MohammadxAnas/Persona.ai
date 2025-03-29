@@ -32,10 +32,10 @@ export default function VerificationPage() {
 
         try {
             const data = { email: userEmail, code: confCode.code };
-            const response = await fetch(`${baseURL}/api/verify`, {
+            const response = await fetch(`${baseURL}/api/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify({ ...data, type: "verify" }),
             });
 
             const result = await response.json();

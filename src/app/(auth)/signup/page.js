@@ -32,9 +32,10 @@ export default function SignupPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(signupData),
+        body: JSON.stringify({ ...signupData, type: "signup" }), 
       });
 
+      
       if (response.ok) {
         localStorage.setItem("userEmail", email);
         alert("Confirmational Code sent to your Email!");

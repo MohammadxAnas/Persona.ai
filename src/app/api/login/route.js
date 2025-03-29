@@ -1,58 +1,64 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
-export async function POST(req) {  //  Use named export for GET request
-   try{
+export async function POST(req) {
+  try {
     const { email, password } = await req.json();
+
     const user = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email },
     });
-    if(!user){
+    console.log(user);
+    if (!user) {
       return Response.json({ error: "User Not Found!" }, { status: 400 });
     }
-    const ispassEqual = await bcrypt.compare(password,user.password);
-    
-    if(!ispassEqual){
-        return res.status(403)
-        .json({message:"Incorrect password. Please try again.",success:false});
-      }
-      if(user.sessionToken !== null){
-        return res.status(403)
-        .json({message:"user already logged in from other device",success:false});
-      }
-      const sessionToken = crypto.randomBytes(32).toString("hex");
 
-      user.sessionToken = sessionToken;
-      await user.save();
+    const isPassEqual = await bcrypt.compare(password, user.password);
+    if (!isPassEqual) {
+      return Response.json(
+        { message: "Incorrect password. Please try again.", success: false },
+        { status: 403 }
+      );
+    }
 
-      const jwtToken = jwt.sign(
-        {email: user.email,_id: user.id, sessionToken},
-        process.env.JWT_SECRET,
-        {expiresIn: '24h'}
-      )
+    if (user.sessionToken !== null) {
+      return Response.json(
+        { message: "User already logged in from another device", success: false },
+        { status: 403 }
+      );
+    }
 
-      res.status(200)
-      .json({message: "Login successfully",
-        success:true,
-        jwtToken,
-        email,
-        name:user.name
+    // Generate session token
+    const sessionToken = crypto.randomBytes(32).toString("hex");
+
+    // Update the user with the new session token
+    await prisma.user.update({
+      where: { email },
+      data: { sessionToken },
     });
 
-    console.log({message: "Login successfully",
-        success:true,
-        jwtToken,
-        sessionToken,
-        email,
-        name:user.name
-    });
+    // Generate JWT token
+    const jwtToken = jwt.sign(
+      { email: user.email, _id: user.id, sessionToken },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
 
-}catch(err){
-    res.status(500)
-    .json({message:"Login failed",success: false});
+    return Response.json(
+      {
+        message: "Login successful",
+        success: true,
+        jwtToken,
+        email,
+        name: user.name,
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Login Error:", err);
+    return Response.json({ message: "Login failed", success: false }, { status: 500 });
+  }
 }
-};
-  
