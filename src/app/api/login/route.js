@@ -8,10 +8,12 @@ export async function POST(req) {
   try {
     const { email, password } = await req.json();
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { email },
     });
-    console.log(user);
+
+    console.log("User fetched:", user);
+
     if (!user) {
       return Response.json({ error: "User Not Found!" }, { status: 400 });
     }
@@ -24,7 +26,9 @@ export async function POST(req) {
       );
     }
 
-    if (user.sessionToken !== null) {
+    // 💡 Re-fetch the user from DB after updating
+    if (user.sessionToken) {
+      console.log("Error: User already logged in");
       return Response.json(
         { message: "User already logged in from another device", success: false },
         { status: 403 }
@@ -34,15 +38,22 @@ export async function POST(req) {
     // Generate session token
     const sessionToken = crypto.randomBytes(32).toString("hex");
 
-    // Update the user with the new session token
+    // Update session token in the database
     await prisma.user.update({
       where: { email },
       data: { sessionToken },
     });
 
+    // 🟢 Re-fetch the user to get the updated sessionToken
+    user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    console.log("Updated User:", user);
+
     // Generate JWT token
     const jwtToken = jwt.sign(
-      { email: user.email, _id: user.id, sessionToken },
+      { email: user.email, _id: user.id, sessionToken: user.sessionToken },
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
