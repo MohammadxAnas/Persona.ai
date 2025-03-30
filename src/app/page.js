@@ -3,16 +3,22 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { baseURL } from "./utlils/const";
 import { jwtDecode } from "jwt-decode";
+import { Button } from "@/components/ui/button"
+import Link from "next/link";
+
+
 
 export default function Home() {
 
   const [loggedInUser, setLoggedInUser] = useState();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const user = localStorage.getItem("loggedInUser");
+    setIsAuthenticated(!!token);
   
     if (!token) {
       router.push("/login"); // Redirect to login if no token found
@@ -63,20 +69,28 @@ export default function Home() {
   }
   return (
     <>
-    <div className="bg-gray-900 text-white py-4">
+    <div className=" text-white py-4">
   <header className="container mx-auto flex items-center justify-between px-6">
     {/* Left Section */}
     <div className="flex items-center space-x-4">
       <h1 className="text-2xl font-bold tracking-wide text-blue-400">
         persona.ai
       </h1>
-      <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition">
-        Sign Up to Chat
-      </button>
-      <button className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-md transition">
-        Login
-      </button>
-      <button className="bg-amber-800 " onClick={handleLogout}>Logout</button>
+      {isAuthenticated ? (
+  <Button onClick={handleLogout} >
+    Logout
+  </Button>
+) : (
+  <div className="flex gap-2"> 
+    <Button asChild>
+      <Link href="/signup">Sign Up to Chat</Link>
+    </Button>
+    <Button asChild>
+      <Link href="/login">Login</Link>
+    </Button>
+  </div>
+)}
+
     </div>
 
     {/* Right Section (Search Bar) */}
