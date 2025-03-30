@@ -31,9 +31,11 @@ export default function LoginPage(){
             body: JSON.stringify(loginInfo),
           });
           const result = await response.json();
-          const {success,message,error}=result;
+          const { success, message, jwtToken, name, error } = result;
     
           if (success) {
+            localStorage.setItem("token", jwtToken);
+            localStorage.setItem("loggedInUser", name);
             alert(message);
             setTimeout(() => {
                 router.push("/"); 

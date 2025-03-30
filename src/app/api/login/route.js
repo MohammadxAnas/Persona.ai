@@ -44,7 +44,7 @@ export async function POST(req) {
       data: { sessionToken },
     });
 
-    // 🟢 Re-fetch the user to get the updated sessionToken
+    //  Re-fetch the user to get the updated sessionToken
     user = await prisma.user.findUnique({
       where: { email },
     });
