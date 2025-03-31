@@ -26,6 +26,11 @@ export default function Home() {
   const [loggedInUser, setLoggedInUser] = useState();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginInfo, setloginInfo] = useState({ email: "", password: "" });
+  const [signupData, setSignupData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
   const router = useRouter();
 
@@ -38,6 +43,11 @@ export default function Home() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setloginInfo((prev) => ({ ...prev, [name]: value }));
+};
+
+const handleChange1 = (e) => {
+  const { name, value } = e.target;
+  setSignupData({ ...signupData, [name]: value });
 };
 
 const handleSubmit = async (e) => {
@@ -75,6 +85,37 @@ const handleSubmit = async (e) => {
   }
 };
 
+const handleSubmit1 = async (e) => {
+  e.preventDefault();
+  const { name, email, password } = signupData;
+  if (!name || !email || !password) {
+    return alert("Name, Email, and Password are required!");
+  }
+
+  try {
+    const url = `${baseURL}/api/signup`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...signupData, type: "signup" }), 
+    });
+
+    
+    if (response.ok) {
+      localStorage.setItem("userEmail", email);
+      alert("Confirmational Code sent to your Email!");
+      setTimeout(() => {
+          router.push("/verify"); 
+        }, 1000);
+    } else {
+      alert("Signup Failed!");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   const handleLogout = async() => {
     try{
@@ -130,9 +171,63 @@ const handleSubmit = async (e) => {
 
 ) : (
   <div className="flex gap-2"> 
-    <Button asChild>
-      <Link href="/signup">Sign Up to Chat</Link>
-    </Button>
+
+    <Dialog>
+          <DialogTrigger asChild>
+            <Button>Sign Up to Chat</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Signup</DialogTitle>
+              <DialogDescription>
+              "Create an account to start chatting with intelligent AI characters! Engage in dynamic conversations, get insights, and experience interactive AI like never before. Sign up now and start chatting!"
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Username:
+                </Label>
+                <Input name="name" 
+                 placeholder="enter your name"
+                 type="text"
+                 value={signupData.name}
+                 onChange={handleChange1}
+                 required
+                 className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="email" className="text-right">
+                  Email:
+                </Label>
+                <Input name="email" 
+                 type="email"
+                 placeholder="email"
+                 value={signupData.email}
+                 onChange={handleChange1}
+                 required
+                 className="col-span-3" />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password" className="text-right">
+                  Password:
+                </Label>
+                <Input name="password" 
+                 type="password"
+                 placeholder="password"
+                 value={signupData.password}
+                 onChange={handleChange1}
+                 required
+                 className="col-span-3" />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit" onClick={handleSubmit1}>Continue</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+
     <Dialog>
           <DialogTrigger asChild>
             <Button>Login</Button>
@@ -147,7 +242,7 @@ const handleSubmit = async (e) => {
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
-                  Email
+                  Email:
                 </Label>
                 <Input name="email" 
                  type="email"
@@ -159,7 +254,7 @@ const handleSubmit = async (e) => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="username" className="text-right">
-                  Password
+                  Password:
                 </Label>
                 <Input name="password" 
                  type="password"
@@ -180,15 +275,8 @@ const handleSubmit = async (e) => {
 
     </div>
 
-   
-
     {/* Right Section (Search Bar) */}
     <div className="relative">
-      <input
-        type="text"
-        placeholder="Search..."
-        className="bg-gray-800 text-white px-4 py-2 rounded-full outline-none focus:ring-2 focus:ring-blue-400 transition w-64"
-      />
     </div>
   </header>
 </div>
