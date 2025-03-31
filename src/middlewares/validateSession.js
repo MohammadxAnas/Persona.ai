@@ -1,28 +1,32 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+import { PrismaClient } from "@prisma/client";
+import jwt from "jsonwebtoken";
 
-const validateSession = async (req, res, next) => {
+const prisma = new PrismaClient();
+
+const validateSession = async (req) => {
     try {
-        const authHeader = req.header('Authorization');
+        const authHeader = req.headers.authorization;
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            return res.status(403).json({ message: "Unauthorized, JWT token is required" });
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return { status: 403, message: "Unauthorized, JWT token is required" };
         }
-        const token = authHeader.split(' ')[1];
 
+        const token = authHeader.split(" ")[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded._id);
+
+        const user = await prisma.user.findUnique({
+            where: { email: decoded.email },
+        });
 
         if (!user || user.sessionToken !== decoded.sessionToken) {
-            return res.status(401).json({ message: "Session expired. Login again." });
+            return { status: 401, message: "Session expired. Login again." };
         }
 
-        req.user = user; // Attach user data to request
-        next();
+        return { status: 200, user }; // Return user object if valid
     } catch (error) {
         console.error("Session validation error:", error);
-        res.status(401).json({ message: "Invalid session" });
+        return { status: 401, message: "Invalid session" };
     }
 };
 
-module.exports = validateSession;
+export default validateSession;
