@@ -32,10 +32,12 @@ export default function VerificationPage() {
 
         try {
             const data = { email: userEmail, code: confCode.code };
+            const Data = localStorage.getItem("userData");
+            console.log("userData:",Data);
             const response = await fetch(`${baseURL}/api/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...data, type: "verify" }),
+                body: JSON.stringify(data),
             });
 
             const result = await response.json();

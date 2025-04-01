@@ -99,10 +99,12 @@ const handleSubmit1 = async (e) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...signupData, type: "signup" }), 
+      body: JSON.stringify(signupData), 
     });
 
-    
+    const data = await response.json();
+    localStorage.setItem("userData",data);
+    console.log(data.tempUser);
     if (response.ok) {
       localStorage.setItem("userEmail", email);
       alert("Confirmational Code sent to your Email!");
