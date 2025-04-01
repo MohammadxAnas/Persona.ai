@@ -32,12 +32,12 @@ export default function VerificationPage() {
 
         try {
             const data = { email: userEmail, code: confCode.code };
-            const Data = localStorage.getItem("userData");
-            console.log("userData:",Data);
-            const response = await fetch(`${baseURL}/api/signup`, {
+            const userData = JSON.parse(localStorage.getItem("userData"));
+            console.log("userData:",userData);
+            const response = await fetch(`${baseURL}/api/verify`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
+                body: JSON.stringify({...data, ...userData}),
             });
 
             const result = await response.json();
@@ -46,6 +46,7 @@ export default function VerificationPage() {
             if (success) {
                 console.log(message);
                 localStorage.removeItem("userEmail");
+                localStorage.removeItem("userData");
                 setTimeout(() => {
                     router.push("/login");
                 }, 1000);

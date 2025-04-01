@@ -3,23 +3,21 @@ const prisma = new PrismaClient();
 
 export async function POST(req) {
     try {
-        const body = await req.json();
-        const { code, email } = body;
+      const body = await req.json();
+      const { code, email, name, password, confirmationCode, codeExpiresAt } = body;
 
-         if (!email || !code) {
-                console.log("1")
-                return Response.json({ message: "Email and confirmation code required!" }, { status: 400 });
-               
-              }
-              console.log(tempUsers);
-              if (!tempUsers[email]) {
-                  console.log("2")
-                return Response.json({ message: "Invalid or expired confirmation code" }, { status: 400 });
+      console.log("Email:", email);
+      console.log("Code:", code);
+      console.log("Name:", name);
+      console.log("Password:", password);
+      console.log("Confirmation Code:", confirmationCode);
+      console.log("Code Expiry:", codeExpiresAt);
+    
+      if (!email || !code || !name || !password || !confirmationCode || !codeExpiresAt) {
+        console.log("1 - Missing Fields");
+        return Response.json({ message: "All fields are required!", success: false }, { status: 400 });
+      }
               
-              }
-          
-              const { name, password, confirmationCode, codeExpiresAt } = tempUsers[email];
-          
               if (confirmationCode !== code) {
                   console.log("3")
                 return Response.json({ message: "Incorrect confirmation code" }, { status: 400 });
@@ -28,15 +26,14 @@ export async function POST(req) {
           
               // Create user in the database
               const user = await prisma.user.create({
-                data: { name, email, password ,confirmationCode, codeExpiresAt},
+                data: { name, email, password, confirmationCode, codeExpiresAt, isVerified: true},
               });
           
-              // Remove temp user after successful signup
-              delete tempUsers[email];
-          
-              return Response.json({ message: "Email confirmed! You can now log in.", success: true }, { status: 200 });
+              console.log("User Created:", user);
+
+              return Response.json({ message: "Email confirmed! ", success: true }, { status: 200 });
     } catch (error) {
         console.error("Error registering user:", error);
-        Response.json({ message:  "Internal Server Error",success: false }, { status: 500 });
+        return Response.json({ message:  "Internal Server Error",success: false }, { status: 500 });
     }
 }

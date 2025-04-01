@@ -40,7 +40,7 @@ export async function POST(req) {
     return Response.json({ 
       message: "Confirmation email sent! Please verify your email.", 
       success: true,
-      tempUser, 
+      userData: tempUser, 
     }, { status: 200 });
 
   } catch (error) {

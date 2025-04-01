@@ -103,8 +103,8 @@ const handleSubmit1 = async (e) => {
     });
 
     const data = await response.json();
-    localStorage.setItem("userData",data);
-    console.log(data.tempUser);
+    localStorage.setItem("userData", JSON.stringify(data.userData));
+    console.log(data.userData);
     if (response.ok) {
       localStorage.setItem("userEmail", email);
       alert("Confirmational Code sent to your Email!");
