@@ -18,9 +18,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-import Link from "next/link";
-
-
 
 export default function Home() {
 
@@ -55,7 +52,8 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   const { email, password } = loginInfo;
   if (!email || !password) {
-    return toast("Email, and Password are required!");
+    toast.error("Email and Password are required!");
+    return; // Prevents further execution
   }
 
   try {
@@ -73,16 +71,17 @@ const handleSubmit = async (e) => {
     if (success) {
       localStorage.setItem("token", jwtToken);
       localStorage.setItem("loggedInUser", name);
-      toast(message);
+      toast.success(message);
       setTimeout(() => {
-          router.push("/"); 
-        }, 1000);
-    } else if(error) {
-      const details= error?.details[0].message;
-      console.log(details);
+        router.push("/");
+      }, 1000);
+    } else if (error) {
+      const details = error?.details?.[0]?.message || "Login failed";
+      toast.error(details);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    toast.error("Something went wrong. Please try again.");
   }
 };
 
@@ -90,7 +89,8 @@ const handleSubmit1 = async (e) => {
   e.preventDefault();
   const { name, email, password } = signupData;
   if (!name || !email || !password) {
-    return toast("Name, Email, and Password are required!");
+    toast.error("Name, Email, and Password are required!");
+    return; // Prevents further execution
   }
 
   try {
@@ -100,23 +100,26 @@ const handleSubmit1 = async (e) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(signupData), 
+      body: JSON.stringify(signupData),
     });
-
     const data = await response.json();
-    localStorage.setItem("userData", JSON.stringify(data.userData));
-    console.log(data.userData);
-    if (response.ok) {
+    const { success, message, error } = data;
+
+    if (success) {
       localStorage.setItem("userEmail", email);
-      toast("Confirmational Code sent to your Email!");
+      localStorage.setItem("userData", JSON.stringify(data.userData));
+    console.log(data.userData);
+
+      toast.success(message);
       setTimeout(() => {
-          router.push("/verify"); 
-        }, 1000);
+        router.push("/verify");
+      }, 1000);
     } else {
-      toast("Signup Failed!");
+      toast.error(error || "Signup failed");
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    toast.error("Something went wrong. Please try again.");
   }
 };
 
@@ -149,10 +152,10 @@ const handleSubmit1 = async (e) => {
           if (success) {
 
             localStorage.removeItem("token");
-            toast(message);
             setTimeout(() => {
                 router.push("/"); 
               }, 1000);
+              return toast(message);
           } else  {
             console.error(error || "Logout failed");
           }

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { baseURL } from "@/app/utlils/const";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function VerificationPage() {
     const [confCode, setConfCode] = useState({ code: "" });
@@ -44,14 +45,15 @@ export default function VerificationPage() {
             const { success, message } = result;
 
             if (success) {
-                console.log(message);
+              
                 localStorage.removeItem("userEmail");
                 localStorage.removeItem("userData");
                 setTimeout(() => {
                     router.push("/login");
                 }, 1000);
+                return   toast(message);
             } else {
-                console.log("Invalid confirmation code!");
+                toast("Invalid confirmation code!");
             }
         } catch (error) {
             console.error("Verification Error:", error);

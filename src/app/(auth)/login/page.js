@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 const baseURL = "http://localhost:3000";
 
 
@@ -36,13 +37,13 @@ export default function LoginPage(){
           if (success) {
             localStorage.setItem("token", jwtToken);
             localStorage.setItem("loggedInUser", name);
-            alert(message);
+            toast(message);
             setTimeout(() => {
                 router.push("/"); 
               }, 1000);
           } else if(error) {
             const details= error?.details[0].message;
-            console.log(details);
+            toast(details);
           }
         } catch (err) {
           console.log(err);
