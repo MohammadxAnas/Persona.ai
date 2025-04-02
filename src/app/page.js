@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { baseURL } from "./utlils/const";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -54,7 +55,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   const { email, password } = loginInfo;
   if (!email || !password) {
-    return alert("Email, and Password are required!");
+    return toast("Email, and Password are required!");
   }
 
   try {
@@ -72,7 +73,7 @@ const handleSubmit = async (e) => {
     if (success) {
       localStorage.setItem("token", jwtToken);
       localStorage.setItem("loggedInUser", name);
-      alert(message);
+      toast(message);
       setTimeout(() => {
           router.push("/"); 
         }, 1000);
@@ -89,7 +90,7 @@ const handleSubmit1 = async (e) => {
   e.preventDefault();
   const { name, email, password } = signupData;
   if (!name || !email || !password) {
-    return alert("Name, Email, and Password are required!");
+    return toast("Name, Email, and Password are required!");
   }
 
   try {
@@ -107,12 +108,12 @@ const handleSubmit1 = async (e) => {
     console.log(data.userData);
     if (response.ok) {
       localStorage.setItem("userEmail", email);
-      alert("Confirmational Code sent to your Email!");
+      toast("Confirmational Code sent to your Email!");
       setTimeout(() => {
           router.push("/verify"); 
         }, 1000);
     } else {
-      alert("Signup Failed!");
+      toast("Signup Failed!");
     }
   } catch (err) {
     console.log(err);
@@ -146,8 +147,9 @@ const handleSubmit1 = async (e) => {
           const { success, message, error } = result;
     
           if (success) {
+
             localStorage.removeItem("token");
-            alert(message);
+            toast(message);
             setTimeout(() => {
                 router.push("/"); 
               }, 1000);
