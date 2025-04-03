@@ -43,12 +43,14 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    toast("Logging in...");
     const { email, password } = loginInfo;
     if (!email || !password) {
       return toast.error("Email and Password are required!");
     }
 
     try {
+
       const response = await fetch(`${baseURL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -57,6 +59,7 @@ export default function Home() {
 
       const result = await response.json();
       if (result.success) {
+  
         localStorage.setItem("token", result.jwtToken);
         localStorage.setItem("loggedInUser", result.name);
         setIsAuthenticated(true);
@@ -100,6 +103,7 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
+      toast("Logging out...");
       const token = localStorage.getItem("token");
       if (!token) return toast.error("No token found. Cannot logout.");
 
@@ -115,6 +119,7 @@ export default function Home() {
 
       const result = await response.json();
       if (result.success) {
+        
         localStorage.removeItem("token");
         localStorage.removeItem("loggedInUser");
         setIsAuthenticated(false);
