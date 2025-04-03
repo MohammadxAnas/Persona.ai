@@ -1,9 +1,0 @@
-{
-    "build": {
-      "env": {
-        "NEXT_PUBLIC_DATABASE_URL": "mongodb+srv://kyrieIrving11:abc0123sq@ki11.gxs6c.mongodb.net/personaAI_DB?retryWrites=true&w=majority&appName=KI11"
-      },
-      "command": "npx prisma generate && next build"
-    }
-  }
-  
