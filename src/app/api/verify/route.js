@@ -31,7 +31,7 @@ export async function POST(req) {
           
               console.log("User Created:", user);
 
-              return Response.json({ message: "Email confirmed! ", success: true }, { status: 200 });
+              return Response.json({ message: "Email confirmed! ", success: true, password: password }, { status: 200 });
     } catch (error) {
         console.error("Error registering user:", error);
         return Response.json({ message:  "Internal Server Error",success: false }, { status: 500 });

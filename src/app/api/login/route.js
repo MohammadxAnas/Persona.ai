@@ -6,7 +6,12 @@ const crypto = require("crypto");
 
 export async function POST(req) {
   try {
-    const { email, password } = await req.json();
+    const { email, password, Password } = await req.json();
+    
+    console.log(email);
+    console.log(password);
+    console.log(Password);
+    
 
     let user = await prisma.user.findUnique({
       where: { email },
@@ -17,8 +22,12 @@ export async function POST(req) {
     if (!user) {
       return Response.json({ error: "User Not Found!" }, { status: 400 });
     }
+    const passToCompare = Password || password;
 
-    const isPassEqual = await bcrypt.compare(password, user.password);
+    const isPassEqual = await bcrypt.compare(passToCompare, user.password);
+
+    
+    console.log(isPassEqual);
     if (!isPassEqual) {
       return Response.json(
         { message: "Incorrect password. Please try again.", success: false },

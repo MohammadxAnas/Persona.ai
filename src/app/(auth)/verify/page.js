@@ -32,6 +32,7 @@ export default function VerificationPage() {
         }
 
         try {
+           
             const data = { email: userEmail, code: confCode.code };
             const userData = JSON.parse(localStorage.getItem("userData"));
             console.log("userData:",userData);
@@ -42,21 +43,45 @@ export default function VerificationPage() {
             });
 
             const result = await response.json();
-            const { success, message } = result;
+            const { success, message} = result;
+            console.log(userData.password);
+            console.log(userData.email);
 
             if (success) {
-              
-                localStorage.removeItem("userEmail");
-                localStorage.removeItem("userData");
+                const Password = localStorage.getItem("Password");
+                console.log("password:",Password);
+                const loginResponse = await fetch(`${baseURL}/api/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: userData.email, password: userData.password , Password: Password}),
+                });
+    
+                const loginResult = await loginResponse.json();
+                const { jwtToken, name } = loginResult;
+    
+                if (loginResult.success) {
+                    // Store token and user info
+                    localStorage.setItem("token", jwtToken);
+                    localStorage.setItem("loggedInUser", name);
+    
+                    // Clean up unnecessary data
+                    localStorage.removeItem("userEmail");
+                    localStorage.removeItem("userData");
+
+                    toast.success("Verification successful! Redirecting...");
+
                 setTimeout(() => {
-                    router.push("/login");
-                }, 1000);
-                return   toast(message);
-            } else {
-                toast("Invalid confirmation code!");
+                    router.push("/");
+                }, 1500);
+            }else{
+                toast.error("Login failed after verification. Try logging in manually.");
             }
+            } else {
+                toast.error("Invalid confirmation code!");
+            }
+        
         } catch (error) {
-            console.error("Verification Error:", error);
+            toast.error("Something went wrong. Please try again.");
         }
     };
 
@@ -91,11 +116,11 @@ export default function VerificationPage() {
                     </button>
                 </form>
                 <div className="mt-4 text-white/80 text-sm">
-                    <Link href="/signup" className="hover:underline">
+                    <Link href="/" className="hover:underline">
                         Go back
                     </Link>
                     <span className="mx-2">•</span>
-                    <Link href="/login" className="hover:underline">
+                    <Link href="/" className="hover:underline">
                         Have an account? Log in
                     </Link>
                 </div>
