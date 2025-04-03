@@ -17,7 +17,7 @@ export default function VerificationPage() {
         } else {
             setUserEmail(storedEmail);
         }
-    }, []); 
+    }, [router]); 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
