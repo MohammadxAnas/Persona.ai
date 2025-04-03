@@ -133,13 +133,15 @@ export default function Home() {
       <header className="container mx-auto flex items-center justify-between px-6">
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl font-bold tracking-wide text-blue-400">persona.ai</h1>
+         </div> 
+         <div>
           {isAuthenticated ? (
             <Button onClick={handleLogout}>Logout</Button>
           ) : (
             <div className="flex gap-2">
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button>Sign Up to Chat</Button>
+                  <Button variant="mine">Sign Up to Chat</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                   <DialogHeader>
