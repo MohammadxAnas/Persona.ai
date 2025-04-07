@@ -141,7 +141,42 @@ export default function Home() {
          </div> 
          <div>
           {isAuthenticated ? (
-            <Button onClick={handleLogout}>Logout</Button>
+  <>
+  <div className="flex gap-3">
+    <Button onClick={handleLogout}>Logout</Button>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="mine">Create Bot</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create a Bot</DialogTitle>
+              <DialogDescription>
+                Start by providing a name, description, and personality for your bot.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="grid gap-4 py-4">
+              <Label className="text-right">Name:</Label>
+              <Input name="botName" placeholder="e.g., Dr. Helper" />
+
+              <Label className="text-right">Description:</Label>
+              <Input name="botDesc" placeholder="What is this bot for?" />
+
+              <Label className="text-right">Personality:</Label>
+              <Input name="botPersona" placeholder="e.g., Friendly, professional..." />
+            </div>
+
+            <DialogFooter>
+              <Button onClick={() => toast("Bot created! (not yet wired)")}>Create</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+  </div>
+</>
+
+    
           ) : (
             <div className="flex gap-2">
               <Dialog>
@@ -226,6 +261,7 @@ export default function Home() {
               </Dialog>
             </div>
           )}
+        
         </div>
       </header>
     </div>
