@@ -124,7 +124,7 @@ export default function Home() {
         localStorage.removeItem("loggedInUser");
         setIsAuthenticated(false);
         toast.success(result.message);
-        router.replace("/");  // Redirect immediately
+        router.replace("/dashboard");  // Redirect immediately
       } else {
         toast.error(result.error || "Logout failed");
       }
