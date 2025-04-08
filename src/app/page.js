@@ -22,6 +22,7 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginInfo, setloginInfo] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
+  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "" });
 
   const router = useRouter();
 
@@ -40,6 +41,12 @@ export default function Home() {
     const { name, value } = e.target;
     setSignupData((prev) => ({ ...prev, [name]: value }));
   };
+
+  const handleChange3 = (e) => {
+    const { name, value } = e.target;
+    setBotData((prev) => ({ ...prev, [name]: value }));
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -101,6 +108,41 @@ export default function Home() {
     }
   };
 
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    const { botName, botDesc, botPersona } = BotData;
+    if (!botName || !botDesc || !botPersona) {
+      return toast.error("Bot info required!");
+    }
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+      console.log(userId);
+
+      const response = await fetch(`${baseURL}/api/createBot`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...BotData,      
+          userId,          
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.error || "Failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+  
+
   const handleLogout = async () => {
     try {
       toast("Logging out...");
@@ -159,17 +201,32 @@ export default function Home() {
 
             <div className="grid gap-4 py-4">
               <Label className="text-right">Name:</Label>
-              <Input name="botName" placeholder="e.g., Dr. Helper" />
+              <Input name="botName" 
+               type="text"
+               value={BotData.botName}
+               onChange={handleChange3}
+               required
+               placeholder="e.g., Dr. Helper" />
 
               <Label className="text-right">Description:</Label>
-              <Input name="botDesc" placeholder="What is this bot for?" />
+              <Input name="botDesc"
+               type="text"
+               value={BotData.botDesc}
+               onChange={handleChange3}
+               required
+               placeholder="What is this bot for?" />
 
               <Label className="text-right">Personality:</Label>
-              <Input name="botPersona" placeholder="e.g., Friendly, professional..." />
+              <Input name="botPersona"
+               type="text"
+               value={BotData.botPersona}
+               onChange={handleChange3}
+               required
+              placeholder="e.g., Friendly, professional..." />
             </div>
 
             <DialogFooter>
-              <Button onClick={() => toast("Bot created! (not yet wired)")}>Create</Button>
+              <Button onClick={handleSubmit2}>Create</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
