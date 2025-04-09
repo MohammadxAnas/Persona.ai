@@ -189,6 +189,8 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         toast.success(data.message);
+        const updatedBots = await fetchUserBots(); 
+        setBots(updatedBots); 
       } else {
         toast.error(data.error || "Failed");
       }
@@ -197,6 +199,32 @@ export default function Home() {
     }
   };
   
+  const deleteBot = async (botId, fetchUserBots) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+  
+      const response = await fetch(`${baseURL}/api/delBot?botId=${botId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        toast.success("Bot deleted successfully!");
+        const updatedBots = await fetchUserBots(); // Fetch fresh bots
+        setBots(updatedBots); 
+      } else {
+        throw new Error(data.error || "Failed to delete bot");
+      }
+    } catch (err) {
+      console.error("Error deleting bot:", err.message);
+      toast.error(err.message || "Something went wrong");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -387,7 +415,9 @@ export default function Home() {
                 <CardDescription>{bot.description}</CardDescription>
               </CardHeader>
               <CardFooter className="flex justify-between">
-                <Button variant="outline">Delete</Button>
+              <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
+                Delete
+              </Button>
                 <Button>Chat</Button>
               </CardFooter>
             </Card>
