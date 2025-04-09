@@ -378,9 +378,10 @@ export default function Home() {
       
       </header>
       {isAuthenticated && (
-        <div className="flex flex-wrap gap-6 px-6 py-6">
-          {Bots.map((bot) => (
-            <Card key={bot._id} className="w-[300px]">
+      <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
+        {Bots.map((bot) => (
+          <li key={bot.id}>
+            <Card className="w-[300px]">
               <CardHeader>
                 <CardTitle>{bot.name}</CardTitle>
                 <CardDescription>{bot.description}</CardDescription>
@@ -390,8 +391,9 @@ export default function Home() {
                 <Button>Chat</Button>
               </CardFooter>
             </Card>
-          ))}
-        </div>
+          </li>
+        ))}
+      </ul>
 )}
 
     </div>
