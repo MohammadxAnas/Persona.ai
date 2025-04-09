@@ -30,7 +30,49 @@ export default function Home() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token);
+
+    const loadBots = async () => {
+      const bots = await fetchUserBots();
+      console.log("Fetched Bots:", bots);
+      // You can set it in state if needed
+      // setBotList(bots);
+    };
+  
+    loadBots();
+  
   }, []);
+
+  const fetchUserBots = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+  
+      const decoded = jwtDecode(token);
+      console.log(decoded);
+      const userId = decoded._id;
+      console.log(userId);
+  
+      const response = await fetch(`${baseURL}/api/getBots?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+      console.log(data);
+  
+      if (response.ok) {
+        return data.bots; // Assuming the backend returns { bots: [...] }
+      } else {
+        throw new Error(data.error || "Failed to fetch bots");
+      }
+    } catch (err) {
+      console.error("Error fetching bots:", err.message);
+      return [];
+    }
+  };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
