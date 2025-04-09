@@ -33,6 +33,8 @@ export default function Home() {
   const [loginInfo, setloginInfo] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
   const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "" });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const [Bots, setBots] = useState([]);
 
@@ -188,6 +190,7 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
+        setIsModalOpen(false);
         toast.success(data.message);
         const updatedBots = await fetchUserBots(); 
         setBots(updatedBots); 
@@ -270,9 +273,9 @@ export default function Home() {
   <div className="flex gap-3">
     <Button onClick={handleLogout}>Logout</Button>
 
-        <Dialog>
+     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button variant="mine">Create Bot</Button>
+            <Button variant="mine"> Create Bot</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
