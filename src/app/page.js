@@ -15,6 +15,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -23,6 +33,8 @@ export default function Home() {
   const [loginInfo, setloginInfo] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
   const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "" });
+
+  const [Bots, setBots] = useState([]);
 
   const router = useRouter();
 
@@ -33,14 +45,16 @@ export default function Home() {
 
     const loadBots = async () => {
       const bots = await fetchUserBots();
-      console.log("Fetched Bots:", bots);
-      // You can set it in state if needed
-      // setBotList(bots);
+      setBots(bots);
     };
   
     loadBots();
   
   }, []);
+
+  useEffect(() => {
+    console.log("Updated bots:", Bots);
+  }, [Bots]);
 
   const fetchUserBots = async () => {
     try {
@@ -48,7 +62,6 @@ export default function Home() {
       if (!token) throw new Error("No token found");
   
       const decoded = jwtDecode(token);
-      console.log(decoded);
       const userId = decoded._id;
       console.log(userId);
   
@@ -60,8 +73,8 @@ export default function Home() {
       });
   
       const data = await response.json();
-      console.log(data);
-  
+     
+    
       if (response.ok) {
         return data.bots; // Assuming the backend returns { bots: [...] }
       } else {
@@ -362,7 +375,25 @@ export default function Home() {
           )}
         
         </div>
+      
       </header>
+      {isAuthenticated && (
+        <div className="flex flex-wrap gap-6 px-6 py-6">
+          {Bots.map((bot) => (
+            <Card key={bot._id} className="w-[300px]">
+              <CardHeader>
+                <CardTitle>{bot.name}</CardTitle>
+                <CardDescription>{bot.description}</CardDescription>
+              </CardHeader>
+              <CardFooter className="flex justify-between">
+                <Button variant="outline">Delete</Button>
+                <Button>Chat</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+)}
+
     </div>
   );
 }
