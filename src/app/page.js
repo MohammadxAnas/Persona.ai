@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { baseURL } from "./utlils/const";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 
@@ -29,6 +28,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function Home() {
+  const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginInfo, setloginInfo] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });

@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { baseURL } from "@/app/utlils/const";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
 export default function VerificationPage() {
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+
+
     const [confCode, setConfCode] = useState({ code: "" });
     const [userEmail, setUserEmail] = useState("");
     const router = useRouter();
