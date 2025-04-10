@@ -122,7 +122,9 @@ export default function Home() {
 
       const response = await fetch(`${baseURL}/api/login`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+          "Access-Control-ALlow-Origin": "http://localhost:3000"
+         },
         body: JSON.stringify(loginInfo),
       });
 
