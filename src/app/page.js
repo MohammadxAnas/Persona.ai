@@ -43,16 +43,21 @@ export default function Home() {
   // Check authentication status on page load
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token);
-
+    if (!token) {
+      setIsAuthenticated(false);
+      return;
+    }
+  
+    setIsAuthenticated(true);
+  
     const loadBots = async () => {
       const bots = await fetchUserBots();
       setBots(bots);
     };
   
     loadBots();
-  
   }, []);
+  
 
   useEffect(() => {
     console.log("Updated bots:", Bots);

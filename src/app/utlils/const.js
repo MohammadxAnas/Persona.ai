@@ -1,2 +1,2 @@
 
-export const baseURL="https://persona-ai-pearl.vercel.app"
+export const baseURL=" http://localhost:3000"
