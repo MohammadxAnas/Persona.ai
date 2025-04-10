@@ -5,7 +5,6 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 
 export async function POST(req) {
-  console.log("hitting");
   try {
     const { email, password, Password } = await req.json();
     
