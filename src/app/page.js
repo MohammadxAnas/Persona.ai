@@ -133,7 +133,7 @@ export default function Home() {
         toast.success(result.message);
         router.replace("/");  // Redirect immediately
       } else {
-        toast.error(result.error || "Login failed");
+        toast.error(result.message || result.error || "Login failed");
       }
     } catch (err) {
       toast.error("Something went wrong. Please try again.");

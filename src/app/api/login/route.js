@@ -3,6 +3,8 @@ const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+import { NextResponse } from "next/server";
+
 
 export async function POST(req) {
   try {
@@ -20,7 +22,7 @@ export async function POST(req) {
     console.log("User fetched:", user);
 
     if (!user) {
-      return Response.json({ error: "User Not Found!" }, { status: 400 });
+      return NextResponse.json({ error: "User Not Found!" }, { status: 400 });
     }
     const passToCompare = Password || password;
 
@@ -29,7 +31,7 @@ export async function POST(req) {
     
     console.log(isPassEqual);
     if (!isPassEqual) {
-      return Response.json(
+      return NextResponse.json(
         { message: "Incorrect password. Please try again.", success: false },
         { status: 403 }
       );
@@ -38,7 +40,7 @@ export async function POST(req) {
     // 💡 Re-fetch the user from DB after updating
     if (user.sessionToken) {
       console.log("Error: User already logged in");
-      return Response.json(
+      return NextResponse.json(
         { message: "User already logged in from another device", success: false },
         { status: 403 }
       );
@@ -67,7 +69,7 @@ export async function POST(req) {
       { expiresIn: "24h" }
     );
 
-    return Response.json(
+    return NextResponse.json(
       {
         message: "Login successful",
         success: true,
@@ -79,6 +81,6 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("Login Error:", err);
-    return Response.json({ message: "Login failed", success: false }, { status: 500 });
+    return NextResponse.json({ message: "Login failed", success: false }, { status: 500 });
   }
 }
