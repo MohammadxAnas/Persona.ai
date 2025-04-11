@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 
 export default function Home() {
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+ 
 
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -115,13 +116,14 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     toast("Logging in...");
+    console.log("baseURL:",baseURL);
     const { email, password } = loginInfo;
     if (!email || !password) {
       return toast.error("Email and Password are required!");
     }
 
     try {
-
+     
       const response = await fetch(`${baseURL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
