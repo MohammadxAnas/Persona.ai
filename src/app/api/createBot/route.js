@@ -1,9 +1,15 @@
+import validateSession from "@/middlewares/validateSession";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient(); // Use a single instance of Prisma
 
 export async function POST(req) {  
   try {
+    const session = await validateSession(req);
+    if (session.status !== 200) {
+      return Response.json({ message: session.message, success: false }, { status: session.status });
+    }
+
     const body = await req.json();
     const {  botName, botDesc, botPersona, userId } = body;
 

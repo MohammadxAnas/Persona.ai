@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 const validateSession = async (req) => {
     try {
-        const authHeader = req.headers.authorization;
+        const authHeader = req.headers.get("authorization");
 
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return { status: 403, message: "Unauthorized, JWT token is required" };

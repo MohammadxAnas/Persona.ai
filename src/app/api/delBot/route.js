@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import validateSession from "@/middlewares/validateSession";
 
 const prisma = new PrismaClient();
 
 export async function DELETE(req) {
   try {
+    const session = await validateSession(req);
+    if (session.status !== 200) {
+      return Response.json({ message: session.message, success: false }, { status: session.status });
+    }
+
     const { searchParams } = new URL(req.url);
     const botId = searchParams.get("botId");
 

@@ -72,6 +72,7 @@ export default function Home() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
   
@@ -183,7 +184,10 @@ export default function Home() {
 
       const response = await fetch(`${baseURL}/api/createBot`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           ...BotData,      
           userId,          
@@ -213,6 +217,7 @@ export default function Home() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
   
@@ -243,7 +248,10 @@ export default function Home() {
 
       const response = await fetch(`${baseURL}/api/logout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ email: userEmail }),
       });
 
