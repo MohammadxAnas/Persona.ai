@@ -43,29 +43,22 @@ export default function Home() {
 
   const router = useRouter();
 
-  // Check authentication status on page load
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      setIsAuthenticated(false);
-      return;
-    }
-  
-    setIsAuthenticated(true);
-  
-    const loadBots = async () => {
-      const bots = await fetchUserBots();
-      setBots(bots);
-    };
-  
-    loadBots();
+    setIsAuthenticated(!!token);
   }, []);
   
 
   useEffect(() => {
-    console.log("Updated bots:", Bots);
-  }, [Bots]);
-
+    if (!isAuthenticated) return;
+    const loadBots = async () => {
+      const bots = await fetchUserBots();
+      setBots(bots);
+    };
+    loadBots();
+  }, [isAuthenticated]);
+  
+  
   const fetchUserBots = async () => {
     try {
       const token = localStorage.getItem("token");
