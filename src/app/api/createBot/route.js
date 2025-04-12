@@ -11,12 +11,13 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const {  botName, botDesc, botPersona, userId } = body;
+    const {  botName, botDesc, botPersona, avatar, userId } = body;
 
     const bot = await prisma.aICharacter.create({
         data: { name: botName,
                 description: botDesc,
                 personality: botPersona,
+                avatar: avatar,
                 userId: userId},
       });
 

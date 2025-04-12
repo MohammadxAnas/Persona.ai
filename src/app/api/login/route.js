@@ -37,15 +37,6 @@ export async function POST(req) {
       );
     }
 
-    // 💡 Re-fetch the user from DB after updating
-    if (user.sessionToken) {
-      console.log("Error: User already logged in");
-      return NextResponse.json(
-        { message: "User already logged in from another device", success: false },
-        { status: 403 }
-      );
-    }
-
     // Generate session token
     const sessionToken = crypto.randomBytes(32).toString("hex");
 

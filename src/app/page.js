@@ -24,6 +24,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -35,7 +41,7 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginInfo, setloginInfo] = useState({ email: "", password: "" });
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
-  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "" });
+  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
 
@@ -57,6 +63,14 @@ export default function Home() {
     };
     loadBots();
   }, [isAuthenticated]);
+
+  const handleUnauthorized = () => {
+    toast.error("You’ve been logged out because you signed in on another device.");
+    localStorage.removeItem("token");
+    localStorage.removeItem("loggedInUser");
+    router.push("/dashboard");
+  };
+  
   
   
   const fetchUserBots = async () => {
@@ -76,6 +90,11 @@ export default function Home() {
         },
       });
   
+      if (response.status === 401) {
+        handleUnauthorized();
+        return [];
+      }
+
       const data = await response.json();
      
     
@@ -101,13 +120,13 @@ export default function Home() {
     setSignupData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleChange3 = (e) => {
+  const handleChange2 = (e) => {
     const { name, value } = e.target;
     setBotData((prev) => ({ ...prev, [name]: value }));
   };
 
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     toast("Logging in...");
     console.log("baseURL:",baseURL);
@@ -140,7 +159,7 @@ export default function Home() {
     }
   };
 
-  const handleSubmit1 = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     const { name, email, password } = signupData;
     if (!name || !email || !password) {
@@ -168,7 +187,7 @@ export default function Home() {
     }
   };
 
-  const handleSubmit2 = async (e) => {
+  const handleCreatebot = async (e) => {
     e.preventDefault();
     const { botName, botDesc, botPersona } = BotData;
     if (!botName || !botDesc || !botPersona) {
@@ -193,6 +212,11 @@ export default function Home() {
           userId,          
         }),
       });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
 
       const data = await response.json();
       if (data.success) {
@@ -220,6 +244,11 @@ export default function Home() {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
   
       const data = await response.json();
   
@@ -300,7 +329,7 @@ export default function Home() {
               <Input name="botName" 
                type="text"
                value={BotData.botName}
-               onChange={handleChange3}
+               onChange={handleChange2}
                required
                placeholder="e.g., Dr. Helper" />
 
@@ -308,7 +337,7 @@ export default function Home() {
               <Input name="botDesc"
                type="text"
                value={BotData.botDesc}
-               onChange={handleChange3}
+               onChange={handleChange2}
                required
                placeholder="What is this bot for?" />
 
@@ -316,13 +345,23 @@ export default function Home() {
               <Input name="botPersona"
                type="text"
                value={BotData.botPersona}
-               onChange={handleChange3}
+               onChange={handleChange2}
                required
               placeholder="e.g., Friendly, professional..." />
+
+              <Label className="text-right">Avatar:</Label>
+              <Input
+                name="avatar"
+                type="text"
+                value={BotData.avatar || ""} 
+                onChange={handleChange2}
+                required
+                placeholder="e.g., https://example.com/avatar.png"
+              />
             </div>
 
             <DialogFooter>
-              <Button onClick={handleSubmit2}>Create</Button>
+              <Button onClick={handleCreatebot}>Create</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -373,7 +412,7 @@ export default function Home() {
                     />
                   </div>
                   <DialogFooter>
-                    <Button type="submit" onClick={handleSubmit1}>Continue</Button>
+                    <Button type="submit" onClick={handleSignup}>Continue</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -408,7 +447,7 @@ export default function Home() {
                     />
                   </div>
                   <DialogFooter>
-                    <Button type="submit" onClick={handleSubmit}>Continue</Button>
+                    <Button type="submit" onClick={handleLogin}>Continue</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -423,10 +462,16 @@ export default function Home() {
         {Bots.map((bot) => (
           <li key={bot.id}>
             <Card className="w-[300px]">
-              <CardHeader>
-                <CardTitle>{bot.name}</CardTitle>
-                <CardDescription>{bot.description}</CardDescription>
-              </CardHeader>
+            <CardHeader>
+              <div className="flex items-center gap-4">
+                <Avatar>
+                  <AvatarImage src={bot.avatar} alt="@shadcn" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <CardTitle className="text-lg">{bot.name}</CardTitle>
+              </div>
+              <CardDescription>{bot.description}</CardDescription>
+            </CardHeader>
               <CardFooter className="flex justify-between">
               <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
                 Delete

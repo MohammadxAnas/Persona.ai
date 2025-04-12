@@ -137,7 +137,7 @@ export default function Home() {
 
   return (
     <div className="text-white py-4">
-      <header className="container mx-auto flex items-center justify-between px-6">
+      <header className="w-full flex items-center justify-between px-4 sm:px-6">
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl font-bold tracking-wide text-blue-400">persona.ai</h1>
          </div> 
