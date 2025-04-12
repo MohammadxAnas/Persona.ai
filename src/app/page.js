@@ -45,6 +45,7 @@ export default function Home() {
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
   const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
 
@@ -151,7 +152,7 @@ export default function Home() {
 
       const result = await response.json();
       if (result.success) {
-  
+        setIsLoginModalOpen(false);
         localStorage.setItem("token", result.jwtToken);
         localStorage.setItem("loggedInUser", result.name);
         setIsAuthenticated(true);
@@ -423,7 +424,7 @@ export default function Home() {
                 </DialogContent>
               </Dialog>
 
-              <Dialog>
+              <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
                 <DialogTrigger asChild>
                   <Button>Login</Button>
                 </DialogTrigger>
