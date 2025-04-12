@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -43,6 +45,7 @@ export default function Home() {
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
   const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
 
   const [Bots, setBots] = useState([]);
@@ -74,6 +77,7 @@ export default function Home() {
   
   
   const fetchUserBots = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -106,6 +110,8 @@ export default function Home() {
     } catch (err) {
       console.error("Error fetching bots:", err.message);
       return [];
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -457,32 +463,44 @@ export default function Home() {
         </div>
       
       </header>
-      {isAuthenticated && (
-      <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
-        {Bots.map((bot) => (
-          <li key={bot.id}>
-            <Card className="w-[300px]">
-            <CardHeader>
-              <div className="flex items-center gap-4">
-                <Avatar>
-                  <AvatarImage src={bot.avatar} alt="@shadcn" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <CardTitle className="text-lg">{bot.name}</CardTitle>
-              </div>
-              <CardDescription>{bot.description}</CardDescription>
-            </CardHeader>
-              <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
-                Delete
-              </Button>
-                <Button>Chat</Button>
-              </CardFooter>
-            </Card>
-          </li>
-        ))}
-      </ul>
-)}
+      {loading ? (
+        <div className="flex h-[80vh] justify-center items-center">
+          <div className="flex items-center space-x-4">
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[200px]" />
+            </div>
+          </div>
+        </div>
+      ) : (
+        isAuthenticated && (
+          <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
+            {Bots.map((bot) => (
+              <li key={bot.id}>
+                <Card className="w-[300px]">
+                  <CardHeader>
+                    <div className="flex items-center gap-4">
+                      <Avatar>
+                        <AvatarImage src={bot.avatar} alt="@shadcn" />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                      <CardTitle className="text-lg">{bot.name}</CardTitle>
+                    </div>
+                    <CardDescription>{bot.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="flex justify-between">
+                    <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
+                      Delete
+                    </Button>
+                    <Button>Chat</Button>
+                  </CardFooter>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )
+      )}
 
     </div>
   );
