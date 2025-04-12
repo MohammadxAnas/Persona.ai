@@ -71,7 +71,7 @@ export default function Home() {
     toast.error("You’ve been logged out because you signed in on another device.");
     localStorage.removeItem("token");
     localStorage.removeItem("loggedInUser");
-    router.push("/dashboard");
+    router.push("/");
   };
   
   
@@ -297,7 +297,7 @@ export default function Home() {
         localStorage.removeItem("loggedInUser");
         setIsAuthenticated(false);
         toast.success(result.message);
-        router.replace("/dashboard");  // Redirect immediately
+        router.replace("/");  // Redirect immediately
       } else {
         toast.error(result.error || "Logout failed");
       }
@@ -463,44 +463,44 @@ export default function Home() {
         </div>
       
       </header>
-      {loading ? (
-        <div className="flex h-[80vh] justify-center items-center">
-          <div className="flex items-center space-x-4">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[250px]" />
-              <Skeleton className="h-4 w-[200px]" />
+      {isAuthenticated ? (
+          loading ? (
+            <div className="flex h-[80vh] justify-center items-center">
+              <div className="flex items-center space-x-4">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-[250px]" />
+                  <Skeleton className="h-4 w-[200px]" />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      ) : (
-        isAuthenticated && (
-          <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
-            {Bots.map((bot) => (
-              <li key={bot.id}>
-                <Card className="w-[300px]">
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <Avatar>
-                        <AvatarImage src={bot.avatar} alt="@shadcn" />
-                        <AvatarFallback>CN</AvatarFallback>
-                      </Avatar>
-                      <CardTitle className="text-lg">{bot.name}</CardTitle>
-                    </div>
-                    <CardDescription>{bot.description}</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="flex justify-between">
-                    <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
-                      Delete
-                    </Button>
-                    <Button>Chat</Button>
-                  </CardFooter>
-                </Card>
-              </li>
-            ))}
-          </ul>
-        )
-      )}
+          ) : (
+            <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
+              {Bots.map((bot) => (
+                <li key={bot.id}>
+                  <Card className="w-[300px]">
+                    <CardHeader>
+                      <div className="flex items-center gap-4">
+                        <Avatar>
+                          <AvatarImage src={bot.avatar} alt="@shadcn" />
+                          <AvatarFallback>CN</AvatarFallback>
+                        </Avatar>
+                        <CardTitle className="text-lg">{bot.name}</CardTitle>
+                      </div>
+                      <CardDescription>{bot.description}</CardDescription>
+                    </CardHeader>
+                    <CardFooter className="flex justify-between">
+                      <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
+                        Delete
+                      </Button>
+                      <Button>Chat</Button>
+                    </CardFooter>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          )
+        ) : null}
 
     </div>
   );

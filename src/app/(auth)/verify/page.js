@@ -15,7 +15,7 @@ export default function VerificationPage() {
     useEffect(() => {
         const storedEmail = localStorage.getItem("userEmail");
         if (!storedEmail) {
-            router.push("/login");
+            router.push("/");
         } else {
             setUserEmail(storedEmail);
         }
