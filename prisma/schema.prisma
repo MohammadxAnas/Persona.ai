@@ -17,7 +17,6 @@ model User {
   isVerified       Boolean       @default(false)
   codeExpiresAt    DateTime
 
-  // ✅ Add matching relation name
   aiCharacters     AICharacter[] @relation("UserAICharacters")
 }
 
