@@ -99,6 +99,12 @@ export default function VerificationPage() {
                     <b className="text-blue-300 cursor-pointer hover:underline">
                         Request a new one.
                     </b>
+                    <br />
+                    <br />
+                        <span className="text-xs text-white/60">
+                            📩 Don’t forget to check your spam or junk folder if you don’t see the email!
+                        </span>
+
                 </p>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
