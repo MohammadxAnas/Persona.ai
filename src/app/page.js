@@ -49,6 +49,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+   const [sidebarOpen, setSidebarOpen] = useState(false);
 
 
   const [Bots, setBots] = useState([]);
@@ -308,75 +309,133 @@ export default function Home() {
 
   return (
     <div className="text-white py-4">
+    {/* Only show the sidebar if the user is authenticated */}
+    {isAuthenticated && (
+      <div
+        className={`fixed top-0 left-0 h-full w-[250px] bg-white p-5 border-r border-gray-300 transition-transform duration-300 z-30 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <button
+          className="cursor-pointer text-xl text-black mb-4"
+          onClick={() => setSidebarOpen(false)}
+        >
+          ☰
+        </button>
+        <ul className="list-none p-0">
+          <li>
+            
+          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="text-black min-w-[210px] justify-center items-center "> Create Bot</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Create a Bot</DialogTitle>
+                      <DialogDescription>
+                        Start by providing a name, description, and personality for your bot.
+                      </DialogDescription>
+                    </DialogHeader>
+  
+                    <div className="grid gap-4 py-4">
+                      <Label className="text-right">Name:</Label>
+                      <Input
+                        name="botName"
+                        type="text"
+                        value={BotData.botName}
+                        onChange={handleChange2}
+                        required
+                        placeholder="e.g., Dr. Helper"
+                      />
+  
+                      <Label className="text-right">Description:</Label>
+                      <Input
+                        name="botDesc"
+                        type="text"
+                        value={BotData.botDesc}
+                        onChange={handleChange2}
+                        required
+                        placeholder="What is this bot for?"
+                      />
+  
+                      <Label className="text-right">Personality:</Label>
+                      <Input
+                        name="botPersona"
+                        type="text"
+                        value={BotData.botPersona}
+                        onChange={handleChange2}
+                        required
+                        placeholder="e.g., Friendly, professional..."
+                      />
+  
+                      <Label className="text-right">Avatar:</Label>
+                      <Input
+                        name="avatar"
+                        type="text"
+                        value={BotData.avatar || ""}
+                        onChange={handleChange2}
+                        required
+                        placeholder="e.g., https://example.com/avatar.png"
+                      />
+                    </div>
+  
+                    <DialogFooter>
+                      <Button onClick={handleCreatebot}>Create</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+          </li>
+        </ul>
+        <br />
+        <p className="text-gray-800 font-semibold">Recent</p>
+      </div>
+    )}
+  
+    {/* Overlay when sidebar is open */}
+    {sidebarOpen && (
+      <div
+        className="fixed inset-0 z-20 transition-opacity duration-300"
+        onClick={() => setSidebarOpen(false)}
+      />
+    )}
+  
+    {/* Content Wrapper */}
+    <div
+      className={`transition-all duration-300 ease-in-out ${
+        sidebarOpen && isAuthenticated ? "ml-[250px]" : "ml-0"
+      }`}
+    >
       <header className="container mx-auto flex items-center justify-between px-6">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-2xl font-bold tracking-wide text-blue-400">persona.ai</h1>
-         </div> 
-         <div>
+        {/* Persona.ai Name */}
+        <div
+          className={`flex items-center text-lg font-bold z-50 transition-transform duration-300 ease-in-out ${
+            sidebarOpen ? "translate-x-[10px]" : "translate-x-0"
+          }`}
+        >
+          {/* Hamburger Icon */}
+          {!sidebarOpen && isAuthenticated && (
+            <span
+              className="mr-2 cursor-pointer text-black"
+              onClick={() => setSidebarOpen(true)}
+            >
+              ☰
+            </span>
+          )}
+          <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">
+            persona.ai
+          </span>
+        </div>
+  
+        <div>
           {isAuthenticated ? (
-  <>
-  <div className="flex gap-3">
-    <Button onClick={handleLogout}>Logout</Button>
-
-     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button variant="mine"> Create Bot</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Create a Bot</DialogTitle>
-              <DialogDescription>
-                Start by providing a name, description, and personality for your bot.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="grid gap-4 py-4">
-              <Label className="text-right">Name:</Label>
-              <Input name="botName" 
-               type="text"
-               value={BotData.botName}
-               onChange={handleChange2}
-               required
-               placeholder="e.g., Dr. Helper" />
-
-              <Label className="text-right">Description:</Label>
-              <Input name="botDesc"
-               type="text"
-               value={BotData.botDesc}
-               onChange={handleChange2}
-               required
-               placeholder="What is this bot for?" />
-
-              <Label className="text-right">Personality:</Label>
-              <Input name="botPersona"
-               type="text"
-               value={BotData.botPersona}
-               onChange={handleChange2}
-               required
-              placeholder="e.g., Friendly, professional..." />
-
-              <Label className="text-right">Avatar:</Label>
-              <Input
-                name="avatar"
-                type="text"
-                value={BotData.avatar || ""} 
-                onChange={handleChange2}
-                required
-                placeholder="e.g., https://example.com/avatar.png"
-              />
-            </div>
-
-            <DialogFooter>
-              <Button onClick={handleCreatebot}>Create</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-  </div>
-</>
-
-    
+            <>
+              <div className="flex gap-3">
+                <Button onClick={handleLogout}>Logout</Button>
+              </div>
+            </>
           ) : (
             <div className="flex gap-2">
+              {/* Signup / Login Dialog */}
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="mine">Sign Up to Chat</Button>
@@ -422,7 +481,8 @@ export default function Home() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-
+  
+              {/* Login Dialog */}
               <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
                 <DialogTrigger asChild>
                   <Button>Login</Button>
@@ -459,82 +519,67 @@ export default function Home() {
               </Dialog>
             </div>
           )}
-        
         </div>
-      
       </header>
-      {isAuthenticated ? (
-          loading ? (
-            <div className="flex h-[80vh] justify-center items-center">
-              <div className="flex items-center space-x-4">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-4 w-[250px]" />
-                  <Skeleton className="h-4 w-[200px]" />
-                </div>
-              </div>
-            </div>
-          ) : (
-            <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
-              {Bots.map((bot) => (
-                <li key={bot.id}>
-                  <Card
-                      className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                      onClick={() => router.push("/chat")}
-                    >
-                      <CardHeader>
-                        <div className="flex items-center gap-4">
-                        <Avatar className="w-12 h-12">
-                            <AvatarImage src={bot.avatar} alt="@shadcn" />
-                            <AvatarFallback>CN</AvatarFallback>
-                          </Avatar>
-                          <CardTitle className="text-lg flex items-center gap-2">
-                          {bot.name}
-                          <span className="text-sm text-gray-500 font-normal">(he/him)</span>
-                        </CardTitle>
-
-                        </div>
-                        <CardDescription>{bot.description}</CardDescription>
-                      </CardHeader>
-                      <CardFooter className="flex justify-between">
-                         <Button
-                          className="min-w-[130px] justify-center items-center gap-2"
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation(); // prevent card click
-                            router.push("/chat");
-                          }}
-                        >
-                          <Mail className="w-5 h-5" />
-                          Message
-                        </Button>
-
-                        <Button
-                          variant="outline"
-                        >
-                        <Phone className="w-5 h-5" />
-                        </Button>
-
-                        <Button
-                          variant="outline"
-                          onClick={(e) => {
-                            e.stopPropagation(); // prevent card click
-                            deleteBot(bot.id, fetchUserBots);
-                          }}
-                        >
-                         <Trash2 className="w-5 h-5 text-red-500" />
-                        </Button>
-
-                      
-                      </CardFooter>
-                    </Card>
-
-                </li>
-              ))}
-            </ul>
-          )
-        ) : null}
-
+  
+      {/* Conditional Bot List Rendering */}
+      {isAuthenticated && !loading && Bots && (
+        <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
+          {Bots.map((bot) => (
+            <li key={bot.id}>
+              <Card
+                className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                onClick={() => router.push("/chat")}
+              >
+                <CardHeader>
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={bot.avatar} alt="@shadcn" />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      {bot.name}
+                      <span className="text-sm text-gray-500 font-normal">(he/him)</span>
+                    </CardTitle>
+                  </div>
+                  <CardDescription>{bot.description}</CardDescription>
+                </CardHeader>
+                <CardFooter className="flex justify-between">
+                  <Button
+                    className="min-w-[130px] justify-center items-center gap-2"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent card click
+                      router.push("/chat");
+                    }}
+                  >
+                    <Mail className="w-5 h-5" />
+                    Message
+                  </Button>
+  
+                  <Button variant="outline">
+                    <Phone className="w-5 h-5" />
+                  </Button>
+  
+                  <Button
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent card click
+                      deleteBot(bot.id, fetchUserBots);
+                    }}
+                  >
+                    <Trash2 className="w-5 h-5 text-red-500" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
+  </div>
+  
+  
+
   );
 }
