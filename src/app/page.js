@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
+import { Mail, Phone, Trash2 } from "lucide-react";
+
 
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -476,24 +478,57 @@ export default function Home() {
             <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
               {Bots.map((bot) => (
                 <li key={bot.id}>
-                  <Card className="w-[300px]">
-                    <CardHeader>
-                      <div className="flex items-center gap-4">
-                        <Avatar>
-                          <AvatarImage src={bot.avatar} alt="@shadcn" />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <CardTitle className="text-lg">{bot.name}</CardTitle>
-                      </div>
-                      <CardDescription>{bot.description}</CardDescription>
-                    </CardHeader>
-                    <CardFooter className="flex justify-between">
-                      <Button variant="outline" onClick={() => deleteBot(bot.id, fetchUserBots)}>
-                        Delete
-                      </Button>
-                      <Button>Chat</Button>
-                    </CardFooter>
-                  </Card>
+                  <Card
+                      className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                      onClick={() => router.push("/chat")}
+                    >
+                      <CardHeader>
+                        <div className="flex items-center gap-4">
+                        <Avatar className="w-12 h-12">
+                            <AvatarImage src={bot.avatar} alt="@shadcn" />
+                            <AvatarFallback>CN</AvatarFallback>
+                          </Avatar>
+                          <CardTitle className="text-lg flex items-center gap-2">
+                          {bot.name}
+                          <span className="text-sm text-gray-500 font-normal">(he/him)</span>
+                        </CardTitle>
+
+                        </div>
+                        <CardDescription>{bot.description}</CardDescription>
+                      </CardHeader>
+                      <CardFooter className="flex justify-between">
+                         <Button
+                          className="min-w-[130px] justify-center items-center gap-2"
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation(); // prevent card click
+                            router.push("/chat");
+                          }}
+                        >
+                          <Mail className="w-5 h-5" />
+                          Message
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                        >
+                        <Phone className="w-5 h-5" />
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          onClick={(e) => {
+                            e.stopPropagation(); // prevent card click
+                            deleteBot(bot.id, fetchUserBots);
+                          }}
+                        >
+                         <Trash2 className="w-5 h-5 text-red-500" />
+                        </Button>
+
+                      
+                      </CardFooter>
+                    </Card>
+
                 </li>
               ))}
             </ul>
