@@ -324,66 +324,78 @@ export default function Home() {
         </button>
         <ul className="list-none p-0">
           <li>
-            
-          <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="text-black min-w-[210px] justify-center items-center "> Create Bot</Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Create a Bot</DialogTitle>
-                      <DialogDescription>
-                        Start by providing a name, description, and personality for your bot.
-                      </DialogDescription>
-                    </DialogHeader>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="text-black min-w-[210px] justify-center items-center"
+                >
+                  Create Bot
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Create a Bot</DialogTitle>
+                  <DialogDescription>
+                    Start by providing a name, description, and personality for your bot.
+                  </DialogDescription>
+                </DialogHeader>
   
-                    <div className="grid gap-4 py-4">
-                      <Label className="text-right">Name:</Label>
-                      <Input
-                        name="botName"
-                        type="text"
-                        value={BotData.botName}
-                        onChange={handleChange2}
-                        required
-                        placeholder="e.g., Dr. Helper"
-                      />
+                <div className="grid gap-4 py-4">
+                  <div>
+                    <Label>Name:</Label>
+                    <Input
+                      name="botName"
+                      type="text"
+                      value={BotData.botName}
+                      onChange={handleChange2}
+                      required
+                      placeholder="e.g., Dr. Helper"
+                    />
+                  </div>
   
-                      <Label className="text-right">Description:</Label>
-                      <Input
-                        name="botDesc"
-                        type="text"
-                        value={BotData.botDesc}
-                        onChange={handleChange2}
-                        required
-                        placeholder="What is this bot for?"
-                      />
+                  <div>
+                    <Label>Description:</Label>
+                    <Input
+                      name="botDesc"
+                      type="text"
+                      value={BotData.botDesc}
+                      onChange={handleChange2}
+                      required
+                      placeholder="What is this bot for?"
+                    />
+                  </div>
   
-                      <Label className="text-right">Personality:</Label>
-                      <Input
-                        name="botPersona"
-                        type="text"
-                        value={BotData.botPersona}
-                        onChange={handleChange2}
-                        required
-                        placeholder="e.g., Friendly, professional..."
-                      />
+                  <div>
+                    <Label>Personality:</Label>
+                    <Input
+                      name="botPersona"
+                      type="text"
+                      value={BotData.botPersona}
+                      onChange={handleChange2}
+                      required
+                      placeholder="e.g., Friendly, professional..."
+                    />
+                  </div>
   
-                      <Label className="text-right">Avatar:</Label>
-                      <Input
-                        name="avatar"
-                        type="text"
-                        value={BotData.avatar || ""}
-                        onChange={handleChange2}
-                        required
-                        placeholder="e.g., https://example.com/avatar.png"
-                      />
-                    </div>
+                  <div>
+                    <Label>Avatar:</Label>
+                    <Input
+                      name="avatar"
+                      type="text"
+                      value={BotData.avatar || ""}
+                      onChange={handleChange2}
+                      required
+                      placeholder="e.g., https://example.com/avatar.png"
+                    />
+                  </div>
+                </div>
   
-                    <DialogFooter>
-                      <Button onClick={handleCreatebot}>Create</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <DialogFooter>
+                  <Button onClick={handleCreatebot}>Create</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </li>
         </ul>
         <br />
@@ -402,184 +414,188 @@ export default function Home() {
     {/* Content Wrapper */}
     <div
       className={`transition-all duration-300 ease-in-out ${
-        sidebarOpen && isAuthenticated ? "ml-[250px]" : "ml-0"
+        sidebarOpen && isAuthenticated ? "ml-0 md:ml-[250px]" : "ml-0"
       }`}
     >
-      <header className="container mx-auto flex items-center justify-between px-6">
-        {/* Persona.ai Name */}
-        <div
-          className={`flex items-center text-lg font-bold z-50 transition-transform duration-300 ease-in-out ${
-            sidebarOpen ? "translate-x-[10px]" : "translate-x-0"
-          }`}
-        >
-          {/* Hamburger Icon */}
-          {!sidebarOpen && isAuthenticated && (
-            <span
-              className="mr-2 cursor-pointer text-black"
-              onClick={() => setSidebarOpen(true)}
-            >
-              ☰
+      <div className="transition-all duration-300 ease-in-out">
+        <header className="container mx-auto flex items-center justify-between px-6">
+          <div
+            className={`flex items-center text-lg font-bold z-50 transition-transform duration-300 ease-in-out ${
+              sidebarOpen ? "translate-x-[10px]" : "translate-x-0"
+            }`}
+          >
+            {!sidebarOpen && isAuthenticated && (
+              <span
+                className="mr-3 cursor-pointer text-black"
+                onClick={() => setSidebarOpen(true)}
+              >
+                ☰
+              </span>
+            )}
+            <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">
+              persona.ai
             </span>
-          )}
-          <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">
-            persona.ai
-          </span>
-        </div>
+          </div>
   
-        <div>
-          {isAuthenticated ? (
-            <>
+          <div>
+            {isAuthenticated ? (
               <div className="flex gap-3">
                 <Button onClick={handleLogout}>Logout</Button>
               </div>
-            </>
-          ) : (
-            <div className="flex gap-2">
-              {/* Signup / Login Dialog */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="mine">Sign Up to Chat</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Signup</DialogTitle>
-                    <DialogDescription>
-                      Create an account to start chatting with intelligent AI characters!
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <Label className="text-right">Username:</Label>
-                    <Input
-                      name="name"
-                      placeholder="Enter your name"
-                      type="text"
-                      value={signupData.name}
-                      onChange={handleChange1}
-                      required
-                    />
-                    <Label className="text-right">Email:</Label>
-                    <Input
-                      name="email"
-                      type="email"
-                      placeholder="Email"
-                      value={signupData.email}
-                      onChange={handleChange1}
-                      required
-                    />
-                    <Label className="text-right">Password:</Label>
-                    <Input
-                      name="password"
-                      type="password"
-                      placeholder="Password"
-                      value={signupData.password}
-                      onChange={handleChange1}
-                      required
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit" onClick={handleSignup}>Continue</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+            ) : (
+              <div className="flex gap-2">
+                {/* Sign Up Dialog */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="mine">Sign Up to Chat</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Signup</DialogTitle>
+                      <DialogDescription>
+                        Create an account to start chatting with intelligent AI characters!
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <Label>Username:</Label>
+                      <Input
+                        name="name"
+                        placeholder="Enter your name"
+                        type="text"
+                        value={signupData.name}
+                        onChange={handleChange1}
+                        required
+                      />
+                      <Label>Email:</Label>
+                      <Input
+                        name="email"
+                        type="email"
+                        placeholder="Email"
+                        value={signupData.email}
+                        onChange={handleChange1}
+                        required
+                      />
+                      <Label>Password:</Label>
+                      <Input
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        value={signupData.password}
+                        onChange={handleChange1}
+                        required
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" onClick={handleSignup}>
+                        Continue
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
   
-              {/* Login Dialog */}
-              <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-                <DialogTrigger asChild>
-                  <Button>Login</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Login</DialogTitle>
-                    <DialogDescription>Log in to access your account securely.</DialogDescription>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <Label className="text-right">Email:</Label>
-                    <Input
-                      name="email"
-                      type="email"
-                      placeholder="Email"
-                      value={loginInfo.email}
-                      onChange={handleChange}
-                      required
-                    />
-                    <Label className="text-right">Password:</Label>
-                    <Input
-                      name="password"
-                      type="password"
-                      placeholder="Password"
-                      value={loginInfo.password}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit" onClick={handleLogin}>Continue</Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
-            </div>
-          )}
-        </div>
-      </header>
+                {/* Login Dialog */}
+                <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button>Login</Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Login</DialogTitle>
+                      <DialogDescription>
+                        Log in to access your account securely.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <Label>Email:</Label>
+                      <Input
+                        name="email"
+                        type="email"
+                        placeholder="Email"
+                        value={loginInfo.email}
+                        onChange={handleChange}
+                        required
+                      />
+                      <Label>Password:</Label>
+                      <Input
+                        name="password"
+                        type="password"
+                        placeholder="Password"
+                        value={loginInfo.password}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button type="submit" onClick={handleLogin}>
+                        Continue
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
+          </div>
+        </header>
   
-      {/* Conditional Bot List Rendering */}
-      {isAuthenticated && !loading && Bots && (
-        <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
-          {Bots.map((bot) => (
-            <li key={bot.id}>
-              <Card
-                className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                onClick={() => router.push("/chat")}
-              >
-                <CardHeader>
-                  <div className="flex items-center gap-4">
-                    <Avatar className="w-12 h-12">
-                      <AvatarImage src={bot.avatar} alt="@shadcn" />
-                      <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      {bot.name}
-                      <span className="text-sm text-gray-500 font-normal">(he/him)</span>
-                    </CardTitle>
-                  </div>
-                  <CardDescription>{bot.description}</CardDescription>
-                </CardHeader>
-                <CardFooter className="flex justify-between">
-                  <Button
-                    className="min-w-[130px] justify-center items-center gap-2"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation(); // prevent card click
-                      router.push("/chat");
-                    }}
-                  >
-                    <Mail className="w-5 h-5" />
-                    Message
-                  </Button>
+        {/* Conditional Bot List Rendering */}
+        {isAuthenticated && !loading && Bots && (
+          <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
+            {Bots.map((bot) => (
+              <li key={bot.id}>
+                <Card
+                  className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                  onClick={() => router.push("/chat")}
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={bot.avatar} alt={bot.name} />
+                        <AvatarFallback>AI</AvatarFallback>
+                      </Avatar>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        {bot.name}
+                        <span className="text-sm text-gray-500 font-normal">(he/him)</span>
+                      </CardTitle>
+                    </div>
+                    <CardDescription>{bot.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="flex justify-between">
+                    <Button
+                      className="min-w-[130px] justify-center items-center gap-2"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push("/chat");
+                      }}
+                    >
+                      <Mail className="w-5 h-5" />
+                      Message
+                    </Button>
   
-                  <Button variant="outline">
-                    <Phone className="w-5 h-5" />
-                  </Button>
+                    <Button variant="outline">
+                      <Phone className="w-5 h-5" />
+                    </Button>
   
-                  <Button
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation(); // prevent card click
-                      deleteBot(bot.id, fetchUserBots);
-                    }}
-                  >
-                    <Trash2 className="w-5 h-5 text-red-500" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            </li>
-          ))}
-        </ul>
-      )}
+                    <Button
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteBot(bot.id, fetchUserBots);
+                      }}
+                    >
+                      <Trash2 className="w-5 h-5 text-red-500" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   </div>
   
-  
+
 
   );
 }
