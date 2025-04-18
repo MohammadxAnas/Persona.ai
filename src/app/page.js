@@ -418,24 +418,32 @@ export default function Home() {
       }`}
     >
       <div className="transition-all duration-300 ease-in-out">
-        <header className="container mx-auto flex items-center justify-between px-6">
-          <div
-            className={`flex items-center text-lg font-bold z-50 transition-transform duration-300 ease-in-out ${
-              sidebarOpen ? "translate-x-[10px]" : "translate-x-0"
-            }`}
+      <header className="container mx-auto flex items-center justify-between px-6">
+      {/* Persona.ai Name with Hamburger */}
+      <div
+        className={`flex items-center gap-3 text-lg font-bold z-50 transition-transform duration-300 ease-in-out ${
+          sidebarOpen ? "translate-x-[10px]" : "translate-x-0"
+        }`}
+      >
+        {/* Hamburger Icon */}
+        {!sidebarOpen && isAuthenticated && (
+          <span
+            className="cursor-pointer text-black"
+            onClick={() => setSidebarOpen(true)}
           >
-            {!sidebarOpen && isAuthenticated && (
-              <span
-                className="mr-3 cursor-pointer text-black"
-                onClick={() => setSidebarOpen(true)}
-              >
-                ☰
-              </span>
-            )}
-            <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">
-              persona.ai
-            </span>
-          </div>
+            ☰
+          </span>
+        )}
+        <span
+        className={`text-2xl font-bold tracking-wide text-blue-400 pb-1 ${
+          sidebarOpen ? "ml-7 md:ml-0" : ""
+        }`}
+      >
+        persona.ai
+      </span>
+
+      </div>
+
   
           <div>
             {isAuthenticated ? (
