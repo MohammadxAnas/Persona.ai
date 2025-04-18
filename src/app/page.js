@@ -565,7 +565,7 @@ export default function Home() {
           <li key={bot.id} className="snap-start">
                 <Card
                   className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                  onClick={() => router.push("/chat")}
+                  onClick={() => router.push(`/chat/${bot.id}`)}
                 >
                   <CardHeader>
                     <div className="flex items-center gap-4">
@@ -586,7 +586,7 @@ export default function Home() {
                       variant="outline"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push("/chat");
+                        router.push(`/chat/${bot.id}`);
                       }}
                     >
                       <Mail className="w-5 h-5" />

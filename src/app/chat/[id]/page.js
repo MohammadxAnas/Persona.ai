@@ -1,14 +1,53 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from 'next/navigation';
 
 const API_KEY = "AIzaSyCZr5XSib2ni0zhUrgBZv5uCfN4NzWwOqw";
 
 
 const App = () => {
+
+    const { id } = useParams(); 
+    const [bot, setBot] = useState(null);
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    if (id) {
+      const fetchBot = async () => {
+        try {
+          const res = await fetch(`${baseURL}/api/getBot/${id}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await res.json();
+          if (data.success) {
+            setBot(data.bot);
+          } else {
+            console.error("Error fetching bot:", data.error);
+          }
+        } catch (err) {
+          console.error("Failed to fetch bot:", err);
+        }
+      };
+  
+      fetchBot();
+    }
+  }, [id]);
+  
+  useEffect(() => {
+    console.log("Updated bot =", bot);
+  }, [bot]);
+  
+
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -25,7 +64,7 @@ const App = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: userMessage.text }] }],
+            contents: [{ parts: [{ text: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Now respond to the user message: "${userMessage.text}".`}] }],
           }),
         }
       );
@@ -129,14 +168,22 @@ const App = () => {
           <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">persona.ai</span>
         </div>
 
-        {/* Greeting */}
-        {messages.length === 0 && (
-          <h1 className="text-4xl font-bold text-center mt-24">
-            <span className="bg-gradient-to-r from-blue-500 to-red-500 text-transparent bg-clip-text">
-              What can I help with?
-            </span>
-          </h1>
-        )}
+      {/* bot info */}
+        {bot ? (
+             <div className="flex flex-col items-center mt-24 space-y-4">
+             <img
+             src={bot.avatar} // replace with your actual bot avatar field
+             alt={bot.name}
+             className="w-24 h-24 rounded-full object-cover shadow-md"
+             />
+             <h2 className="text-2xl font-semibold text-center">{bot.name}</h2>
+             <p className="text-center text-gray-500 max-w-md">{bot.description}</p>
+         </div>
+        ) : (
+            <div className="text-center mt-24 text-gray-400">Loading bot info...</div>
+        )
+        }
+
 
         {/* Chat Section */}
         <div className="w-4/5 max-w-3xl h-[60vh] overflow-y-auto mt-10 flex flex-col gap-2 px-4">
