@@ -560,54 +560,57 @@ export default function Home() {
   
         {/* Conditional Bot List Rendering */}
         {isAuthenticated && !loading && Bots && (
-          <ul className="flex flex-wrap gap-6 px-6 py-6 list-none">
-            {Bots.map((bot) => (
-              <li key={bot.id}>
-                <Card
-                  className="w-[300px] cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                  onClick={() => router.push("/chat")}
+          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-6 py-6 list-none">
+          {Bots.map((bot) => (
+            <li key={bot.id}>
+                    <Card
+                className="w-full cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                onClick={() => router.push("/chat")}
+              >
+                <CardHeader>
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={bot.avatar} alt={bot.name} />
+                      <AvatarFallback>AI</AvatarFallback>
+                    </Avatar>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      {bot.name}
+                      <span className="text-sm text-gray-500 font-normal">(he/him)</span>
+                    </CardTitle>
+                  </div>
+                  <CardDescription>{bot.description}</CardDescription>
+                </CardHeader>
+                <CardFooter className="flex flex-wrap gap-2 justify-between">
+                <Button
+                  className="flex-1 min-w-[100px] justify-center items-center gap-2"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push("/chat");
+                  }}
                 >
-                  <CardHeader>
-                    <div className="flex items-center gap-4">
-                      <Avatar className="w-12 h-12">
-                        <AvatarImage src={bot.avatar} alt={bot.name} />
-                        <AvatarFallback>AI</AvatarFallback>
-                      </Avatar>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {bot.name}
-                        <span className="text-sm text-gray-500 font-normal">(he/him)</span>
-                      </CardTitle>
-                    </div>
-                    <CardDescription>{bot.description}</CardDescription>
-                  </CardHeader>
-                  <CardFooter className="flex justify-between">
-                    <Button
-                      className="min-w-[130px] justify-center items-center gap-2"
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push("/chat");
-                      }}
-                    >
-                      <Mail className="w-5 h-5" />
-                      Message
-                    </Button>
-  
-                    <Button variant="outline">
-                      <Phone className="w-5 h-5" />
-                    </Button>
-  
-                    <Button
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteBot(bot.id, fetchUserBots);
-                      }}
-                    >
-                      <Trash2 className="w-5 h-5 text-red-500" />
-                    </Button>
-                  </CardFooter>
-                </Card>
+                  <Mail className="w-5 h-5" />
+                  Message
+                </Button>
+
+                <Button className="flex-1 min-w-[80px]" variant="outline">
+                  <Phone className="w-5 h-5" />
+                </Button>
+
+                <Button
+                  className="flex-1 min-w-[80px]"
+                  variant="outline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteBot(bot.id, fetchUserBots);
+                  }}
+                >
+                  <Trash2 className="w-5 h-5 text-red-500" />
+                </Button>
+              </CardFooter>
+
+              </Card>
+
               </li>
             ))}
           </ul>
