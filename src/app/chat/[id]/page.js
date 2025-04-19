@@ -2,14 +2,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from 'next/navigation';
 
-const API_KEY = "AIzaSyCZr5XSib2ni0zhUrgBZv5uCfN4NzWwOqw";
-
 
 const App = () => {
 
     const { id } = useParams(); 
     const [bot, setBot] = useState(null);
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -59,17 +58,27 @@ const App = () => {
 
     try {
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`,
+        "https://api.openai.com/v1/chat/completions",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
+           },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Now respond to the user message: "${userMessage.text}".`}] }],
+            model: "gpt-3.5-turbo" ,
+            messages: [
+              {
+                role: "user",
+                content: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Now respond to the user message: "${userMessage}".`
+              }
+            ],
+            temperature: 0.7,
           }),
         }
       );
 
       const data = await response.json();
+      console.log("response:",data);
       const botText =
         data.candidates?.[0]?.content?.parts?.[0]?.text ||
         "Sorry, I didn't understand that.";

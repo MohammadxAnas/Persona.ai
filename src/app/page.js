@@ -102,9 +102,13 @@ export default function Home() {
 
       const data = await response.json();
      
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
     
       if (response.ok) {
-        return data.bots; // Assuming the backend returns { bots: [...] }
+        return data.bots; 
       } else {
         throw new Error(data.error || "Failed to fetch bots");
       }
@@ -261,7 +265,7 @@ export default function Home() {
   
       if (response.ok) {
         toast.success("Bot deleted successfully!");
-        const updatedBots = await fetchUserBots(); // Fetch fresh bots
+        const updatedBots = await fetchUserBots(); 
         setBots(updatedBots); 
       } else {
         throw new Error(data.error || "Failed to delete bot");
@@ -309,7 +313,6 @@ export default function Home() {
 
   return (
     <div className="text-white py-4">
-    {/* Only show the sidebar if the user is authenticated */}
     {isAuthenticated && (
       <div
         className={`fixed top-0 left-0 h-full w-[250px] bg-white p-5 border-r border-gray-300 transition-transform duration-300 z-30 ${
@@ -403,7 +406,7 @@ export default function Home() {
       </div>
     )}
   
-    {/* Overlay when sidebar is open */}
+
     {sidebarOpen && (
       <div
         className="fixed inset-0 z-20 transition-opacity duration-300"
@@ -411,7 +414,7 @@ export default function Home() {
       />
     )}
   
-    {/* Content Wrapper */}
+
     <div
       className={`transition-all duration-300 ease-in-out ${
         sidebarOpen && isAuthenticated ? "ml-0 md:ml-[250px]" : "ml-0"
@@ -419,13 +422,11 @@ export default function Home() {
     >
       <div className="transition-all duration-300 ease-in-out">
       <header className="container mx-auto flex items-center justify-between px-6">
-      {/* Persona.ai Name with Hamburger */}
       <div
         className={`flex items-center gap-3 text-lg font-bold z-50 transition-transform duration-300 ease-in-out ${
           sidebarOpen ? "translate-x-[10px]" : "translate-x-0"
         }`}
       >
-        {/* Hamburger Icon */}
         {!sidebarOpen && isAuthenticated && (
           <span
             className="cursor-pointer text-black"
@@ -501,7 +502,6 @@ export default function Home() {
                   </DialogContent>
                 </Dialog>
   
-                {/* Login Dialog */}
                 <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
                   <DialogTrigger asChild>
                     <Button>Login</Button>
@@ -558,7 +558,7 @@ export default function Home() {
 
 
   
-        {/* Conditional Bot List Rendering */}
+
         {isAuthenticated && !loading && Bots && (
         <ul className="flex overflow-x-auto gap-6 px-6 py-6 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
         {Bots.map((bot) => (
