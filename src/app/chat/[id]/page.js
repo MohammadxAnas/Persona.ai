@@ -5,9 +5,9 @@ import { useParams } from 'next/navigation';
 
 const App = () => {
 
-    const { id } = useParams(); 
-    const [bot, setBot] = useState(null);
-    const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+  const { id } = useParams(); 
+  const [bot, setBot] = useState(null);
+  const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -56,38 +56,61 @@ const App = () => {
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
-
+  
     const userMessage = { text: input, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
-
+  
     try {
+      // Step 1: Build full chat history for Gemini
+      const fullChat = messages
+        .map((msg) => ({
+          role: msg.sender === "user" ? "user" : "model",
+          parts: [{ text: msg.text }],
+        }))
+        .concat([
+          {
+            role: "user",
+            parts: [{ text: input }],
+          },
+        ]);
+  
+      // Step 2: Add bot's persona to the beginning
+      const systemIntro = {
+        role: "user",
+        parts: [
+          {
+            text: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Stay in character while chatting.`,
+          },
+        ],
+      };
+  
       const response = await fetch(
-       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json",
-           },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Now respond to the user message: "${userMessage.text}".`}] }],
+            contents: [systemIntro, ...fullChat],
           }),
         }
       );
-
+  
       const data = await response.json();
-      console.log("response:",data);
+      console.log("response:", data);
+  
       const botText =
         data.candidates?.[0]?.content?.parts?.[0]?.text ||
         "Sorry, I didn't understand that.";
-
+  
       typeMessage(botText);
     } catch (error) {
       console.error("Error fetching response:", error);
       setIsTyping(false);
     }
   };
-
+  
   const typeMessage = (text) => {
     setIsTyping(false);
     const words = text.split(" ");
@@ -211,7 +234,6 @@ const App = () => {
               </div>
             )}
 
-            {/* This triggers scroll into view */}
             <div ref={bottomRef} />
           </div>
           </div>
