@@ -25,8 +25,42 @@ async function main() {
     },
   });
 
+  // Create a chat session between the user and AI
+  const chatSession = await prisma.chatSession.create({
+    data: {
+      userId: user.id,
+      characterId: aiCharacter.id,
+      startedAt: new Date(),
+    },
+  });
+
+  // Create a message from the user to the AI character within the chat session
+  const userMessage = await prisma.message.create({
+    data: {
+      userId: user.id,
+      characterId: aiCharacter.id,
+      chatSessionId: chatSession.id, // Link to chat session
+      sender: 'USER',
+      content: 'Hello NeoBot! How are you today?',
+    },
+  });
+
+  // AI responds to the user's message
+  const aiResponse = await prisma.message.create({
+    data: {
+      userId: user.id,
+      characterId: aiCharacter.id,
+      chatSessionId: chatSession.id, // Link to chat session
+      sender: 'AI',
+      content: 'I am doing great, Alice! How can I assist you today?',
+    },
+  });
+
   console.log('✅ User Created:', user);
   console.log('🤖 AI Character Created:', aiCharacter);
+  console.log('💬 Chat Session Created:', chatSession);
+  console.log('💬 User Message Created:', userMessage);
+  console.log('💬 AI Response Created:', aiResponse);
 }
 
 main()
