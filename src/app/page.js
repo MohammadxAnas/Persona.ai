@@ -340,8 +340,13 @@ export default function Home() {
                 <DialogHeader>
                   <DialogTitle>Create a Bot</DialogTitle>
                   <DialogDescription>
-                    Start by providing a name, description, and personality for your bot.
+                    Start by providing a name, description, and personality for your bot.  
+                    <br />
+                    <strong>Note:</strong> More detailed information results in more accurate and engaging conversations.
                   </DialogDescription>
+
+
+
                 </DialogHeader>
   
                 <div className="grid gap-4 py-4">
@@ -406,18 +411,11 @@ export default function Home() {
       </div>
     )}
   
-
-    {sidebarOpen && (
-      <div
-        className="fixed inset-0 z-20 transition-opacity duration-300"
-        onClick={() => setSidebarOpen(false)}
-      />
-    )}
   
 
     <div
       className={`transition-all duration-300 ease-in-out ${
-        sidebarOpen && isAuthenticated ? "ml-0 md:ml-[250px]" : "ml-0"
+        sidebarOpen && isAuthenticated ? "ml-0 md:ml-[270px]" : "ml-0"
       }`}
     >
       <div className="transition-all duration-300 ease-in-out">
