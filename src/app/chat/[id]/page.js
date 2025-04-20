@@ -63,7 +63,6 @@ const App = () => {
     setIsTyping(true);
   
     try {
-      // Step 1: Build full chat history for Gemini
       const fullChat = messages
         .map((msg) => ({
           role: msg.sender === "user" ? "user" : "model",
@@ -76,7 +75,6 @@ const App = () => {
           },
         ]);
   
-      // Step 2: Add bot's persona to the beginning
       const systemIntro = {
         role: "user",
         parts: [
