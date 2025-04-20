@@ -8,7 +8,6 @@ const App = () => {
     const { id } = useParams(); 
     const [bot, setBot] = useState(null);
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
-    const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -58,21 +57,13 @@ const App = () => {
 
     try {
       const response = await fetch(
-        "https://api.openai.com/v1/chat/completions",
+       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.NEXT_PUBLIC_GEMINI_API_KEY}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`
            },
           body: JSON.stringify({
-            model: "gpt-3.5-turbo" ,
-            messages: [
-              {
-                role: "user",
-                content: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Now respond to the user message: "${userMessage}".`
-              }
-            ],
-            temperature: 0.7,
+            contents: [{ parts: [{ text: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Now respond to the user message: "${userMessage.text}".`}] }],
           }),
         }
       );
