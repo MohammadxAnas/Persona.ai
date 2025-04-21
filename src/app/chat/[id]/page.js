@@ -15,6 +15,8 @@ const App = () => {
   const [isTyping, setIsTyping] = useState(false);
   const token = localStorage.getItem("token");
 
+  const [sessionId, setSessionId] = useState();
+
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -103,6 +105,30 @@ const App = () => {
         "Sorry, I didn't understand that.";
   
       typeMessage(botText);
+
+      const saveResponse = await fetch("/api/savemessage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+         },
+        body: JSON.stringify({
+          userId: bot.userId, 
+          characterId: id,
+          sessionId : sessionId,
+          messages: [
+            { sender: "user", text: input },
+            { sender: "ai", text: botText },
+          ],
+        }),
+      });
+  
+      const saveData = await saveResponse.json();
+  
+     
+      if (saveData.sessionId) {
+        setSessionId(saveData.sessionId); 
+      }
+
     } catch (error) {
       console.error("Error fetching response:", error);
       setIsTyping(false);
