@@ -54,6 +54,44 @@ const App = () => {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    const savedSession = localStorage.getItem("session");
+    if (savedSession) {
+      setSessionId(savedSession);
+    }
+  }, []);
+  
+
+  useEffect(() => {
+    if (!sessionId) return ;
+    const fetchChatHistory = async () => {
+      const res = await fetch("/api/fetchHistory", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ sessionId }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        const normalizedMessages = data.messages.map(msg => ({
+          text: msg.content,
+          sender: msg.sender === "USER" ? "user" : "bot",
+        }));
+        setMessages(normalizedMessages);
+        
+      } else {
+        console.error("Failed to fetch chat history");
+      }
+    };
+
+    fetchChatHistory();
+    console.log("messages:",messages);
+  }, [sessionId]);
+
   
 
   const sendMessage = async () => {
@@ -125,9 +163,11 @@ const App = () => {
       const saveData = await saveResponse.json();
   
      
-      if (saveData.sessionId) {
-        setSessionId(saveData.sessionId); 
+      if (saveData.sessionId && !sessionId) {
+        setSessionId(saveData.sessionId);
+        localStorage.setItem("session", saveData.sessionId);
       }
+      
 
     } catch (error) {
       console.error("Error fetching response:", error);
