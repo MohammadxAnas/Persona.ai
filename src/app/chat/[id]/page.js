@@ -31,8 +31,10 @@ const App = () => {
             },
           });
           const data = await res.json();
+          console.log(data);
           if (data.success) {
             setBot(data.bot);
+            setSessionId(data.chatSessionId);
           } else {
             console.error("Error fetching bot:", data.error);
           }
@@ -47,6 +49,7 @@ const App = () => {
   
   useEffect(() => {
     console.log("Updated bot =", bot);
+    console.log("Updated Id =",sessionId);
   }, [bot]);
   
   useEffect(() => {

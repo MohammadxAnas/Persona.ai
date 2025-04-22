@@ -20,9 +20,25 @@ export async function GET(req, { params }) {
     const bot = await prisma.aICharacter.findUnique({
       where: { id },
     });
-    console.log(bot);
-    return NextResponse.json({ success: true, bot });
+
+    if (!bot) {
+      return NextResponse.json({ success: false, error: "Bot not found" }, { status: 404 });
+    }
+
+    const chatSession = await prisma.chatSession.findFirst({
+      where: {
+        characterId: bot.id,
+      },
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      bot, 
+      chatSessionId: chatSession ? chatSession.id : null 
+    });
+
   } catch (err) {
+    console.error("Error fetching bot:", err);
     return NextResponse.json({ success: false, error: "Failed to fetch bot" }, { status: 500 });
   }
 }
