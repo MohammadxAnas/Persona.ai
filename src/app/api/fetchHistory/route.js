@@ -11,15 +11,16 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { sessionId } = body;
+    const { sessionId, id } = body;
 
-    if (!sessionId) {
-      return Response.json({ message: "sessionId is required", success: false }, { status: 400 });
+    if (!sessionId || !id) {
+      return Response.json({ message: "sessionId and id are required", success: false }, { status: 400 });
     }
 
     const messages = await prisma.message.findMany({
       where: {
         chatSessionId: sessionId,
+        characterId: id,
       },
       orderBy: {
         createdAt: "asc",

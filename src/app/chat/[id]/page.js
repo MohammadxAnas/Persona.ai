@@ -72,7 +72,7 @@ const App = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ sessionId }),
+        body: JSON.stringify({ sessionId, id }),
       });
 
       const data = await res.json();
