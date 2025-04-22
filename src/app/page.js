@@ -315,17 +315,23 @@ export default function Home() {
   return (
     <div className="text-white py-4">
     {isAuthenticated && (
-      <div
-        className={`fixed top-0 left-0 h-full w-[250px] bg-white p-5 border-r border-gray-300 transition-transform duration-300 z-30 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
+  <div
+    className={`fixed top-0 left-0 h-full w-[250px] bg-white p-5 border-r border-gray-300 transition-transform duration-300 z-30 ${
+      sidebarOpen ? "translate-x-0" : "-translate-x-full"
+    }`}
+  >
+    <div className="flex flex-col h-full">
+  {/* Top section */}
+      <div>
+        {/* Close button */}
         <button
           className="cursor-pointer text-xl text-black mb-4"
           onClick={() => setSidebarOpen(false)}
         >
           ☰
         </button>
+
+        {/* Dialog and main menu content */}
         <ul className="list-none p-0">
           <li>
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -337,6 +343,7 @@ export default function Home() {
                   Create Bot
                 </Button>
               </DialogTrigger>
+
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                   <DialogTitle>Create a Bot</DialogTitle>
@@ -345,11 +352,8 @@ export default function Home() {
                     <br />
                     <strong>Note:</strong> More detailed information results in more accurate and engaging conversations.
                   </DialogDescription>
-
-
-
                 </DialogHeader>
-  
+
                 <div className="grid gap-4 py-4">
                   <div>
                     <Label>Name:</Label>
@@ -362,7 +366,7 @@ export default function Home() {
                       placeholder="e.g., Dr. Helper"
                     />
                   </div>
-  
+
                   <div>
                     <Label>Description:</Label>
                     <Input
@@ -374,7 +378,7 @@ export default function Home() {
                       placeholder="What is this bot for?"
                     />
                   </div>
-  
+
                   <div>
                     <Label>Personality:</Label>
                     <Input
@@ -386,7 +390,7 @@ export default function Home() {
                       placeholder="e.g., Friendly, professional..."
                     />
                   </div>
-  
+
                   <div>
                     <Label>Avatar:</Label>
                     <Input
@@ -399,7 +403,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
-  
+
                 <DialogFooter>
                   <Button onClick={handleCreatebot}>Create</Button>
                 </DialogFooter>
@@ -407,10 +411,22 @@ export default function Home() {
             </Dialog>
           </li>
         </ul>
-        <br />
-        <p className="text-gray-800 font-semibold">Recent</p>
+
+        <p className="text-gray-800 font-semibold mt-4">Recent</p>
+        {/* Add recent items here if needed */}
       </div>
-    )}
+
+      {/* Bottom pinned logout */}
+      <div className="mt-auto pt-4">
+        <Button className="w-full" variant="default" onClick={handleLogout}>
+          Logout
+        </Button>
+      </div>
+    </div>
+
+  </div>
+)}
+
   
   
 
@@ -448,7 +464,6 @@ export default function Home() {
           <div>
             {isAuthenticated ? (
               <div className="flex gap-3">
-                <Button onClick={handleLogout}>Logout</Button>
               </div>
             ) : (
               <div className="flex gap-2">
