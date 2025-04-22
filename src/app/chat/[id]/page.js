@@ -262,9 +262,10 @@ const App = () => {
           </div>
 
           {/* Chat Section */}
+          {bot ? (
           <div className="w-4/5 max-w-3xl flex flex-col flex-grow mt-20 px-4 pb-24">
             {/* Bot Info */}
-            {bot ? (
+            
               <div className="flex flex-col items-center text-center space-y-3 mb-6">
                 <img
                   src={bot.avatar}
@@ -274,11 +275,7 @@ const App = () => {
                 <h2 className="text-2xl font-bold">{bot.name}</h2>
                 <p className="text-gray-500 max-w-md">{bot.description}</p>
               </div>
-            ) : (
-              <div className="flex flex-col items-center mt-40 space-y-4">
-                <div className="text-gray-400">Loading bot info...</div>
-              </div>
-            )}
+           
 
             {/* Messages */}
             <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-28">
@@ -304,6 +301,11 @@ const App = () => {
             <div ref={bottomRef} />
           </div>
           </div>
+           ) : (
+            <div className="flex flex-col items-center mt-40 space-y-4">
+              <div className="text-gray-400">Loading bot info...</div>
+            </div>
+          )}
 
 
           {/* Input Bar */}
