@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2 } from "lucide-react";
 
 
 import { Skeleton } from "@/components/ui/skeleton"
@@ -59,7 +59,9 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [User, setUser] = useState("");
+  const [UserEmail, setUserEmail] = useState("");
 
 
   const [Bots, setBots] = useState([]);
@@ -71,6 +73,14 @@ export default function Home() {
     setIsAuthenticated(!!token);
   }, []);
   
+  useEffect(() => {
+    const storedUser = localStorage.getItem("loggedInUser");
+    const storedEmail = localStorage.getItem("UserEmail");
+  
+    if (storedUser) setUser(storedUser);
+    if (storedEmail) setUserEmail(storedEmail);
+  
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -170,10 +180,16 @@ export default function Home() {
         setIsLoginModalOpen(false);
         localStorage.setItem("token", result.jwtToken);
         localStorage.setItem("loggedInUser", result.name);
-        localStorage.setItem("UserEmail",result.email);
+        localStorage.setItem("UserEmail", result.email);
         setIsAuthenticated(true);
+      
+       
+        setUser(result.name);
+        setUserEmail(result.email);
+      
         toast.success(result.message);
         router.replace("/");  // Redirect immediately
+
       } else {
         toast.error(result.message || result.error || "Login failed");
       }
@@ -311,7 +327,10 @@ export default function Home() {
         
         localStorage.removeItem("token");
         localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("UserEmail");
         setIsAuthenticated(false);
+        setUser("");          
+        setUserEmail(""); 
         toast.success(result.message);
         router.replace("/");  // Redirect immediately
       } else {
@@ -322,8 +341,7 @@ export default function Home() {
     }
   };
 
-  const User = localStorage.getItem("loggedInUser");
-  const UserEmail = localStorage.getItem("UserEmail");
+  
 
   return (
 <div className="text-white py-4">
@@ -440,15 +458,13 @@ export default function Home() {
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="ml-46 bg-white/10 backdrop-blur-md text-white rounded-xl shadow-lg p-2">
-          <DropdownMenuItem className="hover:bg-white/20 rounded-md transition px-3 py-2">
-            My Account
+        <DropdownMenuContent className="ml-46">
+          <DropdownMenuItem  className="flex items-center space-x-2">
+            <User2/>
+            <span>Profile</span>
           </DropdownMenuItem>
-          <DropdownMenuSeparator className="bg-white/30 my-1" />
-          <DropdownMenuItem 
-            onClick={handleLogout} 
-            className="flex items-center space-x-2 hover:bg-red-500/20 text-red-300 px-3 py-2 rounded-md transition"
-          >
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLogout} className="flex items-center space-x-2">
             <LogOut />
             <span>Log out</span>
           </DropdownMenuItem>
