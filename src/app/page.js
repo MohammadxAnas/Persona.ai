@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, User } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft } from "lucide-react";
 
 
 import { Skeleton } from "@/components/ui/skeleton"
@@ -170,6 +170,7 @@ export default function Home() {
         setIsLoginModalOpen(false);
         localStorage.setItem("token", result.jwtToken);
         localStorage.setItem("loggedInUser", result.name);
+        localStorage.setItem("UserEmail",result.email);
         setIsAuthenticated(true);
         toast.success(result.message);
         router.replace("/");  // Redirect immediately
@@ -197,7 +198,6 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
-        localStorage.setItem("userEmail", email);
         localStorage.setItem("userData", JSON.stringify(data.userData));
         toast.success(data.message);
         router.push("/verify");
@@ -323,10 +323,10 @@ export default function Home() {
   };
 
   const User = localStorage.getItem("loggedInUser");
-  const UserEmail = localStorage.getItem("userEmail");
+  const UserEmail = localStorage.getItem("UserEmail");
 
   return (
-    <div className="text-white py-4">
+<div className="text-white py-4">
     {isAuthenticated && (
   <div
     className={`fixed top-0 left-0 h-full w-[250px] bg-white p-5 border-r border-gray-300 transition-transform duration-300 z-30 ${
@@ -334,14 +334,13 @@ export default function Home() {
     }`}
   >
     <div className="flex flex-col h-full">
-  {/* Top section */}
+      {/* Top section */}
       <div>
-        {/* Close button */}
         <button
           className="cursor-pointer text-xl text-black mb-4"
           onClick={() => setSidebarOpen(false)}
         >
-          ☰
+          <ChevronsLeft/>
         </button>
 
         {/* Dialog and main menu content */}
@@ -430,32 +429,34 @@ export default function Home() {
 
     
       <div className="mt-auto">
-        <DropdownMenu>
-        <DropdownMenuTrigger className="w-full bg-black text-white p-2 rounded-xl hover:bg-gray-800 transition-all">
+      <DropdownMenu>
+        <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-3 rounded-2xl hover:brightness-110 transition-all shadow-md">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-white font-semibold">
-              {User?.charAt(0).toUpperCase()}
-            </div>
-
-            <div className="flex flex-col text-left">
-              <span className="font-medium">{User}</span>
-              <span className="text-sm text-gray-300">{UserEmail}</span>
+            {/* Optional: Add avatar again if you want */}
+            <div className="flex flex-col text-left max-w-[180px]">
+              <span className="font-semibold truncate text-white drop-shadow">{User}</span>
+              <span className="text-sm text-white/80 truncate">{UserEmail}</span>
             </div>
           </div>
         </DropdownMenuTrigger>
-          <DropdownMenuContent>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleLogout}
+
+        <DropdownMenuContent className="ml-46 bg-white/10 backdrop-blur-md text-white rounded-xl shadow-lg p-2">
+          <DropdownMenuItem className="hover:bg-white/20 rounded-md transition px-3 py-2">
+            My Account
+          </DropdownMenuItem>
+          <DropdownMenuSeparator className="bg-white/30 my-1" />
+          <DropdownMenuItem 
+            onClick={handleLogout} 
+            className="flex items-center space-x-2 hover:bg-red-500/20 text-red-300 px-3 py-2 rounded-md transition"
           >
-             <LogOut/>
-             <span>Log out</span>
+            <LogOut />
+            <span>Log out</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+    </div>
 
-      </div>
+
     </div>
 
   </div>
