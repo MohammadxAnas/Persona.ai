@@ -25,10 +25,12 @@ export async function DELETE(req) {
     if (!existingBot) {
       return NextResponse.json({ error: "Bot not found" }, { status: 404 });
     }
-
-    await prisma.aICharacter.delete({
-      where: { id: botId },
-    });
+    await prisma.$transaction([
+      prisma.message.deleteMany({ where: { characterId: botId } }),
+      prisma.chatSession.deleteMany({ where: { characterId: botId } }),
+      prisma.aICharacter.delete({ where: { id: botId } }),
+    ]);
+    
 
     return NextResponse.json({ message: "Bot deleted successfully" }, { status: 200 });
 
