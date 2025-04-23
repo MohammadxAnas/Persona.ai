@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { LogOut, Trash2, MoreHorizontal, Share, ChevronsLeft } from "lucide-react";
+import { Trash2, MoreHorizontal, Share, ChevronsLeft } from "lucide-react";
 
 const App = () => {
 
@@ -23,7 +23,6 @@ const App = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const token = localStorage.getItem("token");
 
   const [sessionId, setSessionId] = useState();
   const [sessions, setSessions] = useState([]);
@@ -32,6 +31,7 @@ const App = () => {
 
   useEffect(() => {
     if (id) {
+      const token = localStorage.getItem("token");
       const fetchBot = async () => {
         try {
           const res = await fetch(`${baseURL}/api/getBot/${id}`, {
@@ -81,6 +81,7 @@ const App = () => {
 
   useEffect(() => {
     if (!sessionId) return ;
+    const token = localStorage.getItem("token");
     const fetchChatHistory = async () => {
       const res = await fetch("/api/fetchHistory", {
         method: "POST",
@@ -107,7 +108,12 @@ const App = () => {
     console.log("messages:",messages);
   }, [sessionId]);
 
-  
+  const handleUnauthorized = () => {
+    toast.error("You’ve been logged out because you signed in on another device.");
+    localStorage.removeItem("token");
+    localStorage.removeItem("loggedInUser");
+    router.push("/");
+  };
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -158,6 +164,7 @@ const App = () => {
         "Sorry, I didn't understand that.";
   
       typeMessage(botText);
+      const token = localStorage.getItem("token");
 
       const saveResponse = await fetch("/api/savemessage", {
         method: "POST",
@@ -223,6 +230,36 @@ const App = () => {
     setSidebarOpen(false);
   };
   
+  const delSession = async (sesId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+  
+      const response = await fetch(`${baseURL}/api/delsession?sesId=${sesId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        toast.success("deleted successfully!");
+      } else {
+        throw new Error(data.error || "Failed to delete");
+      }
+    } catch (err) {
+      console.error("Error deleting :", err.message);
+      toast.error(err.message || "Something went wrong");
+    }
+  }
 
   return (
     <div className="relative min-h-screen font-sans bg-white flex transition-all duration-300">
@@ -270,7 +307,12 @@ const App = () => {
                     <MoreHorizontal className="w-6 h-6 text-gray-500" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                       onClick={(e) => {
+                        e.stopPropagation();
+                        delSession(ses.id);
+                       }}
+                    >
                       <Trash2 />
                       <span>Delete</span>
                     </DropdownMenuItem>
@@ -330,7 +372,7 @@ const App = () => {
           </div>
   
           {/* Messages */}
-          <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-28">
+          <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-20">
             {messages.map((msg, index) => (
               <div
                 key={index}
