@@ -3,10 +3,20 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2 } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, User } from "lucide-react";
 
 
 import { Skeleton } from "@/components/ui/skeleton"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -312,6 +322,9 @@ export default function Home() {
     }
   };
 
+  const User = localStorage.getItem("loggedInUser");
+  const UserEmail = localStorage.getItem("userEmail");
+
   return (
     <div className="text-white py-4">
     {isAuthenticated && (
@@ -413,14 +426,35 @@ export default function Home() {
         </ul>
 
         <p className="text-gray-800 font-semibold mt-4">Recent</p>
-        {/* Add recent items here if needed */}
       </div>
 
-      {/* Bottom pinned logout */}
-      <div className="mt-auto pt-4">
-        <Button className="w-full" variant="default" onClick={handleLogout}>
-          Logout
-        </Button>
+    
+      <div className="mt-auto">
+        <DropdownMenu>
+        <DropdownMenuTrigger className="w-full bg-black text-white p-2 rounded-xl hover:bg-gray-800 transition-all">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-white font-semibold">
+              {User?.charAt(0).toUpperCase()}
+            </div>
+
+            <div className="flex flex-col text-left">
+              <span className="font-medium">{User}</span>
+              <span className="text-sm text-gray-300">{UserEmail}</span>
+            </div>
+          </div>
+        </DropdownMenuTrigger>
+          <DropdownMenuContent>
+          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleLogout}
+          >
+             <LogOut/>
+             <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       </div>
     </div>
 

@@ -226,109 +226,111 @@ const App = () => {
 
   return (
     <div className="relative min-h-screen font-sans bg-white flex transition-all duration-300">
-        {/* Sidebar */}
-        <div
-          className={`fixed top-0 left-0 h-full w-[250px] bg-white p-5 border-r border-gray-300 transition-transform duration-300 z-30 ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <button
-            className=" text-xl text-gray-700 mb-4"
-            onClick={() => setSidebarOpen(false)}
+    {/* Sidebar */}
+    <div
+      className={`fixed top-0 left-0 h-full w-[250px] bg-white shadow-lg p-5 border-r border-gray-300 transition-transform duration-300 z-50 ${
+        sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      }`}      
+    >
+      <button
+        className="text-xl text-gray-700 mb-4 " 
+        onClick={() => setSidebarOpen(false)}
+      >
+        <ChevronsLeft />
+      </button>
+      <ul className="list-none p-0">
+        <li>
+          <Button
+            variant="outline"
+            onClick={startNewChat}
+            className="text-black min-w-[210px] justify-center items-center rounded-full hover:rounded-md transition-all"
           >
-            <ChevronsLeft/>
-          </button>
-          <ul className="list-none p-0">
-            <li>
-              <Button
-                  variant="outline"
-                  onClick={startNewChat}
-                  className="text-black min-w-[210px] justify-center items-center rounded-full hover:rounded-md transition-all"
-                >
-                 + New Chat
-                </Button>
-            </li>
-          </ul>
-          <br />
-          <div>
-          <h2 className="text-xl text-gray-800 font-semibold mb-4">Recent Sessions</h2>
-          <ul className="space-y-2">
-            {sessions.map((ses, index) => (
-             <li
-             key={ses.id || index}
-             className="flex justify-between items-center p-1 pl-2 pr-2 bg-white rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-50 transition"
-             onClick={() => {
-               setSessionId(ses.id);
-               fetchChatHistory();
-             }}
-           >
-             <span className="text-sm text-gray-700">{index}</span>
-             <span className="flex justify-center items-center">
-             <DropdownMenu>
-              <DropdownMenuTrigger>
-                <MoreHorizontal className="w-6 h-6 text-gray-500" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem>
-                  <Trash2/>
-                  <span>Delete</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Share/>
-                  <span>Share</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-             </span>
-           </li>
-           
-            ))}
-          </ul>
-        </div>
-        </div>
-
-        {/* Sidebar Overlay */}
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-20 transition-opacity duration-300"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Main Content */}
-        <div
-          className={`flex flex-col flex-grow items-center transition-all duration-300 relative z-40 ${
-            sidebarOpen ? "ml-[250px]" : ""
-          }`}
-        >
-          {/* Header */}
-          <div className="absolute top-2 left-2 flex items-center p-4 text-lg font-bold z-50">
-            {!sidebarOpen && (
-              <span className="mr-2 cursor-pointer" onClick={() => setSidebarOpen(true)}>
-                ☰
+            + New Chat
+          </Button>
+        </li>
+      </ul>
+  
+      <br />
+      <div>
+        <h2 className="text-xl text-gray-800 font-semibold mb-4">Recent Sessions</h2>
+        <ul className="space-y-2">
+          {sessions.map((ses, index) => (
+            <li
+              key={ses.id || index}
+              className="flex justify-between items-center p-1 pl-2 pr-2 bg-white rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-50 transition"
+              onClick={() => {
+                setSessionId(ses.id);
+                fetchChatHistory();
+              }}
+            >
+              <span className="text-sm text-gray-700">{index}</span>
+              <span className="flex justify-center items-center">
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <MoreHorizontal className="w-6 h-6 text-gray-500" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <Trash2 />
+                      <span>Delete</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Share />
+                      <span>Share</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </span>
-            )}
-            <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">persona.ai</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  
+    {/* Sidebar Overlay for mobile */}
+    {sidebarOpen && (
+      <div
+        className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm transition-opacity duration-300 md:hidden"
+        onClick={() => setSidebarOpen(false)}
+      />
+    )}
+  
+    {/* Main Content */}
+    <div
+      className={`flex flex-col flex-grow items-center transition-all duration-300 relative z-40 ${
+        sidebarOpen ? "md:ml-[250px]" : ""
+      }`}
+    >
+    {/* Header */}
+    <div className="absolute top-2 left-2 flex items-center p-4 text-lg font-bold z-50">
+      {!sidebarOpen && (
+        <span
+          className="mr-2 cursor-pointer"
+          onClick={() => setSidebarOpen(true)}
+        >
+          ☰
+        </span>
+      )}
+      <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">persona.ai</span>
+    </div>
+
+  
+      {/* Chat Section */}
+      {bot ? (
+        <div className="w-4/5 max-w-3xl flex flex-col flex-grow mt-20 px-4 pb-24">
+          {/* Bot Info */}
+          <div className="flex flex-col items-center text-center space-y-3 mb-6">
+            <img
+              src={bot.avatar}
+              alt={bot.name}
+              className="w-24 h-24 rounded-full object-cover shadow-lg"
+            />
+            <h2 className="text-2xl font-bold">{bot.name}</h2>
+            <p className="text-gray-500 max-w-md">{bot.description}</p>
           </div>
-
-          {/* Chat Section */}
-          {bot ? (
-          <div className="w-4/5 max-w-3xl flex flex-col flex-grow mt-20 px-4 pb-24">
-            {/* Bot Info */}
-            
-              <div className="flex flex-col items-center text-center space-y-3 mb-6">
-                <img
-                  src={bot.avatar}
-                  alt={bot.name}
-                  className="w-24 h-24 rounded-full object-cover shadow-lg"
-                />
-                <h2 className="text-2xl font-bold">{bot.name}</h2>
-                <p className="text-gray-500 max-w-md">{bot.description}</p>
-              </div>
-           
-
-            {/* Messages */}
-            <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-28">
+  
+          {/* Messages */}
+          <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-28">
             {messages.map((msg, index) => (
               <div
                 key={index}
@@ -341,59 +343,62 @@ const App = () => {
                 {msg.text}
               </div>
             ))}
-
             {isTyping && (
               <div className="self-start bg-gray-100 text-black px-4 py-2 rounded-xl max-w-[70%]">
                 Typing...
               </div>
             )}
-
             <div ref={bottomRef} />
           </div>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center mt-40 space-y-4">
+          <div className="text-gray-400">Loading bot info...</div>
+        </div>
+      )}
+  
+      {/* Input Bar */}
+      {bot && (
+        <div
+        className={`fixed bottom-5 left-0 right-0 z-50 px-4 transition-all duration-300 ${
+          sidebarOpen ? "md:ml-[250px]" : ""
+        }`}
+      >
+        <div className="mx-auto max-w-3xl">
+        <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white max-w-3xl w-full">
+            <button
+              className="relative w-7 h-7 flex items-center justify-center text-gray-500 border border-gray-300 rounded-full text-lg group hover:bg-gray-100"
+              aria-label="Upload"
+            >
+              +
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                Upload files and more
+              </span>
+            </button>
+  
+            <input
+              type="text"
+              placeholder="Ask anything..."
+              className="flex-grow px-3 py-2 text-sm md:text-base outline-none border-none bg-transparent"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            />
+  
+            <button
+              onClick={sendMessage}
+              className="text-gray-600 text-2xl hover:text-blue-500 transition"
+              aria-label="Send message"
+            >
+              ➤
+            </button>
           </div>
-           ) : (
-            <div className="flex flex-col items-center mt-40 space-y-4">
-              <div className="text-gray-400">Loading bot info...</div>
-            </div>
-          )}
-
-
-          {/* Input Bar */}
-          {bot && (
-            <div className="absolute bottom-5 w-4/5 max-w-3xl left-1/2 transform -translate-x-1/2">
-              <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white z-50">
-                <button
-                  className="relative w-7 h-7 flex items-center justify-center text-gray-500 border border-gray-300 rounded-full text-lg group hover:bg-gray-100"
-                  aria-label="Upload"
-                >
-                  +
-                  <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                    Upload files and more
-                  </span>
-                </button>
-
-                <input
-                  type="text"
-                  placeholder="Ask anything..."
-                  className="flex-grow px-3 py-2 text-sm md:text-base outline-none border-none bg-transparent"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                />
-
-                <button
-                  onClick={sendMessage}
-                  className="text-gray-600 text-2xl hover:text-blue-500 transition"
-                  aria-label="Send message"
-                >
-                  ➤
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </div>
-
+      )}
+    </div>
+  </div>
+  
 
   );
 };
