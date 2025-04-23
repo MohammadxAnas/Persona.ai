@@ -29,12 +29,23 @@ export async function GET(req, { params }) {
       where: {
         characterId: bot.id,
       },
+      orderBy: {
+        startedAt: "desc",
+      },
     });
+    
+    const chatSessions = await prisma.chatSession.findMany({
+      where: {characterId: bot.id},
+      orderBy: {
+        startedAt: "desc",
+      },
+    })
 
     return NextResponse.json({ 
       success: true, 
       bot, 
-      chatSessionId: chatSession ? chatSession.id : null 
+      chatSessionId: chatSession ? chatSession.id : null ,
+      chatSessions: chatSessions ? chatSessions : null,
     });
 
   } catch (err) {

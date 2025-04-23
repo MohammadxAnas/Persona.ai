@@ -1,7 +1,17 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from 'next/navigation';
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
+import { LogOut, Trash2, MoreHorizontal, Share, ChevronsLeft } from "lucide-react";
 
 const App = () => {
 
@@ -16,6 +26,7 @@ const App = () => {
   const token = localStorage.getItem("token");
 
   const [sessionId, setSessionId] = useState();
+  const [sessions, setSessions] = useState([]);
 
   const bottomRef = useRef(null);
 
@@ -35,6 +46,7 @@ const App = () => {
           if (data.success) {
             setBot(data.bot);
             setSessionId(data.chatSessionId);
+            setSessions(data.chatSessions);
           } else {
             console.error("Error fetching bot:", data.error);
           }
@@ -50,7 +62,8 @@ const App = () => {
   useEffect(() => {
     console.log("Updated bot =", bot);
     console.log("Updated Id =",sessionId);
-  }, [bot]);
+    console.log("Sessions =",sessions);
+  }, [bot, sessionId, sessions]);
   
   useEffect(() => {
     if (bottomRef.current) {
@@ -77,7 +90,7 @@ const App = () => {
         },
         body: JSON.stringify({ sessionId, id }),
       });
-
+  
       const data = await res.json();
       if (data.success) {
         const normalizedMessages = data.messages.map(msg => ({
@@ -90,7 +103,6 @@ const App = () => {
         console.error("Failed to fetch chat history");
       }
     };
-
     fetchChatHistory();
     console.log("messages:",messages);
   }, [sessionId]);
@@ -206,8 +218,11 @@ const App = () => {
 
   const startNewChat = () => {
     setMessages([]);
+    localStorage.removeItem("session");
+    setSessionId(null);
     setSidebarOpen(false);
   };
+  
 
   return (
     <div className="relative min-h-screen font-sans bg-white flex transition-all duration-300">
@@ -218,23 +233,58 @@ const App = () => {
           }`}
         >
           <button
-            className="text-xl text-gray-700 mb-4"
+            className=" text-xl text-gray-700 mb-4"
             onClick={() => setSidebarOpen(false)}
           >
-            ☰
+            <ChevronsLeft/>
           </button>
           <ul className="list-none p-0">
             <li>
-              <button
-                onClick={startNewChat}
-                className="w-[120px] text-sm py-2 pl-3 bg-gray-100 rounded-full hover:rounded-md transition-all"
-              >
-                + New Chat
-              </button>
+              <Button
+                  variant="outline"
+                  onClick={startNewChat}
+                  className="text-black min-w-[210px] justify-center items-center rounded-full hover:rounded-md transition-all"
+                >
+                 + New Chat
+                </Button>
             </li>
           </ul>
           <br />
-          <p className="text-gray-800 font-semibold">Recent</p>
+          <div>
+          <h2 className="text-xl text-gray-800 font-semibold mb-4">Recent Sessions</h2>
+          <ul className="space-y-2">
+            {sessions.map((ses, index) => (
+             <li
+             key={ses.id || index}
+             className="flex justify-between items-center p-1 pl-2 pr-2 bg-white rounded-lg shadow-sm border border-gray-200 cursor-pointer hover:bg-gray-50 transition"
+             onClick={() => {
+               setSessionId(ses.id);
+               fetchChatHistory();
+             }}
+           >
+             <span className="text-sm text-gray-700">{index}</span>
+             <span className="flex justify-center items-center">
+             <DropdownMenu>
+              <DropdownMenuTrigger>
+                <MoreHorizontal className="w-6 h-6 text-gray-500" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>
+                  <Trash2/>
+                  <span>Delete</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Share/>
+                  <span>Share</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+             </span>
+           </li>
+           
+            ))}
+          </ul>
+        </div>
         </div>
 
         {/* Sidebar Overlay */}
@@ -310,7 +360,7 @@ const App = () => {
 
           {/* Input Bar */}
           {bot && (
-            <div className="fixed bottom-5 w-4/5 max-w-3xl left-1/2 transform -translate-x-1/2">
+            <div className="absolute bottom-5 w-4/5 max-w-3xl left-1/2 transform -translate-x-1/2">
               <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white z-50">
                 <button
                   className="relative w-7 h-7 flex items-center justify-center text-gray-500 border border-gray-300 rounded-full text-lg group hover:bg-gray-100"
