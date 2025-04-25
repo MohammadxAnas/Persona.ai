@@ -520,91 +520,109 @@ export default function Home() {
         <div className="flex gap-2">
           {/* Sign Up and Login Dialogs */}
           <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="mine">Sign Up to Chat</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Signup</DialogTitle>
-                <DialogDescription>
-                  Create an account to start chatting with intelligent AI characters!
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <Label>Username:</Label>
-                <Input
-                  name="name"
-                  placeholder="Enter your name"
-                  type="text"
-                  value={signupData.name}
-                  onChange={handleChange1}
-                  required
-                />
-                <Label>Email:</Label>
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  value={signupData.email}
-                  onChange={handleChange1}
-                  required
-                />
-                <Label>Password:</Label>
-                <Input
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  value={signupData.password}
-                  onChange={handleChange1}
-                  required
-                />
-              </div>
-              <DialogFooter>
-                <Button type="submit" onClick={handleSignup}>
-                  Continue
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <DialogTrigger asChild>
+            <Button variant="mine" className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:brightness-110 shadow-md">
+              Sign Up to Chat
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] rounded-2xl shadow-lg border-none">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-indigo-700">Signup</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500">
+                Create an account to start chatting with intelligent AI characters!
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Label className="text-gray-700">Username:</Label>
+              <Input
+                name="name"
+                placeholder="Enter your name"
+                value={signupData.name}
+                onChange={handleChange1}
+                required
+                className="rounded-xl"
+              />
+              <Label className="text-gray-700">Email:</Label>
+              <Input
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={signupData.email}
+                onChange={handleChange1}
+                required
+                className="rounded-xl"
+              />
+              <Label className="text-gray-700">Password:</Label>
+              <Input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={signupData.password}
+                onChange={handleChange1}
+                required
+                className="rounded-xl"
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="submit"
+                onClick={handleSignup}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl"
+              >
+                Continue
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
-          <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
-            <DialogTrigger asChild>
-              <Button>Login</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Login</DialogTitle>
-                <DialogDescription>
-                  Log in to access your account securely.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <Label>Email:</Label>
-                <Input
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  value={loginInfo.email}
-                  onChange={handleChange}
-                  required
-                />
-                <Label>Password:</Label>
-                <Input
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  value={loginInfo.password}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <DialogFooter>
-                <Button type="submit" onClick={handleLogin}>
-                  Continue
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+        <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
+          <DialogTrigger asChild>
+          <Button className="px-6 py-2 bg-white text-indigo-700 border border-indigo-600 rounded-xl shadow-sm hover:bg-indigo-50 hover:shadow-md transition-all duration-200 font-semibold">
+            Login
+          </Button>
+
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px] rounded-2xl shadow-lg border-none">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-indigo-700">Login</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500">
+                Log in to access your account securely.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Label className="text-gray-700">Email:</Label>
+              <Input
+                name="email"
+                type="email"
+                placeholder="Email"
+                value={loginInfo.email}
+                onChange={handleChange}
+                required
+                className="rounded-xl"
+              />
+              <Label className="text-gray-700">Password:</Label>
+              <Input
+                name="password"
+                type="password"
+                placeholder="Password"
+                value={loginInfo.password}
+                onChange={handleChange}
+                required
+                className="rounded-xl"
+              />
+            </div>
+            <DialogFooter>
+              <Button
+                type="submit"
+                onClick={handleLogin}
+                className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl"
+              >
+                Continue
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
         </div>
       )}
     </div>
