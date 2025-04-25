@@ -274,15 +274,15 @@ const App = () => {
   }
 
   return (
-    <div className="relative min-h-screen font-sans bg-white flex transition-all duration-300">
+    <div className="relative min-h-screen bg-white flex transition-all duration-300">
     {/* Sidebar */}
     <div
       className={`fixed top-0 left-0 h-full w-[250px] bg-white shadow-lg p-5 border-r border-gray-300 transition-transform duration-300 z-50 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
-      }`}      
+      }`}
     >
       <button
-        className="text-xl text-gray-700 mb-4 " 
+        className="text-xl text-gray-700 mb-4"
         onClick={() => setSidebarOpen(false)}
       >
         <ChevronsLeft />
@@ -320,10 +320,10 @@ const App = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem
-                       onClick={(e) => {
+                      onClick={(e) => {
                         e.stopPropagation();
                         delSession(ses.id);
-                       }}
+                      }}
                     >
                       <Trash2 />
                       <span>Delete</span>
@@ -356,19 +356,26 @@ const App = () => {
       }`}
     >
     {/* Header */}
-    <div className="absolute top-2 left-2 flex items-center p-4 text-lg font-bold z-50">
+    <header className="container mx-auto flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
+    <div className="flex items-center gap-3 text-lg font-bold z-50 transition-transform duration-300 ease-in-out">
       {!sidebarOpen && (
         <span
-          className="mr-2 cursor-pointer"
+          className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
           onClick={() => setSidebarOpen(true)}
         >
           ☰
         </span>
       )}
-      <span className="text-2xl font-bold tracking-wide text-blue-400 pb-1">persona.ai</span>
+      {/* Logo Text */}
+      <span
+        className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+      >
+        persona.ai
+      </span>
     </div>
+</header>
 
-  
+
       {/* Chat Section */}
       {bot ? (
         <div className="w-4/5 max-w-3xl flex flex-col flex-grow mt-20 px-4 pb-24">
@@ -414,44 +421,45 @@ const App = () => {
       {/* Input Bar */}
       {bot && (
         <div
-        className={`fixed bottom-5 left-0 right-0 z-50 px-4 transition-all duration-300 ${
-          sidebarOpen ? "md:ml-[250px]" : ""
-        }`}
-      >
-        <div className="mx-auto max-w-3xl">
-        <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white max-w-3xl w-full">
-            <button
-              className="relative w-7 h-7 flex items-center justify-center text-gray-500 border border-gray-300 rounded-full text-lg group hover:bg-gray-100"
-              aria-label="Upload"
-            >
-              +
-              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                Upload files and more
-              </span>
-            </button>
+          className={`fixed bottom-5 left-0 right-0 z-50 px-4 transition-all duration-300 ${
+            sidebarOpen ? "md:ml-[250px]" : ""
+          }`}
+        >
+          <div className="mx-auto max-w-3xl">
+            <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white max-w-3xl w-full">
+              <button
+                className="relative w-7 h-7 flex items-center justify-center text-gray-500 border border-gray-300 rounded-full text-lg group hover:bg-gray-100"
+                aria-label="Upload"
+              >
+                +
+                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                  Upload files and more
+                </span>
+              </button>
   
-            <input
-              type="text"
-              placeholder="Ask anything..."
-              className="flex-grow px-3 py-2 text-sm md:text-base outline-none border-none bg-transparent"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
+              <input
+                type="text"
+                placeholder="Ask anything..."
+                className="flex-grow px-3 py-2 text-sm md:text-base outline-none border-none bg-transparent"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              />
   
-            <button
-              onClick={sendMessage}
-              className="text-gray-600 text-2xl hover:text-blue-500 transition"
-              aria-label="Send message"
-            >
-              ➤
-            </button>
+              <button
+                onClick={sendMessage}
+                className="text-gray-600 text-2xl hover:text-blue-500 transition"
+                aria-label="Send message"
+              >
+                ➤
+              </button>
+            </div>
           </div>
         </div>
-      </div>
       )}
     </div>
   </div>
+  
   
 
   );

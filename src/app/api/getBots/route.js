@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import validateSession from "@/middlewares/validateSession";
-const prisma = new PrismaClient(); // Use a single instance of Prisma
+const prisma = new PrismaClient();
 
 export async function GET(req) {
   const session = await validateSession(req);
@@ -20,6 +20,9 @@ export async function GET(req) {
   try {
     const bots = await prisma.aICharacter.findMany({
       where: { userId },
+      orderBy: {
+        createdAt : "desc"
+      }
     });
 
     return NextResponse.json({ success: true, bots });

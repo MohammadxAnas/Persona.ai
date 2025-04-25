@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Custom properties for theme */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -44,6 +45,7 @@
 }
 
 :root {
+  /* Custom root CSS properties for colors and fonts */
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
@@ -79,6 +81,7 @@
 }
 
 .dark {
+  /* Dark mode overrides for custom properties */
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
@@ -116,7 +119,10 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
     @apply bg-background text-foreground;
   }
 }
