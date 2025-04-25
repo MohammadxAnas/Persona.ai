@@ -39,9 +39,17 @@ export async function POST(req) {
         content: msg.text,
     }))
    })
-
+   const sessions = await prisma.chatSession.findMany({
+    where: {
+      characterId : characterId
+    },
+    orderBy : {
+      startedAt : "desc"
+    }
+   })
     return Response.json({ 
-      sessionId: chatSession.id ,   
+      sessionId: chatSession.id , 
+      session: sessions,  
       success: true, 
     }, { status: 200 });
 

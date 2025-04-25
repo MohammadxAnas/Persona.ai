@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,32 +30,32 @@ const App = () => {
 
   const bottomRef = useRef(null);
 
+  const fetchBot = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${baseURL}/api/getBot/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
+        setBot(data.bot);
+        setSessionId(data.chatSessionId);
+        setSessions(data.chatSessions);
+      } else {
+        console.error("Error fetching bot:", data.error);
+      }
+    } catch (err) {
+      console.error("Failed to fetch bot:", err);
+    }
+  };
+
   useEffect(() => {
     if (id) {
-      const token = localStorage.getItem("token");
-      const fetchBot = async () => {
-        try {
-          const res = await fetch(`${baseURL}/api/getBot/${id}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const data = await res.json();
-          console.log(data);
-          if (data.success) {
-            setBot(data.bot);
-            setSessionId(data.chatSessionId);
-            setSessions(data.chatSessions);
-          } else {
-            console.error("Error fetching bot:", data.error);
-          }
-        } catch (err) {
-          console.error("Failed to fetch bot:", err);
-        }
-      };
-  
       fetchBot();
     }
   }, [id]);
@@ -78,32 +79,34 @@ const App = () => {
     }
   }, []);
   
+ 
+  const fetchChatHistory = async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch("/api/fetchHistory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ sessionId, id }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      const normalizedMessages = data.messages.map(msg => ({
+        text: msg.content,
+        sender: msg.sender === "USER" ? "user" : "bot",
+      }));
+      setMessages(normalizedMessages);
+      
+    } else {
+      console.error("Failed to fetch chat history");
+    }
+  };
 
   useEffect(() => {
     if (!sessionId) return ;
-    const token = localStorage.getItem("token");
-    const fetchChatHistory = async () => {
-      const res = await fetch("/api/fetchHistory", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ sessionId, id }),
-      });
-  
-      const data = await res.json();
-      if (data.success) {
-        const normalizedMessages = data.messages.map(msg => ({
-          text: msg.content,
-          sender: msg.sender === "USER" ? "user" : "bot",
-        }));
-        setMessages(normalizedMessages);
-        
-      } else {
-        console.error("Failed to fetch chat history");
-      }
-    };
+    
     fetchChatHistory();
     console.log("messages:",messages);
   }, [sessionId]);
@@ -189,7 +192,10 @@ const App = () => {
         setSessionId(saveData.sessionId);
         localStorage.setItem("session", saveData.sessionId);
       }
-      
+      if (saveData.session) {
+        setSessions((prev) => [saveData.session, ...prev]);
+      }
+    
 
     } catch (error) {
       console.error("Error fetching response:", error);
@@ -252,6 +258,12 @@ const App = () => {
   
       if (response.ok) {
         toast.success("deleted successfully!");
+        setSessions((prevSessions) => prevSessions.filter((s) => s.id !== sesId));
+        if (sessionId === sesId) {
+          setSessionId(null);
+          setMessages([]);
+          localStorage.removeItem("session");
+        }
       } else {
         throw new Error(data.error || "Failed to delete");
       }
