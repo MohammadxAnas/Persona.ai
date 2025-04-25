@@ -653,7 +653,7 @@ export default function Home() {
                     <CardTitle className="text-base font-semibold text-indigo-700">
                       {bot.name}
                     </CardTitle>
-                    <CardDescription className="line-clamp-1 text-sm text-gray-600 w-[200px]">
+                    <CardDescription className="text-sm text-gray-600 w-[200px]">
                       {bot.description}
                     </CardDescription>
                   </div>
