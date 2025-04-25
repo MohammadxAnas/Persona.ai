@@ -13,6 +13,7 @@ export async function DELETE(req) {
 
     const { searchParams } = new URL(req.url);
     const SessionId = searchParams.get("sesId");
+    console.log(SessionId);
 
     if (!SessionId) {
       return NextResponse.json({ error: "Session ID is required" }, { status: 400 });

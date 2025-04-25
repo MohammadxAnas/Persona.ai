@@ -193,7 +193,7 @@ const App = () => {
         localStorage.setItem("session", saveData.sessionId);
       }
       if (saveData.session) {
-        setSessions((prev) => [saveData.session, ...prev]);
+        setSessions(saveData.session);
       }
     
 
