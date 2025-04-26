@@ -256,7 +256,7 @@ export default function Home() {
 
   return (
 
-  <div className="text-white ">
+  <div className="relative text-white ">
   <div
     className={`fixed top-0 left-0 h-full w-[270px] bg-white p-6 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
       sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -405,25 +405,30 @@ export default function Home() {
      className={`transition-all duration-300 relative z-40 ${sidebarOpen ? "md:ml-[270px]" : "" }`}
   >
 
-  <header className="container mx-auto flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
-    <div className="flex items-center gap-3 text-lg font-bold z-50 transition-transform duration-300 ease-in-out">
-      {/* Sidebar Toggle Button */}
-      {!sidebarOpen &&  (
+    <div className="relative">
+    <header
+        className={`fixed top-0 transition-all duration-300 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl
+        ${sidebarOpen ? "left-64" : "left-0"} right-0`}
+    >
+        <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
+        {!sidebarOpen && (
+            <span
+            className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
+            onClick={() => setSidebarOpen(true)}
+            >
+            ☰
+            </span>
+        )}
         <span
-          className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
-          onClick={() => setSidebarOpen(true)}
+            className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
         >
-          ☰
+            persona.ai
         </span>
-      )}
-    
-      <span
-        className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
-      >
-        persona.ai
-      </span>
+        </div>
+    </header>
     </div>
-  </header>
+
+    <main className="pt-15">
 
     {/* Your Created Bots Label */}
       <div className="px-6 py-4">
@@ -511,6 +516,7 @@ export default function Home() {
         ))}
       </ul>
     )}
+    </main>
   </div>
 </div>
   )
