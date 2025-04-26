@@ -35,6 +35,13 @@ const App = () => {
 
   const router = useRouter();
 
+  const handleUnauthorized = () => {
+    toast.error("You’ve been logged out because you signed in on another device.");
+    localStorage.removeItem("token");
+    localStorage.removeItem("loggedInUser");
+    router.push("/");
+  };
+
   const fetchBot = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -45,6 +52,10 @@ const App = () => {
           Authorization: `Bearer ${token}`,
         },
       });
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
       const data = await res.json();
       console.log(data);
       if (data.success) {
@@ -105,6 +116,11 @@ const App = () => {
       body: JSON.stringify({ sessionId, id }),
     });
 
+    if (res.status === 401) {
+      handleUnauthorized();
+      return;
+    }
+
     const data = await res.json();
     if (data.success) {
       const normalizedMessages = data.messages.map(msg => ({
@@ -125,12 +141,6 @@ const App = () => {
     console.log("messages:",messages);
   }, [sessionId]);
 
-  const handleUnauthorized = () => {
-    toast.error("You’ve been logged out because you signed in on another device.");
-    localStorage.removeItem("token");
-    localStorage.removeItem("loggedInUser");
-    router.push("/");
-  };
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -172,6 +182,11 @@ const App = () => {
           }),
         }
       );
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
   
       const data = await response.json();
       console.log("response:", data);
@@ -335,7 +350,7 @@ const App = () => {
     {/* Top Section */}
     <div>
       {/* Welcome Header */}
-      <div className="flex items-center justify-between mb-6 -mt-3">
+      <div className="flex items-center justify-between mb-4 -mt-3">
         <div className="flex flex-col">
           <span className="text-sm text-gray-500">Welcome,</span>
           <span className="font-medium text-gray-800">{User}</span>
@@ -353,10 +368,10 @@ const App = () => {
       >
         + New Chat
       </Button>
-
+      <p className="text-gray-700 font-semibold mt-4 ">Recent</p>
       {/* Session List */}
-      <div className="mt-6 h-[calc(100dvh-280px)] overflow-y-auto pr-1">
-        <p className="text-gray-700 font-semibold mb-2">Recent</p>
+      <div className="mt-3 h-[calc(100dvh-280px)] overflow-y-auto pr-1">
+        
         <ul className="space-y-2">
           {sessions.map((ses, index) => {
             const isActive = sessionId === ses.id;
