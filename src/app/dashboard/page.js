@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2 } from "lucide-react";
+import { Progress } from "@/components/ui/progress"
 
 
 import { Skeleton } from "@/components/ui/skeleton"
@@ -56,6 +57,33 @@ export default function Home() {
   const [UserEmail, setUserEmail] = useState("");
 
 
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setProgress((oldProgress) => {
+          if (oldProgress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setLoading(false);
+              setProgress(0);
+            }, 300); // small delay before hiding
+            return 100;
+          }
+          return oldProgress + Math.random() * 20; // random speed
+        });
+      }, 300);
+    }
+  }, [loading]);
+
+  // Just a fake loading trigger example
+  const startLoading = () => {
+    setLoading(true);
+    setProgress(10);
+  };
+
+
   const [Bots, setBots] = useState([]);
 
   const router = useRouter();
@@ -94,7 +122,7 @@ export default function Home() {
   
   
   const fetchUserBots = async () => {
-    setLoading(true);
+    startLoading();
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -140,6 +168,7 @@ export default function Home() {
   };
 
   const handleCreatebot = async (e) => {
+    startLoading();
     e.preventDefault();
     const { botName, botDesc, botPersona } = BotData;
     if (!botName || !botDesc || !botPersona) {
@@ -185,6 +214,7 @@ export default function Home() {
   };
   
   const deleteBot = async (botId, fetchUserBots) => {
+    startLoading();
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -218,6 +248,7 @@ export default function Home() {
   };
 
   const handleLogout = async () => {
+    startLoading(0);
     try {
       toast("Logging out...");
       const token = localStorage.getItem("token");
@@ -427,6 +458,13 @@ export default function Home() {
         </div>
     </header>
     </div>
+
+    {loading && (
+    <div className="fixed top-0 left-0 w-full z-[1000]">
+        <Progress value={progress} className="h-1 bg-indigo-600" />
+    </div>
+    )}
+
 
     <main className="pt-15">
 

@@ -1,4 +1,5 @@
 "use client";
+import { Progress } from "@/components/ui/progress"
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,33 @@ const App = () => {
 
   const router = useRouter();
 
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (loading) {
+      const interval = setInterval(() => {
+        setProgress((oldProgress) => {
+          if (oldProgress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setLoading(false);
+              setProgress(0);
+            }, 300); // small delay before hiding
+            return 100;
+          }
+          return oldProgress + Math.random() * 20; // random speed
+        });
+      }, 300);
+    }
+  }, [loading]);
+
+  // Just a fake loading trigger example
+  const startLoading = () => {
+    setLoading(true);
+    setProgress(10);
+  };
+
   const handleUnauthorized = () => {
     toast.error("You’ve been logged out because you signed in on another device.");
     localStorage.removeItem("token");
@@ -43,6 +71,7 @@ const App = () => {
   };
 
   const fetchBot = async () => {
+    startLoading();
     const token = localStorage.getItem("token");
     try {
       const res = await fetch(`${baseURL}/api/getBot/${id}`, {
@@ -266,6 +295,7 @@ const App = () => {
   };
   
   const delSession = async (sesId) => {
+    startLoading();
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -303,6 +333,7 @@ const App = () => {
   }
 
   const handleLogout = async () => {
+    startLoading();
       try {
         toast("Logging out...");
         const token = localStorage.getItem("token");
@@ -340,6 +371,11 @@ const App = () => {
 
   return (
     <div className="relative text-white">
+       {loading && (
+        <div className="fixed top-0 left-0 w-full z-[1000]">
+          <Progress value={progress} className="h-1 bg-indigo-600" />
+        </div>
+      )}
     {/* Sidebar */}
     <div
   className={`fixed top-0 left-0 h-full w-[270px] bg-white p-6 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
