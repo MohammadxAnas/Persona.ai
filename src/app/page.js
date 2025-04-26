@@ -95,6 +95,7 @@ export default function Page() {
       const data = await response.json();
       if (data.success) {
         localStorage.setItem("userData", JSON.stringify(data.userData));
+        localStorage.setItem("userEmail",email);
         toast.success(data.message);
         router.push("/verify");
       } else {

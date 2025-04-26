@@ -14,6 +14,7 @@ export default function VerificationPage() {
 
     useEffect(() => {
         const storedEmail = localStorage.getItem("userEmail");
+        console.log(storedEmail);
         if (!storedEmail) {
             router.push("/");
         } else {
@@ -65,6 +66,7 @@ export default function VerificationPage() {
                     // Store token and user info
                     localStorage.setItem("token", jwtToken);
                     localStorage.setItem("loggedInUser", name);
+                    localStorage.setItem("UserEmail",userEmail);
     
                     // Clean up unnecessary data
                     localStorage.removeItem("userEmail");
@@ -73,7 +75,7 @@ export default function VerificationPage() {
                     toast.success("Verification successful! Redirecting...");
 
                 setTimeout(() => {
-                    router.push("/");
+                    router.push("/dashboard");
                 }, 1500);
             }else{
                 toast.error("Login failed after verification. Try logging in manually.");
