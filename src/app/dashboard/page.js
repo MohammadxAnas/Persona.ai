@@ -52,6 +52,7 @@ export default function Home() {
   const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [Loading, SetLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [User, setUser] = useState("");
   const [UserEmail, setUserEmail] = useState("");
@@ -122,7 +123,7 @@ export default function Home() {
   
   
   const fetchUserBots = async () => {
-    startLoading();
+    SetLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -158,7 +159,7 @@ export default function Home() {
       console.error("Error fetching bots:", err.message);
       return [];
     } finally {
-      setLoading(false);
+      SetLoading(false);
     }
   };
   
@@ -465,8 +466,6 @@ export default function Home() {
         value={progress} 
         className="h-1 bg-transparent [&>div]:bg-white"
         />
-
-
     </div>
     )}
 
@@ -481,7 +480,7 @@ export default function Home() {
     
 
     {/* Loading state */}
-    {loading && (
+    {Loading && (
       <div className="flex justify-center items-center py-20">
         <div className="flex items-center space-x-4">
           <Skeleton className="h-12 w-12 rounded-full" />
@@ -502,7 +501,6 @@ export default function Home() {
             <Card
               className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
               onClick={() => {
-                startLoading(0);
                 router.push(`/chat/${bot.id}`);
               }}
               
