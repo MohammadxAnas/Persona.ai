@@ -373,7 +373,10 @@ const App = () => {
     <div className="relative text-white">
        {loading && (
         <div className="fixed top-0 left-0 w-full z-[1000]">
-          <Progress value={progress} className="h-1 bg-indigo-600" />
+          <Progress 
+        value={progress} 
+        className="h-1 bg-transparent [&>div]:bg-white"
+        />
         </div>
       )}
     {/* Sidebar */}
@@ -542,9 +545,9 @@ const App = () => {
             <img
               src={bot.avatar}
               alt={bot.name}
-              className="w-24 h-24 rounded-full object-cover shadow-lg"
+              className="text-black w-24 h-24 rounded-full object-cover shadow-lg"
             />
-            <h2 className="text-2xl font-bold">{bot.name}</h2>
+            <h2 className="text-black text-2xl font-bold">{bot.name}</h2>
             <p className="text-gray-500 max-w-md">{bot.description}</p>
           </div>
   

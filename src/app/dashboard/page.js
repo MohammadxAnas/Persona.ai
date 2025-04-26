@@ -461,7 +461,12 @@ export default function Home() {
 
     {loading && (
     <div className="fixed top-0 left-0 w-full z-[1000]">
-        <Progress value={progress} className="h-1 bg-indigo-600" />
+       <Progress 
+        value={progress} 
+        className="h-1 bg-transparent [&>div]:bg-white"
+        />
+
+
     </div>
     )}
 
@@ -496,7 +501,11 @@ export default function Home() {
           <li key={bot.id} className="snap-start pl-2">
             <Card
               className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
-              onClick={() => router.push(`/chat/${bot.id}`)}
+              onClick={() => {
+                startLoading(0);
+                router.push(`/chat/${bot.id}`);
+              }}
+              
             >
               <div className="flex h-full items-center justify-between px-4">
                 <div className="flex items-center gap-4">
