@@ -355,7 +355,7 @@ const App = () => {
       </Button>
 
       {/* Session List */}
-      <div className="mt-6 h-[calc(100vh-280px)] overflow-y-auto pr-1">
+      <div className="mt-6 h-[calc(100dvh-280px)] overflow-y-auto pr-1">
         <p className="text-gray-700 font-semibold mb-2">Recent</p>
         <ul className="space-y-2">
           {sessions.map((ses, index) => {
@@ -523,7 +523,7 @@ const App = () => {
       {/* Input Bar */}
       {bot && (
         <div
-          className={`fixed bottom-5 left-0 right-0 z-50 px-4 transition-all duration-300 ${
+          className={`text-black fixed bottom-5 left-0 right-0 z-50 px-4 transition-all duration-300 ${
             sidebarOpen ? "md:ml-[250px]" : ""
           }`}
         >
