@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
 
 
@@ -398,14 +398,19 @@ export default function Home() {
       {/* Bottom Section (User Profile) */}
       <div className="mt-auto pt-6 border-t border-gray-200">
         <DropdownMenu>
-          <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-4 rounded-xl shadow-md hover:brightness-110 transition-all">
-            <div className="flex items-center space-x-3">
-              <div className="flex flex-col text-left max-w-[180px] truncate">
-                <span className="font-semibold truncate">{User}</span>
-                <span className="text-sm text-white/80 truncate">{UserEmail}</span>
+        <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white p-4 rounded-xl shadow-lg hover:brightness-110 transition-all duration-300 ease-in-out transform hover:scale-101">
+          <div className="flex items-center space-x-4">
+            <div className="flex flex-col text-left max-w-[180px] truncate">
+              <div className="flex justify-between items-center font-semibold text-lg truncate">
+                <div className="text-white">{User}</div>
+                <div className="transition-all transform hover:rotate-180">
+                  <ChevronsUpDown className="w-5 h-5 text-white" />
+                </div>
               </div>
+              <span className="text-sm text-white/80 truncate hover:text-white">{UserEmail}</span>
             </div>
-          </DropdownMenuTrigger>
+          </div>
+        </DropdownMenuTrigger>
 
           <DropdownMenuContent className="ml-44">
             <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2">
@@ -534,15 +539,6 @@ export default function Home() {
         </div>
 
         {/* Second Skeleton Loader */}
-        <div className="flex items-center space-x-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-          </div>
-        </div>
-
-        {/* Third Skeleton Loader */}
         <div className="flex items-center space-x-4">
           <Skeleton className="h-12 w-12 rounded-full" />
           <div className="space-y-2">
