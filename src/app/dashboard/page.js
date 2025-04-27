@@ -473,27 +473,49 @@ export default function Home() {
     <main className="pt-15">
 
     {/* Your Created Bots Label */}
-    <div className="flex items-center justify-between flex-wrap sm:flex-nowrap">
+   <div className="flex items-center justify-between">
+      {/* Left panel */}
       <div className="px-6 py-4 flex-1">
         <h2 className="text-2xl font-bold text-gray-900">Your Created Bots</h2>
-        <p className="text-gray-600 text-sm mt-2">Manage and interact with your AI bots here.</p>
+        <p className="text-gray-600 text-sm mt-2">
+          Manage and interact with your AI bots here.
+        </p>
       </div>
 
-      {/* Search input */}
-      <div className="mr-5 w-full sm:w-auto mt-4 sm:mt-0 flex-shrink-0">
-        <div className="relative">
-          {/* Search Icon */}
-          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">
-            <Search className="w-6 h-6" />
-          </span>
+      <div className="flex-1 min-w-0 mr-3">
+      <div className="relative">
+        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">
+          <Search className="w-6 h-6" />
+        </span>
 
-          {/* Input Field */}
-          <Input
-            placeholder="Search for characters..."
-            className="pl-12 pr-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ease-in-out duration-300 hover:border-blue-400 w-full sm:w-[250px] md:w-[300px] lg:w-[350px]"
-          />
-        </div>
+        {/* Shown on small screens: shorter placeholder */}
+        <Input
+          placeholder="Search..."
+          className="
+            w-full
+            block sm:hidden   
+            pl-12 pr-4 py-2
+            rounded-full border border-gray-300
+            bg-white text-gray-700
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
+        />
+
+        {/* Shown on sm+ screens: full placeholder */}
+        <Input
+          placeholder="Search for characters..."
+          className="
+            w-full
+            hidden sm:block   
+            pl-12 pr-4 py-2
+            rounded-full border border-gray-300
+            bg-white text-gray-700
+            focus:outline-none focus:ring-2 focus:ring-blue-500
+          "
+        />
       </div>
+    </div>
+
     </div>
 
 
