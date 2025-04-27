@@ -376,26 +376,23 @@ const App = () => {
 
     const handlePlay = (text, gender) => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
+        const speech = new SpeechSynthesisUtterance();
+        const voices = window.speechSynthesis.getVoices();  
         
-        const voices = window.speechSynthesis.getVoices();
-    
-        let selectedVoice = null;
         if (gender === 'Male') {
-          selectedVoice = voices.find(voice => voice.name.toLowerCase().includes('male'));
+          const maleVoice = voices.find(voice => voice.name === 'Google UK English Male');
+          if (maleVoice) {
+            speech.voice = maleVoice;
+          }
         } else if (gender === 'Female') {
-          selectedVoice = voices.find(voice => voice.name.toLowerCase().includes('female'));
+          const femaleVoice = voices.find(voice => voice.name === 'Google UK English Female');
+          if (femaleVoice) {
+            speech.voice = femaleVoice;
+          }
         }
-  
-        if (!selectedVoice) {
-          selectedVoice = voices.find(voice => voice.default);
-        }
-    
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        }
-    
-        window.speechSynthesis.speak(utterance);
+        speech.text = text;  
+        speech.lang = 'en-GB'; 
+        window.speechSynthesis.speak(speech); 
       } else {
         console.log('Speech Synthesis not supported in this browser.');
       }
