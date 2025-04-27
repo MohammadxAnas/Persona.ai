@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2 } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
 
 
@@ -330,7 +330,7 @@ export default function Home() {
 
             <div className="grid gap-4 py-4">
               <div>
-                <Label>Name:</Label>
+                <Label className="mb-2">Name:</Label>
                 <Input
                   name="botName"
                   type="text"
@@ -342,7 +342,7 @@ export default function Home() {
               </div>
 
               <div>
-                <Label>Description:</Label>
+                <Label className="mb-2">Description:</Label>
                 <Input
                   name="botDesc"
                   type="text"
@@ -354,7 +354,7 @@ export default function Home() {
               </div>
 
               <div>
-                <Label>Personality:</Label>
+                <Label className="mb-2">Personality:</Label>
                 <Input
                   name="botPersona"
                   type="text"
@@ -366,7 +366,7 @@ export default function Home() {
               </div>
 
               <div>
-                <Label>Avatar:</Label>
+                <Label className="mb-2">Avatar:</Label>
                 <Input
                   name="avatar"
                   type="text"
@@ -473,46 +473,64 @@ export default function Home() {
     <main className="pt-15">
 
     {/* Your Created Bots Label */}
-      <div className="px-6 py-4">
+    <div className="flex items-center justify-between flex-wrap sm:flex-nowrap">
+      <div className="px-6 py-4 flex-1">
         <h2 className="text-2xl font-bold text-gray-900">Your Created Bots</h2>
         <p className="text-gray-600 text-sm mt-2">Manage and interact with your AI bots here.</p>
       </div>
-    
 
-    {/* Loading state */}
-    {Loading && (
-  <div className="flex justify-center items-center py-12">
-    {/* Container to hold skeletons horizontally */}
-    <div className="flex space-x-8">
-      {/* First Skeleton Loader */}
-      <div className="flex items-center space-x-4">
-        <Skeleton className="h-12 w-12 rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
-      </div>
+      {/* Search input */}
+      <div className="mr-5 w-full sm:w-auto mt-4 sm:mt-0 flex-shrink-0">
+        <div className="relative">
+          {/* Search Icon */}
+          <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">
+            <Search className="w-6 h-6" />
+          </span>
 
-      {/* Second Skeleton Loader */}
-      <div className="flex items-center space-x-4">
-        <Skeleton className="h-12 w-12 rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
-        </div>
-      </div>
-
-      {/* Third Skeleton Loader */}
-      <div className="flex items-center space-x-4">
-        <Skeleton className="h-12 w-12 rounded-full" />
-        <div className="space-y-2">
-          <Skeleton className="h-4 w-[250px]" />
-          <Skeleton className="h-4 w-[200px]" />
+          {/* Input Field */}
+          <Input
+            placeholder="Search for characters..."
+            className="pl-12 pr-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ease-in-out duration-300 hover:border-blue-400 w-full sm:w-[250px] md:w-[300px] lg:w-[350px]"
+          />
         </div>
       </div>
     </div>
-  </div>
-)}
+
+
+    {/* Loading state */}
+    {Loading && (
+    <div className="flex justify-center items-center py-12">
+      {/* Container to hold skeletons horizontally */}
+      <div className="flex space-x-8">
+        {/* First Skeleton Loader */}
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
+        </div>
+
+        {/* Second Skeleton Loader */}
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
+        </div>
+
+        {/* Third Skeleton Loader */}
+        <div className="flex items-center space-x-4">
+          <Skeleton className="h-12 w-12 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="h-4 w-[200px]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  )}
 
 
 
