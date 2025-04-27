@@ -49,7 +49,7 @@ import { Label } from "@/components/ui/label";
 export default function Home() {
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
-  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "" });
+  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "", botGender: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [Loading, SetLoading] = useState(true);
@@ -376,6 +376,34 @@ export default function Home() {
                   required
                 />
               </div>
+              <div className="flex flex-col space-y-2">
+                <Label className="text-sm font-medium text-gray-700">Gender:</Label>
+                <div className="relative">
+                  <select
+                    name="botGender"
+                    value={BotData.botGender}
+                    onChange={handleChange2}
+                    required
+                    className="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-10 rounded-lg shadow-sm focus:outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition text-sm"
+                  >
+                    <option value="">Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  {/* Chevron Icon */}
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path
+                        fillRule="evenodd"
+                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
             </div>
 
             <DialogFooter>

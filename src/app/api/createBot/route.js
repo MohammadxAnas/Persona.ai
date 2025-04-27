@@ -1,7 +1,7 @@
 import validateSession from "@/middlewares/validateSession";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient(); // Use a single instance of Prisma
+const prisma = new PrismaClient(); 
 
 export async function POST(req) {  
   try {
@@ -11,14 +11,16 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const {  botName, botDesc, botPersona, avatar, userId } = body;
+    const {  botName, botDesc, botPersona, avatar, userId, botGender } = body;
 
     const bot = await prisma.aICharacter.create({
         data: { name: botName,
                 description: botDesc,
                 personality: botPersona,
                 avatar: avatar,
-                userId: userId},
+                userId: userId,
+                gender: botGender
+              },
       });
 
     return Response.json({ 

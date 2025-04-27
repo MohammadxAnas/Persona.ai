@@ -18,7 +18,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon} from "lucide-react";
+import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown} from "lucide-react";
 
 const App = () => {
 
@@ -374,14 +374,33 @@ const App = () => {
       }
     };
 
-    const handlePlay = (text) => {
+    const handlePlay = (text, gender) => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
+        
+        const voices = window.speechSynthesis.getVoices();
+    
+        let selectedVoice = null;
+        if (gender === 'Male') {
+          selectedVoice = voices.find(voice => voice.name.toLowerCase().includes('male'));
+        } else if (gender === 'Female') {
+          selectedVoice = voices.find(voice => voice.name.toLowerCase().includes('female'));
+        }
+  
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.default);
+        }
+    
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        }
+    
         window.speechSynthesis.speak(utterance);
       } else {
         console.log('Speech Synthesis not supported in this browser.');
       }
     };
+    
 
   return (
     <div className="relative text-white">
@@ -479,36 +498,42 @@ const App = () => {
       </div>
     </div>
 
-    {/* Bottom Profile Section */}
-    <div className="pt-6 border-t border-gray-200">
-      <DropdownMenu>
-        <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-4 rounded-xl shadow-md hover:brightness-110 transition-all">
-          <div className="flex items-center space-x-3">
+     {/* Bottom Section (User Profile) */}
+     <div className="mt-auto pt-6 border-t border-gray-200">
+        <DropdownMenu>
+        <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white p-4 rounded-xl shadow-lg hover:brightness-110 transition-all duration-300 ease-in-out transform hover:scale-101">
+          <div className="flex items-center space-x-4">
             <div className="flex flex-col text-left max-w-[180px] truncate">
-              <span className="font-semibold truncate">{User}</span>
-              <span className="text-sm text-white/80 truncate">{UserEmail}</span>
+              <div className="flex justify-between items-center font-semibold text-lg truncate">
+                <div className="text-white">{User}</div>
+                <div className="transition-all transform hover:rotate-180">
+                  <ChevronsUpDown className="w-5 h-5 text-white" />
+                </div>
+              </div>
+              <span className="text-sm text-white/80 truncate hover:text-white">{UserEmail}</span>
             </div>
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="ml-44">
-          <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2">
-            <User2 className="w-4 h-4" />
-            <span>Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleLogout}
-            className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          <DropdownMenuContent className="ml-44">
+            <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2">
+              <User2 className="w-4 h-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   </div>
-</div>
+
 
   
     {/* Sidebar Overlay for mobile */}
@@ -553,7 +578,7 @@ const App = () => {
 
       {/* Chat Section */}
       {bot ? (
-        <div className="w-4/5 max-w-3xl flex flex-col flex-grow mt-20 px-4 pb-24">
+        <div className="w-6/7 max-w-3xl flex flex-col flex-grow mt-20 pb-24">
           {/* Bot Info */}
           <div className="flex flex-col items-center text-center space-y-3 mb-6">
             <img
@@ -589,7 +614,7 @@ const App = () => {
               </div>
               <div className="group relative p-1 rounded-full cursor-pointer bg-white shadow-md hover:bg-blue-100 hover:shadow-lg transform transition-all duration-300 ease-out hover:scale-110">
                 <PlayIcon className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-300" 
-                          onClick={() => handlePlay(msg.text)}
+                          onClick={() => handlePlay(msg.text, bot.gender)}
                 />
               </div>
               </div>
