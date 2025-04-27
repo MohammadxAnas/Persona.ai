@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut } from "lucide-react";
+import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon} from "lucide-react";
 
 const App = () => {
 
@@ -369,6 +369,15 @@ const App = () => {
       }
     };
 
+    const handlePlay = (text) => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(utterance);
+      } else {
+        console.log('Speech Synthesis not supported in this browser.');
+      }
+    };
+
   return (
     <div className="relative text-white">
        {loading && (
@@ -553,18 +562,30 @@ const App = () => {
   
           {/* Messages */}
           <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-20">
-            {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`rounded-2xl px-4 py-2 max-w-[75%] text-sm md:text-base break-words ${
-                  msg.sender === "user"
-                    ? "self-end bg-blue-100 text-blue-900"
-                    : "self-start bg-gray-100 text-gray-800"
-                }`}
-              >
-                {msg.text}
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`rounded-2xl px-4 py-2 max-w-[75%] text-sm md:text-base break-words ${
+                msg.sender === "user"
+                  ? "self-end bg-blue-100 text-blue-900"
+                  : "self-start bg-gray-100 text-gray-800"
+              }`}
+            >
+              {msg.text}
+
+              {/* Show Play button only for bot messages */}
+              {msg.sender !== "user" && (
+              <div className="mt-2 flex justify-start">
+              <div className="group relative p-1 rounded-full cursor-pointer bg-white shadow-md hover:bg-blue-100 hover:shadow-lg transform transition-all duration-300 ease-out hover:scale-110">
+                <PlayIcon className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-300" 
+                          onClick={() => handlePlay(msg.text)}
+                />
               </div>
-            ))}
+              </div>
+              )}
+            </div>
+          ))}
+
             {isTyping && (
               <div className="self-start bg-gray-100 text-black px-4 py-2 rounded-xl max-w-[70%]">
                 Typing...
