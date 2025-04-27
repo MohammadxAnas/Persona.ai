@@ -12,6 +12,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 
 import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon} from "lucide-react";
 
@@ -575,7 +580,13 @@ const App = () => {
 
               {/* Show Play button only for bot messages */}
               {msg.sender !== "user" && (
-              <div className="mt-2 flex justify-start">
+              <div className="mt-2 flex items-center justify-start gap-1">
+                <div>
+                <Avatar className="text-black w-5 h-5 rounded-full object-cover shadow-lg">
+                  <AvatarImage src={bot.avatar} alt={bot.name} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </div>
               <div className="group relative p-1 rounded-full cursor-pointer bg-white shadow-md hover:bg-blue-100 hover:shadow-lg transform transition-all duration-300 ease-out hover:scale-110">
                 <PlayIcon className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-300" 
                           onClick={() => handlePlay(msg.text)}
