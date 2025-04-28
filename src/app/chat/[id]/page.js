@@ -18,7 +18,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic} from "lucide-react";
+import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic} from "lucide-react";
 
 const App = () => {
 
@@ -38,12 +38,33 @@ const App = () => {
   const [User, setUser] = useState("");
   const [UserEmail, setUserEmail] = useState("");
 
+  const [callActive, setCallActive] = useState(false);
+
   const bottomRef = useRef(null);
 
   const router = useRouter();
 
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const [voices, setVoices] = useState([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      const synth = window.speechSynthesis;
+      
+      const loadVoices = () => {
+        const availableVoices = synth.getVoices();
+        if (availableVoices.length > 0) {
+          setVoices(availableVoices);
+        }
+      };
+
+      loadVoices();
+
+      synth.onvoiceschanged = loadVoices;
+    }
+  }, []);
 
   useEffect(() => {
     console.log("voice text:", Text);
@@ -259,6 +280,16 @@ const App = () => {
   
       const saveData = await saveResponse.json();
 
+      if (callActive && botText && Text.trim() !== '') {
+        console.log(callActive);
+        console.log(botText);
+        handlePlay(botText, 'Male'); 
+        console.log(botText);
+      } else {
+        console.log('Skipping empty or undefined Text');
+      }
+      
+      
       setText();
   
       if (saveData.sessionId && !sessionId) {
@@ -386,46 +417,41 @@ const App = () => {
 
     const handlePlay = (text, gender) => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        const synth = window.speechSynthesis;
-    
-        const speakText = () => {
-          const voices = synth.getVoices();
-          const speech = new SpeechSynthesisUtterance();
-    
-          let selectedVoice = null;
-    
-          if (gender === 'Male') {
-            selectedVoice = voices.find(voice => voice.name === 'Google UK English Male');
-          } else if (gender === 'Female') {
-            selectedVoice = voices.find(voice => voice.name === 'Google UK English Female');
-          }
-    
-          if (!selectedVoice) {
-            selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-          }
-          if (selectedVoice) {
-            speech.voice = selectedVoice;
-          }
-    
-          speech.text = text;
-          speech.lang = 'en-GB'; 
-    
-          synth.cancel();  
-          synth.speak(speech);
-        };
-    
-        if (synth.getVoices().length !== 0) {
-          speakText();
-        } else {
-          synth.onvoiceschanged = () => {
-            speakText();
-          };
+        if (!text || text.trim() === '') {
+          console.log('handlePlay: Text is empty, skipping.');
+          return;
         }
     
-      } else {
-        console.log('Speech Synthesis not supported in this browser.');
+        const synth = window.speechSynthesis;
+    
+        const speech = new SpeechSynthesisUtterance(text);
+    
+        let selectedVoice = null;
+        const genderNormalized = gender ? gender.toLowerCase() : '';
+    
+        if (['male', 'man', 'boy'].includes(genderNormalized)) {
+          selectedVoice = voices.find(voice => voice.name === 'Google UK English Male');
+        } else if (['female', 'woman', 'girl', 'lady'].includes(genderNormalized)) {
+          selectedVoice = voices.find(voice => voice.name === 'Google UK English Female');
+        }
+    
+        if (!selectedVoice) {
+          selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
+        }
+    
+        if (selectedVoice) {
+          speech.voice = selectedVoice;
+        }
+    
+        speech.lang = 'en-GB';
+    
+        synth.cancel();
+        setTimeout(() => {
+          synth.speak(speech);
+        }, 100);
       }
     };
+    
     
     const startListening = (onResult) => {
       if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
@@ -435,36 +461,51 @@ const App = () => {
         recognition.lang = 'en-US';  // Set language
         recognition.interimResults = false;  // Get only final results
         recognition.maxAlternatives = 1;  // Best match only
+        
+        // Make sure we don't start another recognition while one is already in progress
+        if (recognitionInProgress) return; 
+        recognitionInProgress = true;
     
         recognition.start();  // Start listening
     
         recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
           console.log('User said:', transcript);
-          if (onResult) {
+          if (onResult && transcript) {
             onResult(transcript); // Pass the result back
           }
         };
     
         recognition.onerror = (event) => {
           console.error('Speech recognition error:', event.error);
+          alert('Sorry, there was an issue with speech recognition.');
+          recognitionInProgress = false;  // Reset flag on error
         };
     
         recognition.onend = () => {
           console.log('Speech recognition ended.');
+          recognitionInProgress = false;  // Reset flag after recognition ends
         };
     
       } else {
         console.log('Speech Recognition not supported in this browser.');
+        alert('Your browser does not support Speech Recognition.');
       }
     };
     
+    let recognitionInProgress = false;  // Flag to track whether recognition is running
+    
     const handleMicClick = () => {
-      startListening((capturedText) => {
-        setInput(capturedText);
-        setText(capturedText);
-      });
+      if (!recognitionInProgress) {  // Only start recognition if it's not already in progress
+        startListening((capturedText) => {
+          if (capturedText) {
+            setInput(capturedText);   // Set the text input for UI
+            setText(capturedText);    // Set the final text to be used
+          }
+        });
+      }
     };
+    
 
   return (
     <div className="relative text-white">
@@ -635,10 +676,32 @@ const App = () => {
           persona.ai
         </span>
       </div>
+      <div>
+      <Button
+        variant="outline"
+        className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
+        onClick={() => {
+          setCallActive(true);
+          handleMicClick();
+        }}
+      >
+        <Phone className="w-4 h-4" />
+      </Button>
+    </div>
     </header>
   </div>
 
-
+  {callActive && (
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
+          <Button
+            variant="destructive"
+            className="h-12 w-12 p-0 rounded-full bg-red-600 hover:bg-red-700 text-white"
+            onClick={() => setCallActive(false)}
+          >
+            <Phone className="w-6 h-6 rotate-135" />
+          </Button>
+        </div>
+      )}
 
       {/* Chat Section */}
       {bot ? (
