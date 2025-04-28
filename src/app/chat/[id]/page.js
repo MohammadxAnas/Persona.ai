@@ -18,7 +18,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown} from "lucide-react";
+import { Trash2, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic} from "lucide-react";
 
 const App = () => {
 
@@ -29,6 +29,7 @@ const App = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [Text, setText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
   const [sessionId, setSessionId] = useState();
@@ -43,6 +44,14 @@ const App = () => {
 
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    console.log("voice text:", Text);
+    if (Text && Text.trim() !== "") {
+      sendMessage();
+    }
+  }, [Text]);
+  
 
   useEffect(() => {
     if (loading) {
@@ -249,8 +258,9 @@ const App = () => {
       });
   
       const saveData = await saveResponse.json();
+
+      setText();
   
-     
       if (saveData.sessionId && !sessionId) {
         setSessionId(saveData.sessionId);
         localStorage.setItem("session", saveData.sessionId);
@@ -376,28 +386,85 @@ const App = () => {
 
     const handlePlay = (text, gender) => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        const speech = new SpeechSynthesisUtterance();
-        const voices = window.speechSynthesis.getVoices();  
-        
-        if (gender === 'Male') {
-          const maleVoice = voices.find(voice => voice.name === 'Google UK English Male');
-          if (maleVoice) {
-            speech.voice = maleVoice;
+        const synth = window.speechSynthesis;
+    
+        const speakText = () => {
+          const voices = synth.getVoices();
+          const speech = new SpeechSynthesisUtterance();
+    
+          let selectedVoice = null;
+    
+          if (gender === 'Male') {
+            selectedVoice = voices.find(voice => voice.name === 'Google UK English Male');
+          } else if (gender === 'Female') {
+            selectedVoice = voices.find(voice => voice.name === 'Google UK English Female');
           }
-        } else if (gender === 'Female') {
-          const femaleVoice = voices.find(voice => voice.name === 'Google UK English Female');
-          if (femaleVoice) {
-            speech.voice = femaleVoice;
+    
+          if (!selectedVoice) {
+            selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
           }
+          if (selectedVoice) {
+            speech.voice = selectedVoice;
+          }
+    
+          speech.text = text;
+          speech.lang = 'en-GB'; 
+    
+          synth.cancel();  
+          synth.speak(speech);
+        };
+    
+        if (synth.getVoices().length !== 0) {
+          speakText();
+        } else {
+          synth.onvoiceschanged = () => {
+            speakText();
+          };
         }
-        speech.text = text;  
-        speech.lang = 'en-GB'; 
-        window.speechSynthesis.speak(speech); 
+    
       } else {
         console.log('Speech Synthesis not supported in this browser.');
       }
     };
     
+    const startListening = (onResult) => {
+      if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+    
+        recognition.lang = 'en-US';  // Set language
+        recognition.interimResults = false;  // Get only final results
+        recognition.maxAlternatives = 1;  // Best match only
+    
+        recognition.start();  // Start listening
+    
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          console.log('User said:', transcript);
+          if (onResult) {
+            onResult(transcript); // Pass the result back
+          }
+        };
+    
+        recognition.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+        };
+    
+        recognition.onend = () => {
+          console.log('Speech recognition ended.');
+        };
+    
+      } else {
+        console.log('Speech Recognition not supported in this browser.');
+      }
+    };
+    
+    const handleMicClick = () => {
+      startListening((capturedText) => {
+        setInput(capturedText);
+        setText(capturedText);
+      });
+    };
 
   return (
     <div className="relative text-white">
@@ -642,15 +709,17 @@ const App = () => {
         >
           <div className="mx-auto max-w-3xl">
             <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white max-w-3xl w-full">
-              <button
-                className="relative w-7 h-7 flex items-center justify-center text-gray-500 border border-gray-300 rounded-full text-lg group hover:bg-gray-100"
-                aria-label="Upload"
-              >
-                +
-                <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-                  Upload files and more
-                </span>
-              </button>
+            <button
+              onClick={handleMicClick}
+              className="relative w-10 h-10 flex items-center justify-center text-indigo-600 bg-white border border-gray-300 rounded-full shadow-md hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-300 group"
+              aria-label="Start Voice Input"
+            >
+              <Mic className="w-5 h-5" />
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                Start Voice Input
+              </span>
+            </button>
+
   
               <input
                 type="text"

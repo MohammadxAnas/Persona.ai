@@ -169,7 +169,6 @@ export default function Home() {
   };
 
   const handleCreatebot = async (e) => {
-    startLoading();
     e.preventDefault();
     const { botName, botDesc, botPersona } = BotData;
     if (!botName || !botDesc || !botPersona) {
