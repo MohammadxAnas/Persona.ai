@@ -205,6 +205,15 @@ const App = () => {
     console.log("messages:",messages);
   }, [sessionId]);
 
+  const handleCall = async (txt) => {
+    try {
+      await handlePlay(txt);
+      handleMicClick();  
+    } catch (error) {
+      console.error('Error in handleCall:', error);
+    }
+  };
+  
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -281,10 +290,7 @@ const App = () => {
       const saveData = await saveResponse.json();
 
       if (callActive && botText && Text.trim() !== '') {
-        console.log(callActive);
-        console.log(botText);
-        handlePlay(botText, 'Male'); 
-        console.log(botText);
+          handleCall(botText);
       } else {
         console.log('Skipping empty or undefined Text');
       }
@@ -416,94 +422,94 @@ const App = () => {
     };
 
     const handlePlay = (text, gender) => {
-      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-        if (!text || text.trim() === '') {
-          console.log('handlePlay: Text is empty, skipping.');
-          return;
-        }
+      return new Promise((resolve, reject) => {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          const synth = window.speechSynthesis;
     
-        const synth = window.speechSynthesis;
+          const speech = new SpeechSynthesisUtterance(text);
+          let selectedVoice = null;
+          const genderNormalized = gender ? gender.toLowerCase() : '';
     
-        const speech = new SpeechSynthesisUtterance(text);
+          if (['male', 'man', 'boy'].includes(genderNormalized)) {
+            selectedVoice = synth.getVoices().find(voice => voice.name === 'Google UK English Male');
+          } else if (['female', 'woman', 'girl', 'lady'].includes(genderNormalized)) {
+            selectedVoice = synth.getVoices().find(voice => voice.name === 'Google UK English Female');
+          }
     
-        let selectedVoice = null;
-        const genderNormalized = gender ? gender.toLowerCase() : '';
+          if (!selectedVoice) {
+            selectedVoice = synth.getVoices().find(voice => voice.lang.startsWith('en'));
+          }
     
-        if (['male', 'man', 'boy'].includes(genderNormalized)) {
-          selectedVoice = voices.find(voice => voice.name === 'Google UK English Male');
-        } else if (['female', 'woman', 'girl', 'lady'].includes(genderNormalized)) {
-          selectedVoice = voices.find(voice => voice.name === 'Google UK English Female');
-        }
+          if (selectedVoice) {
+            speech.voice = selectedVoice;
+          }
     
-        if (!selectedVoice) {
-          selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-        }
+          speech.lang = 'en-GB';
+          speech.onend = () => {
+            console.log('Speech finished');
+            resolve();  // Resolve the promise when speech ends
+          };
     
-        if (selectedVoice) {
-          speech.voice = selectedVoice;
-        }
+          speech.onerror = (error) => {
+            console.error('Speech error:', error);
+            reject(error);  // Reject the promise if there's an error
+          };
     
-        speech.lang = 'en-GB';
-    
-        synth.cancel();
-        setTimeout(() => {
+          synth.cancel();
           synth.speak(speech);
-        }, 100);
-      }
+        } else {
+          reject('Speech Synthesis not supported.');
+        }
+      });
     };
     
+    
+    let recognitionInProgress = false;
+    let recognition = null;
     
     const startListening = (onResult) => {
       if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
-    
-        recognition.lang = 'en-US';  // Set language
-        recognition.interimResults = false;  // Get only final results
-        recognition.maxAlternatives = 1;  // Best match only
+        recognition = new SpeechRecognition();
         
-        // Make sure we don't start another recognition while one is already in progress
-        if (recognitionInProgress) return; 
-        recognitionInProgress = true;
-    
-        recognition.start();  // Start listening
+        recognition.onerror = () => {
+          handleMicClick();
+        };
     
         recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
-          console.log('User said:', transcript);
-          if (onResult && transcript) {
-            onResult(transcript); // Pass the result back
-          }
-        };
-    
-        recognition.onerror = (event) => {
-          console.error('Speech recognition error:', event.error);
-          alert('Sorry, there was an issue with speech recognition.');
-          recognitionInProgress = false;  // Reset flag on error
+          if (onResult) onResult(transcript);
         };
     
         recognition.onend = () => {
-          console.log('Speech recognition ended.');
-          recognitionInProgress = false;  // Reset flag after recognition ends
+          recognitionInProgress = false;
         };
     
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        
+        recognition.start();
+        recognitionInProgress = true;
       } else {
-        console.log('Speech Recognition not supported in this browser.');
         alert('Your browser does not support Speech Recognition.');
       }
     };
     
-    let recognitionInProgress = false;  // Flag to track whether recognition is running
+    const stopListening = () => {
+        console.log("stop");
+        recognition.stop();
+        recognitionInProgress = false;
+    };
     
     const handleMicClick = () => {
-      if (!recognitionInProgress) {  // Only start recognition if it's not already in progress
+      console.log("click");
         startListening((capturedText) => {
           if (capturedText) {
-            setInput(capturedText);   // Set the text input for UI
-            setText(capturedText);    // Set the final text to be used
+            setInput(capturedText);
+            setText(capturedText);
           }
         });
-      }
     };
     
 
@@ -696,7 +702,10 @@ const App = () => {
           <Button
             variant="destructive"
             className="h-12 w-12 p-0 rounded-full bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => setCallActive(false)}
+            onClick={() => {
+              setCallActive(false);
+              stopListening();
+            }}
           >
             <Phone className="w-6 h-6 rotate-135" />
           </Button>
@@ -708,11 +717,11 @@ const App = () => {
         <div className="w-6/7 max-w-3xl flex flex-col flex-grow mt-20 pb-24">
           {/* Bot Info */}
           <div className="flex flex-col items-center text-center space-y-3 mb-6">
-            <img
-              src={bot.avatar}
-              alt={bot.name}
-              className="text-black w-24 h-24 rounded-full object-cover shadow-lg"
-            />
+          <img
+            src={bot.avatar || '/path/to/default-image.jpg'} // fallback image
+            alt={bot.name}
+            className="text-black w-24 h-24 rounded-full object-cover shadow-lg"
+          />
             <h2 className="text-black text-2xl font-bold">{bot.name}</h2>
             <p className="text-gray-500 max-w-md">{bot.description}</p>
           </div>
