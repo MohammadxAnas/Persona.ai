@@ -38,6 +38,8 @@ const App = () => {
   const [User, setUser] = useState("");
   const [UserEmail, setUserEmail] = useState("");
 
+  const [gender, setGender] = useState("");
+
   const [callActive, setCallActive] = useState(false);
 
   const bottomRef = useRef(null);
@@ -124,6 +126,7 @@ const App = () => {
       console.log(data);
       if (data.success) {
         setBot(data.bot);
+        setGender(data.bot.gender);
         setSessionId(data.chatSessionId);
         setSessions(data.chatSessions);
       } else {
@@ -153,6 +156,7 @@ const App = () => {
     console.log("Updated bot =", bot);
     console.log("Updated Id =",sessionId);
     console.log("Sessions =",sessions);
+    console.log("Gender=",gender);
   }, [bot, sessionId, sessions]);
   
   useEffect(() => {
@@ -422,7 +426,7 @@ const App = () => {
       }
     };
 
-    const handlePlay = (text, gender) => {
+    const handlePlay = (text) => {
       return new Promise((resolve, reject) => {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
           const synth = window.speechSynthesis;
@@ -766,7 +770,7 @@ const App = () => {
               </div>
               <div className="group relative p-1 rounded-full cursor-pointer bg-white shadow-md hover:bg-blue-100 hover:shadow-lg transform transition-all duration-300 ease-out hover:scale-110">
                 <PlayIcon className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-300" 
-                          onClick={() => handlePlay(msg.text, bot.gender)}
+                          onClick={() => handlePlay(msg.text)}
                 />
               </div>
               </div>
