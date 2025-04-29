@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
 
 
@@ -69,7 +69,7 @@ export default function Home() {
             setTimeout(() => {
               setLoading(false);
               setProgress(0);
-            }, 300); // small delay before hiding
+            }, 300); 
             return 100;
           }
           return oldProgress + Math.random() * 20; // random speed
@@ -78,7 +78,7 @@ export default function Home() {
     }
   }, [loading]);
 
-  // Just a fake loading trigger example
+
   const startLoading = () => {
     setLoading(true);
     setProgress(10);
@@ -214,7 +214,6 @@ export default function Home() {
   };
   
   const deleteBot = async (botId, fetchUserBots) => {
-    startLoading();
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -244,11 +243,13 @@ export default function Home() {
     } catch (err) {
       console.error("Error deleting bot:", err.message);
       toast.error(err.message || "Something went wrong");
+    } finally{
+      
     }
   };
 
   const handleLogout = async () => {
-    startLoading(0);
+    startLoading();
     try {
       toast("Logging out...");
       const token = localStorage.getItem("token");
@@ -282,181 +283,193 @@ export default function Home() {
       }
     } catch (error) {
       toast.error("Something went wrong while logging out.");
+    } finally{
+      setLoading(false);
     }
   };
 
   return (
 
   <div className="relative text-white ">
-  <div
-    className={`fixed top-0 left-0 h-full w-[270px] bg-white p-6 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
-      sidebarOpen ? "translate-x-0" : "-translate-x-full"
-    }`}
-  >
-    <div className="flex flex-col h-full">
-      {/* Top Section */}
-      <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6 -mt-3">
-      <div className="flex flex-col">
-        <span className="text-sm text-gray-500">Welcome,</span>
-        <span className="font-medium text-gray-800">{User}</span>
-      </div>
+ <div
+  className={`fixed top-0 left-0 h-full w-[280px] bg-gray-50 border-r border-gray-200 shadow-lg z-50 transform transition-transform duration-300 ${
+    sidebarOpen ? "translate-x-0" : "-translate-x-full"
+  }`}
+>
+  <div className="flex flex-col h-full p-4 space-y-4">
 
-        <button onClick={() => setSidebarOpen(false)}>
-          <ChevronsLeft className="text-gray-600 hover:text-black" />
-        </button>
-      </div>
+  {/* Top Bar */}
+  <div className="flex items-center justify-between">
+    <div>
+      <h2 className="text-xs text-gray-400 uppercase">Welcome,</h2>
+      <h3 className="font-semibold text-gray-800 truncate">{User}</h3>
+    </div>
+  
+    <button onClick={() => setSidebarOpen(false)}>
+      <ChevronsLeft className="text-gray-500 hover:text-black" />
+    </button>
+  </div>
 
+  {/* Create Bot Button */}
+  <div className="pt-2 ">
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <DialogTrigger asChild>
+      <Button
+        className="h-12 w-33 bg-white text-gray-800 border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-black transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2"
+      >
+        <span className="flex items-center justify-center gap-1">
+        <Plus className="w-15 h-15" />
+        <div className=" font-sans">Create</div>
+        </span>
+      </Button>
 
-        {/* Create Bot Button */}
-        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              className="w-full py-2 font-medium bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white rounded-xl transition-all"
-            >
-              + Create Bot
-            </Button>
-          </DialogTrigger>
+        </DialogTrigger>
 
-          <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold">Create a Bot</DialogTitle>
-              <DialogDescription className="text-sm text-gray-500">
-                Add a name, description, and personality to personalize your bot.
-              </DialogDescription>
-            </DialogHeader>
+        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle>Create a Bot</DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              Fill out the details below to create a new bot.
+            </DialogDescription>
+          </DialogHeader>
 
-            <div className="grid gap-4 py-4">
-              <div>
-                <Label className="mb-2">Name:</Label>
-                <Input
-                  name="botName"
-                  type="text"
-                  value={BotData.botName}
-                  onChange={handleChange2}
-                  placeholder="e.g., Dr. Helper"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label className="mb-2">Description:</Label>
-                <Input
-                  name="botDesc"
-                  type="text"
-                  value={BotData.botDesc}
-                  onChange={handleChange2}
-                  placeholder="e.g., Assists with medical queries"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label className="mb-2">Personality:</Label>
-                <Input
-                  name="botPersona"
-                  type="text"
-                  value={BotData.botPersona}
-                  onChange={handleChange2}
-                  placeholder="e.g., Friendly, informative"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label className="mb-2">Avatar:</Label>
-                <Input
-                  name="avatar"
-                  type="text"
-                  value={BotData.avatar || ""}
-                  onChange={handleChange2}
-                  placeholder="URL to bot image"
-                  required
-                />
-              </div>
-              <div className="flex flex-col space-y-2">
-                <Label className="text-sm font-medium text-gray-700">Gender:</Label>
-                <div className="relative">
-                  <select
-                    name="botGender"
-                    value={BotData.botGender}
-                    onChange={handleChange2}
-                    required
-                    className="w-full appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-10 rounded-lg shadow-sm focus:outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] transition text-sm"
-                  >
-                    <option value="">Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                  {/* Chevron Icon */}
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-4 h-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.939l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.25 8.27a.75.75 0 01-.02-1.06z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
+          <div className="grid gap-4 py-4">
+            <div>
+              <Label className="pb-2">Name</Label>
+              <Input
+                name="botName"
+                type="text"
+                value={BotData.botName}
+                onChange={handleChange2}
+                placeholder="e.g., Dr. Helper"
+                required
+                maxLength={25} 
+              />
             </div>
-
-            <DialogFooter>
-              <Button
-                onClick={handleCreatebot}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+            <div>
+              <Label className="pb-2">Description</Label>
+              <Input
+                name="botDesc"
+                type="text"
+                value={BotData.botDesc}
+                onChange={handleChange2}
+                placeholder="What does this bot do?"
+                required
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Personality</Label>
+              <Input
+                name="botPersona"
+                type="text"
+                value={BotData.botPersona}
+                onChange={handleChange2}
+                placeholder="e.g., Friendly, formal"
+                required
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Avatar</Label>
+              <Input
+                name="avatar"
+                type="text"
+                value={BotData.avatar || ""}
+                onChange={handleChange2}
+                placeholder="Image URL"
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Gender</Label>
+              <select
+                name="botGender"
+                value={BotData.botGender}
+                onChange={handleChange2}
+                required
+                className="w-full border border-gray-300 rounded-md p-2 text-sm"
               >
-                Create
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <div>
-          <p className="text-gray-700 font-semibold mb-2">Recent</p>
-          {/* You can list recent bots/sessions here */}
-        </div>
-      </div>
-
-      {/* Bottom Section (User Profile) */}
-      <div className="mt-auto pt-6 border-t border-gray-200">
-        <DropdownMenu>
-        <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white p-4 rounded-xl shadow-lg hover:brightness-110 transition-all duration-300 ease-in-out transform hover:scale-101">
-          <div className="flex items-center space-x-4">
-            <div className="flex flex-col text-left max-w-[180px] truncate">
-              <div className="flex justify-between items-center font-semibold text-lg truncate">
-                <div className="text-white">{User}</div>
-                <div className="transition-all transform hover:rotate-180">
-                  <ChevronsUpDown className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <span className="text-sm text-white/80 truncate hover:text-white">{UserEmail}</span>
+                <option value="">Select gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
             </div>
           </div>
-        </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="ml-44">
-            <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2">
-              <User2 className="w-4 h-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2"
+          <DialogFooter>
+            <Button
+              onClick={handleCreatebot}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
             >
-              <LogOut className="w-4 h-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+    <div className="pb-4 border-b border-gray-200">
+    <button
+      className="font-light w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+      onClick={() => {
+        fetchUserBots();
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="w-6 h-6"
+      >
+        <path
+          d="M12 2a9 9 0 0 0-9 9v11l3-3 3 3 3-3 3 3 3-3 3 3V11a9 9 0 0 0-9-9z"
+          fill="grey"
+          stroke="grey"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="9" cy="10" r="1" fill="white" />
+        <circle cx="15" cy="10" r="1" fill="white" />
+      </svg>
+
+      <span className="text-sm font-medium">Discover</span>
+    </button>
+    </div>
+
+    {/* Recent Bots Section */}
+    <div>
+      <h4 className="text-xs text-gray-400 uppercase tracking-wide mb-2">Recent Bots</h4>
+      <ul className="space-y-2">
+        {/* Replace below with actual bot entries if available */}
+        <li className="text-sm text-gray-600">No recent bots</li>
+      </ul>
+    </div>
+
+    {/* Spacer pushes Create Bot to bottom */}
+    <div className="flex-grow " />
+   
+
+    {/* Footer/Profile Menu */}
+    <DropdownMenu>
+      <DropdownMenuTrigger className="mt-4 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
+        <span>{UserEmail}</span>
+        <ChevronsUpDown className="w-4 h-4 text-gray-500" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="mt-2 shadow-lg rounded-md">
+        <DropdownMenuItem className="px-3 py-2 hover:bg-gray-100 flex gap-2">
+          <User2 className="w-4 h-4" />
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="px-3 py-2 text-red-600 hover:bg-gray-100 flex gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   </div>
+</div>
 
 
    {sidebarOpen && (
@@ -472,7 +485,7 @@ export default function Home() {
     <div className="relative">
     <header
         className={`fixed top-0 transition-all duration-300 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl
-        ${sidebarOpen ? "left-64" : "left-0"} right-0`}
+        ${sidebarOpen ? "left-70" : "left-0"} right-0`}
     >
         <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
         {!sidebarOpen && (
@@ -569,10 +582,119 @@ export default function Home() {
   )}
 
 
-
     {/* Bot List */}
-    {!loading && Bots && (
-      <ul className="flex overflow-x-auto gap-4 px-4 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
+    {!loading && !Loading && Bots && (
+      <ul className="ml-2 flex overflow-x-auto gap-4 px-4 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
+
+      <li className="snap-start pl-2">
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <DialogTrigger asChild>
+      <Card
+        className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200 cursor-pointer"
+      >
+        <div className="flex h-full items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <Avatar className="w-12 h-12 border border-indigo-200 shadow-sm bg-indigo-100">
+              <div className="flex items-center justify-center w-full h-full">
+                <Plus className="w-6 h-6 text-indigo-600" />
+              </div>
+            </Avatar>
+
+            <div className="flex flex-col">
+              <CardTitle className="text-base font-semibold text-indigo-700">
+                Create New Bot
+              </CardTitle>
+              <CardDescription className="text-sm text-gray-600 w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                Start a conversation by building your own custom AI assistant.
+              </CardDescription>
+            </div>
+          </div>
+        </div>
+      </Card>
+        </DialogTrigger>
+
+        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle>Create a Bot</DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+              Fill out the details below to create a new bot.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div>
+              <Label className="pb-2">Name</Label>
+              <Input
+                name="botName"
+                type="text"
+                value={BotData.botName}
+                onChange={handleChange2}
+                placeholder="e.g., Dr. Helper"
+                required
+                maxLength={25} 
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Description</Label>
+              <Input
+                name="botDesc"
+                type="text"
+                value={BotData.botDesc}
+                onChange={handleChange2}
+                placeholder="What does this bot do?"
+                required
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Personality</Label>
+              <Input
+                name="botPersona"
+                type="text"
+                value={BotData.botPersona}
+                onChange={handleChange2}
+                placeholder="e.g., Friendly, formal"
+                required
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Avatar</Label>
+              <Input
+                name="avatar"
+                type="text"
+                value={BotData.avatar || ""}
+                onChange={handleChange2}
+                placeholder="Image URL"
+              />
+            </div>
+            <div>
+              <Label className="pb-2">Gender</Label>
+              <select
+                name="botGender"
+                value={BotData.botGender}
+                onChange={handleChange2}
+                required
+                className="w-full border border-gray-300 rounded-md p-2 text-sm"
+              >
+                <option value="">Select gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              onClick={handleCreatebot}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+        </li>
+
         {Bots.map((bot) => (
           <li key={bot.id} className="snap-start pl-2">
             <Card
@@ -593,9 +715,12 @@ export default function Home() {
                     <CardTitle className="text-base font-semibold text-indigo-700">
                       {bot.name}
                     </CardTitle>
-                    <CardDescription className="text-sm text-gray-600 w-[200px]">
+                    <CardDescription
+                      className="text-sm text-gray-600 w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
+                    >
                       {bot.description}
                     </CardDescription>
+
                   </div>
                 </div>
 
@@ -634,10 +759,13 @@ export default function Home() {
                 </div>
               </div>
             </Card>
+            
           </li>
         ))}
       </ul>
+      
     )}
+
     </main>
   </div>
 </div>

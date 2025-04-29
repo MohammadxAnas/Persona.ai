@@ -707,9 +707,10 @@ const App = () => {
           setCallActive(true);
           handleCallClick();
         }}
-        className="h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+        className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
       >
-        <Phone className="w-6 h-6 text-white" />
+        <Phone className="w-7 h-7 text-white fill-current" />
+
       </Button>
 
 
