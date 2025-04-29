@@ -208,12 +208,13 @@ const App = () => {
   const handleCall = async (txt) => {
     try {
       await handlePlay(txt);
-      handleMicClick();  
+      if (callActive){
+        handleCallClick();
+      }
     } catch (error) {
       console.error('Error in handleCall:', error);
     }
   };
-  
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -263,7 +264,7 @@ const App = () => {
   
       const data = await response.json();
       console.log("response:", data);
-  
+     
       const botText =
         data.candidates?.[0]?.content?.parts?.[0]?.text ||
         "Sorry, I didn't understand that.";
@@ -289,7 +290,7 @@ const App = () => {
   
       const saveData = await saveResponse.json();
 
-      if (callActive && botText && Text.trim() !== '') {
+      if (callActive && botText ) {
           handleCall(botText);
       } else {
         console.log('Skipping empty or undefined Text');
@@ -430,11 +431,12 @@ const App = () => {
           let selectedVoice = null;
           const genderNormalized = gender ? gender.toLowerCase() : '';
     
-          if (['male', 'man', 'boy'].includes(genderNormalized)) {
+          if (genderNormalized === 'male') {
             selectedVoice = synth.getVoices().find(voice => voice.name === 'Google UK English Male');
-          } else if (['female', 'woman', 'girl', 'lady'].includes(genderNormalized)) {
+          } else if (genderNormalized === 'female') {
             selectedVoice = synth.getVoices().find(voice => voice.name === 'Google UK English Female');
           }
+          
     
           if (!selectedVoice) {
             selectedVoice = synth.getVoices().find(voice => voice.lang.startsWith('en'));
@@ -447,12 +449,12 @@ const App = () => {
           speech.lang = 'en-GB';
           speech.onend = () => {
             console.log('Speech finished');
-            resolve();  // Resolve the promise when speech ends
+            resolve();  
           };
     
           speech.onerror = (error) => {
             console.error('Speech error:', error);
-            reject(error);  // Reject the promise if there's an error
+            reject(error);  
           };
     
           synth.cancel();
@@ -462,54 +464,67 @@ const App = () => {
         }
       });
     };
-    
-    
+
+    let Recognition = null;
     let recognitionInProgress = false;
-    let recognition = null;
-    
-    const startListening = (onResult) => {
+
+    const handleCallClick = () => {
       if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        
-        recognition.onerror = () => {
-          handleMicClick();
-        };
+        Recognition = new SpeechRecognition();
     
-        recognition.onresult = (event) => {
+        Recognition.lang = 'en-US';
+        Recognition.interimResults = false;
+        Recognition.maxAlternatives = 1;
+    
+        Recognition.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
-          if (onResult) onResult(transcript);
+          if (transcript) {
+            setInput(transcript);
+            setText(transcript);
+          }
         };
     
-        recognition.onend = () => {
-          recognitionInProgress = false;
-        };
-    
-        recognition.lang = 'en-US';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-        
-        recognition.start();
+        Recognition.start();
         recognitionInProgress = true;
       } else {
         alert('Your browser does not support Speech Recognition.');
       }
     };
-    
-    const stopListening = () => {
-        console.log("stop");
-        recognition.stop();
-        recognitionInProgress = false;
+    const disableMic = () => {
+      if (Recognition && recognitionInProgress) {
+        Recognition.stop();
+        RecognitionInProgress = false;
+        Recognition = null;
+        console.log("Microphone disabled.");
+      } else {
+        console.log("No active microphone to disable.");
+      }
     };
     
+    let recognition = null;
+
     const handleMicClick = () => {
-      console.log("click");
-        startListening((capturedText) => {
-          if (capturedText) {
-            setInput(capturedText);
-            setText(capturedText);
+      if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+    
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+    
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript) {
+            setInput(transcript);
+            setText(transcript);
           }
-        });
+        };
+    
+        recognition.start();
+      } else {
+        alert('Your browser does not support Speech Recognition.');
+      }
     };
     
 
@@ -684,15 +699,16 @@ const App = () => {
       </div>
       <div>
       <Button
-        variant="outline"
-        className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
         onClick={() => {
           setCallActive(true);
-          handleMicClick();
+          handleCallClick();
         }}
+        className="h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
       >
-        <Phone className="w-4 h-4" />
+        <Phone className="w-6 h-6 text-white" />
       </Button>
+
+
     </div>
     </header>
   </div>
@@ -704,7 +720,7 @@ const App = () => {
             className="h-12 w-12 p-0 rounded-full bg-red-600 hover:bg-red-700 text-white"
             onClick={() => {
               setCallActive(false);
-              stopListening();
+              disableMic();
             }}
           >
             <Phone className="w-6 h-6 rotate-135" />
@@ -718,7 +734,7 @@ const App = () => {
           {/* Bot Info */}
           <div className="flex flex-col items-center text-center space-y-3 mb-6">
           <img
-            src={bot.avatar || '/path/to/default-image.jpg'} // fallback image
+            src={bot.avatar || 'https://loremflickr.com/600/400/cat.jpg'} // fallback image
             alt={bot.name}
             className="text-black w-24 h-24 rounded-full object-cover shadow-lg"
           />
