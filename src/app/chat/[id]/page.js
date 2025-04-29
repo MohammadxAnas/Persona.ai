@@ -684,7 +684,7 @@ const App = () => {
     <div className="relative">
     <header
       className={`fixed top-0 transition-all duration-300 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl
-        ${sidebarOpen ? "left-64" : "left-0"} right-0`}
+        ${sidebarOpen ? "left-65" : "left-0"} right-0`}
     >
       <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
         {!sidebarOpen && (
@@ -800,7 +800,7 @@ const App = () => {
             sidebarOpen ? "md:ml-[250px]" : ""
           }`}
         >
-          <div className="mx-auto max-w-3xl">
+          <div className="flex items-center justify-center gap-2 mx-auto max-w-3xl">
             <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white max-w-3xl w-full">
             <button
               onClick={handleMicClick}
@@ -831,6 +831,15 @@ const App = () => {
                 ➤
               </button>
             </div>
+            <button
+              className="relative w-10 h-10 flex items-center justify-center text-indigo-600 bg-white border border-gray-300 rounded-full shadow-md hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-300 group"
+              aria-label="Start Voice Input"
+            >
+              <Phone className="w-5 h-5" />
+              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                Start Voice Input
+              </span>
+            </button>
           </div>
         </div>
       )}
