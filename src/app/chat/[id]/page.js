@@ -18,7 +18,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic} from "lucide-react";
+import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis} from "lucide-react";
 
 const App = () => {
 
@@ -544,178 +544,199 @@ const App = () => {
       )}
     {/* Sidebar */}
     <div
-  className={`fixed top-0 left-0 h-full w-[270px] bg-white p-6 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+  className={`fixed top-0 left-0 h-full w-[270px] bg-white p-4 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     sidebarOpen ? "translate-x-0" : "-translate-x-full"
   }`}
 >
-  <div className="flex flex-col h-full justify-between">
-    {/* Top Section */}
-    <div>
-      {/* Welcome Header */}
-      <div className="flex items-center justify-between mb-4 -mt-3">
-        <div className="flex flex-col">
-          <span className="text-sm text-gray-500">Welcome,</span>
-          <span className="font-medium text-gray-800">{User}</span>
-        </div>
-        <button onClick={() => setSidebarOpen(false)}>
-          <ChevronsLeft className="text-gray-600 hover:text-black" />
-        </button>
-      </div>
+  <div className="flex flex-col h-full space-y-4">
 
-      {/* New Chat Button */}
-      <Button
-        variant="outline"
+    {/* Top Bar */}
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-xs text-gray-400 uppercase">Welcome,</h2>
+        <h3 className="font-semibold text-gray-800 truncate">{User}</h3>
+      </div>
+      <button onClick={() => setSidebarOpen(false)}>
+        <ChevronsLeft className="text-gray-500 hover:text-black" />
+      </button>
+    </div>
+
+    {/* Create Bot Button */}
+    <div className="pt-2">
+    <Button
+        className="h-12 w-33 bg-white text-gray-800 border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-black transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2"
         onClick={startNewChat}
-        className="w-full py-2 font-medium bg-indigo-600 text-white hover:bg-indigo-700 hover:text-white rounded-xl transition-all"
       >
-        + New Chat
+        <span className="flex items-center justify-center gap-1">
+        <Plus className="w-15 h-15" />
+        <div className=" font-sans">New Chat</div>
+        </span>
       </Button>
-      <p className="text-gray-700 font-semibold mt-4 ">Recent</p>
-      {/* Session List */}
-      <div className="mt-3 h-[calc(100dvh-280px)] overflow-y-auto pr-1">
-        
-        <ul className="space-y-2">
-          {sessions.map((ses, index) => {
-            const isActive = sessionId === ses.id;
-            return (
-              <li
-                key={ses.id || index}
-                className={`group flex justify-between items-center px-3 py-2 rounded-lg border cursor-pointer transition ${
-                  isActive
-                    ? "bg-indigo-100 border-indigo-400 text-indigo-900"
-                    : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                }`}
-                onClick={() => {
-                  setSessionId(ses.id);
-                  fetchChatHistory();
+  </div>
+  <div className="pb-4 border-b border-gray-200">
+    <button
+      className="font-light w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+      onClick={() => {
+        router.push('/dashboard');
+      }}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        className="w-6 h-6"
+      >
+        <path
+          d="M12 2a9 9 0 0 0-9 9v11l3-3 3 3 3-3 3 3 3-3 3 3V11a9 9 0 0 0-9-9z"
+          fill="grey"
+          stroke="grey"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="9" cy="10" r="1" fill="white" />
+        <circle cx="15" cy="10" r="1" fill="white" />
+      </svg>
+
+      <span className="text-sm font-medium">Discover</span>
+    </button>
+    </div>
+
+    <div className="pt-1">
+      <p className="text-xs text-gray-400 uppercase tracking-wide">Recent</p>
+    </div>
+
+    {/* Session List */}
+    <div className="overflow-y-auto pr-1 flex-1">
+    <ul className="space-y-2 ">
+  {sessions.map((ses, index) => {
+    const isActive = sessionId === ses.id;
+    return (
+      <li
+        key={ses.id || index}
+        className={`group flex justify-between items-center px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200 text-sm
+          ${
+            isActive
+              ? "bg-indigo-100 text-indigo-900"
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+        onClick={() => {
+          setSessionId(ses.id);
+          fetchChatHistory();
+        }}
+      >
+        <span className="truncate">{ses.title || `Session ${index + 1}`}</span>
+
+        <span className="flex items-center ml-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <MoreHorizontal className="w-5 h-5 text-gray-500" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  delSession(ses.id);
                 }}
               >
-                <span className="text-sm truncate">
-                  {ses.title || `Session ${index + 1}`}
-                </span>
+                <Trash2 className="mr-2" />
+                <span>Delete</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Share className="mr-2" />
+                <span>Share</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </span>
+      </li>
+    );
+  })}
+</ul>
 
-                <span className="flex items-center ml-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <MoreHorizontal className="w-5 h-5 text-gray-500" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          delSession(ses.id);
-                        }}
-                      >
-                        <Trash2 className="mr-2" />
-                        <span>Delete</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Share className="mr-2" />
-                        <span>Share</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
     </div>
 
-     {/* Bottom Section (User Profile) */}
-     <div className="mt-auto pt-6 border-t border-gray-200">
-        <DropdownMenu>
-        <DropdownMenuTrigger className="w-full bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-600 text-white p-4 rounded-xl shadow-lg hover:brightness-110 transition-all duration-300 ease-in-out transform hover:scale-101">
-          <div className="flex items-center space-x-4">
-            <div className="flex flex-col text-left max-w-[180px] truncate">
-              <div className="flex justify-between items-center font-semibold text-lg truncate">
-                <div className="text-white">{User}</div>
-                <div className="transition-all transform hover:rotate-180">
-                  <ChevronsUpDown className="w-5 h-5 text-white" />
-                </div>
-              </div>
-              <span className="text-sm text-white/80 truncate hover:text-white">{UserEmail}</span>
-            </div>
-          </div>
+    {/* Footer / Profile */}
+    <div>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
+          <span className="truncate">{UserEmail}</span>
+          <ChevronsUpDown className="w-4 h-4 text-gray-500" />
         </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="ml-44">
-            <DropdownMenuItem className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2">
-              <User2 className="w-4 h-4" />
-              <span>Profile</span>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="flex items-center gap-2 hover:bg-gray-100 rounded-md px-3 py-2"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+        <DropdownMenuContent className="mt-2 shadow-lg rounded-md">
+          <DropdownMenuItem className="px-3 py-2 hover:bg-gray-100 flex gap-2">
+            <User2 className="w-4 h-4" />
+            Profile
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleLogout}
+            className="px-3 py-2 text-red-600 hover:bg-gray-100 flex gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   </div>
+</div>
 
 
   
-    {/* Sidebar Overlay for mobile */}
-    {sidebarOpen && (
-      <div
-        className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm transition-opacity duration-300 md:hidden"
-        onClick={() => setSidebarOpen(false)}
-      />
-    )}
+{sidebarOpen && (
+  <div
+    className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
+
   
     {/* Main Content */}
-    <div
-      className={`flex flex-col flex-grow items-center transition-all duration-300 relative z-40 ${
-        sidebarOpen ? "md:ml-[270px]" : ""
-      }`}
-    >
-    {/* Header */}
-    <div className="relative">
-    <header
-      className={`fixed top-0 transition-all duration-300 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl
-        ${sidebarOpen ? "left-65" : "left-0"} right-0`}
-    >
-      <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
-        {!sidebarOpen && (
-          <span
-            className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
-            onClick={() => setSidebarOpen(true)}
-          >
-            ☰
-          </span>
-        )}
-        <span
-          className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+<div className={`transition-all duration-300 relative z-10 overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
+<div className="relative">
+<header className="fixed w-full max-w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
+      <div className="flex items-center gap-3 text-lg font-bold z-10 transition-transform duration-300 ease-in-out">
+         {!sidebarOpen && (
+                <span
+                  className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
+                  onClick={() => setSidebarOpen(true)}
+                >
+                  ☰
+                </span>
+              )}
+         <span
+             className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+         >
+             persona.ai
+         </span>
+         </div>
+         <div className="flex items-center justify-center gap-1.5">
+        <Button
+          onClick={() => {
+            setCallActive(true);
+            handleCallClick();
+          }}
+          className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
         >
-          persona.ai
-        </span>
+          <Phone className="w-7 h-7 text-white fill-current" />
+        </Button>
+
+        <Button
+          onClick={() => {
+    
+          }}
+          className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+        >
+          <Ellipsis className="w-7 h-7 text-white fill-current" />
+        </Button>
       </div>
-      <div>
-      <Button
-        onClick={() => {
-          setCallActive(true);
-          handleCallClick();
-        }}
-        className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
-      >
-        <Phone className="w-7 h-7 text-white fill-current" />
+     </header>
 
-      </Button>
-
-
-    </div>
-    </header>
   </div>
 
   {callActive && (
@@ -735,7 +756,8 @@ const App = () => {
 
       {/* Chat Section */}
       {bot ? (
-        <div className="w-6/7 max-w-3xl flex flex-col flex-grow mt-20 pb-24">
+         <div className="flex flex-col items-center ">
+        <div className="w-6/7 max-w-3xl flex flex-col items-center flex-grow mt-20 pb-24">
           {/* Bot Info */}
           <div className="flex flex-col items-center text-center space-y-3 mb-6">
           <img
@@ -787,6 +809,7 @@ const App = () => {
             <div ref={bottomRef} />
           </div>
         </div>
+        </div>
       ) : (
         <div className="flex flex-col items-center mt-40 space-y-4">
           <div className="text-gray-400">Loading bot info...</div>
@@ -800,7 +823,7 @@ const App = () => {
             sidebarOpen ? "md:ml-[250px]" : ""
           }`}
         >
-          <div className="flex items-center justify-center gap-2 mx-auto max-w-3xl">
+          <div className="mx-auto max-w-3xl">
             <div className="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-full shadow-md bg-white max-w-3xl w-full">
             <button
               onClick={handleMicClick}
@@ -831,15 +854,6 @@ const App = () => {
                 ➤
               </button>
             </div>
-            <button
-              className="relative w-10 h-10 flex items-center justify-center text-indigo-600 bg-white border border-gray-300 rounded-full shadow-md hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-300 group"
-              aria-label="Start Voice Input"
-            >
-              <Phone className="w-5 h-5" />
-              <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-black text-white text-xs px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                Start Voice Input
-              </span>
-            </button>
           </div>
         </div>
       )}

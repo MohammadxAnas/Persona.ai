@@ -290,39 +290,37 @@ export default function Home() {
 
   return (
 
-  <div className="relative text-white ">
- <div
-  className={`fixed top-0 left-0 h-full w-[280px] bg-gray-50 border-r border-gray-200 shadow-lg z-50 transform transition-transform duration-300 ${
+  <div className=" text-white ">
+<div
+  className={`fixed top-0 left-0 h-full w-[270px] bg-white p-4 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     sidebarOpen ? "translate-x-0" : "-translate-x-full"
   }`}
 >
-  <div className="flex flex-col h-full p-4 space-y-4">
+  <div className="flex flex-col h-full space-y-4">
 
-  {/* Top Bar */}
-  <div className="flex items-center justify-between">
-    <div>
-      <h2 className="text-xs text-gray-400 uppercase">Welcome,</h2>
-      <h3 className="font-semibold text-gray-800 truncate">{User}</h3>
+    {/* Top Bar */}
+    <div className="flex items-center justify-between">
+      <div>
+        <h2 className="text-xs text-gray-400 uppercase">Welcome,</h2>
+        <h3 className="font-semibold text-gray-800 truncate">{User}</h3>
+      </div>
+      <button onClick={() => setSidebarOpen(false)}>
+        <ChevronsLeft className="text-gray-500 hover:text-black" />
+      </button>
     </div>
-  
-    <button onClick={() => setSidebarOpen(false)}>
-      <ChevronsLeft className="text-gray-500 hover:text-black" />
-    </button>
-  </div>
 
-  {/* Create Bot Button */}
-  <div className="pt-2 ">
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-      <Button
-        className="h-12 w-33 bg-white text-gray-800 border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-black transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2"
-      >
-        <span className="flex items-center justify-center gap-1">
-        <Plus className="w-15 h-15" />
-        <div className=" font-sans">Create</div>
-        </span>
-      </Button>
-
+    {/* Create Bot Button */}
+    <div className="pt-2">
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogTrigger asChild>
+         <Button
+                 className="h-12 w-33 bg-white text-gray-800 border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-black transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2"
+               >
+                 <span className="flex items-center justify-center gap-1">
+                 <Plus className="w-15 h-15" />
+                 <div className=" font-sans">Create</div>
+                 </span>
+               </Button>
         </DialogTrigger>
 
         <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
@@ -335,7 +333,7 @@ export default function Home() {
 
           <div className="grid gap-4 py-4">
             <div>
-              <Label className="pb-2">Name</Label>
+              <Label className="pb-1 block">Name</Label>
               <Input
                 name="botName"
                 type="text"
@@ -343,11 +341,11 @@ export default function Home() {
                 onChange={handleChange2}
                 placeholder="e.g., Dr. Helper"
                 required
-                maxLength={25} 
+                maxLength={25}
               />
             </div>
             <div>
-              <Label className="pb-2">Description</Label>
+              <Label className="pb-1 block">Description</Label>
               <Input
                 name="botDesc"
                 type="text"
@@ -358,7 +356,7 @@ export default function Home() {
               />
             </div>
             <div>
-              <Label className="pb-2">Personality</Label>
+              <Label className="pb-1 block">Personality</Label>
               <Input
                 name="botPersona"
                 type="text"
@@ -369,7 +367,7 @@ export default function Home() {
               />
             </div>
             <div>
-              <Label className="pb-2">Avatar</Label>
+              <Label className="pb-1 block">Avatar</Label>
               <Input
                 name="avatar"
                 type="text"
@@ -379,7 +377,7 @@ export default function Home() {
               />
             </div>
             <div>
-              <Label className="pb-2">Gender</Label>
+              <Label className="pb-1 block">Gender</Label>
               <select
                 name="botGender"
                 value={BotData.botGender}
@@ -406,50 +404,47 @@ export default function Home() {
         </DialogContent>
       </Dialog>
     </div>
-    <div className="pb-4 border-b border-gray-200">
-    <button
-      className="font-light w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
-      onClick={() => {
-        fetchUserBots();
-      }}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-        className="w-6 h-6"
-      >
-        <path
-          d="M12 2a9 9 0 0 0-9 9v11l3-3 3 3 3-3 3 3 3-3 3 3V11a9 9 0 0 0-9-9z"
-          fill="grey"
-          stroke="grey"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <circle cx="9" cy="10" r="1" fill="white" />
-        <circle cx="15" cy="10" r="1" fill="white" />
-      </svg>
 
-      <span className="text-sm font-medium">Discover</span>
-    </button>
+    {/* Discover Button */}
+    <div className="border-b border-gray-200 pb-4">
+      <button
+        className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+        onClick={fetchUserBots}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          className="w-6 h-6"
+        >
+          <path
+            d="M12 2a9 9 0 0 0-9 9v11l3-3 3 3 3-3 3 3 3-3 3 3V11a9 9 0 0 0-9-9z"
+            fill="grey"
+            stroke="grey"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <circle cx="9" cy="10" r="1" fill="white" />
+          <circle cx="15" cy="10" r="1" fill="white" />
+        </svg>
+        <span className="text-sm font-medium">Discover</span>
+      </button>
     </div>
 
     {/* Recent Bots Section */}
     <div>
       <h4 className="text-xs text-gray-400 uppercase tracking-wide mb-2">Recent Bots</h4>
       <ul className="space-y-2">
-        {/* Replace below with actual bot entries if available */}
         <li className="text-sm text-gray-600">No recent bots</li>
       </ul>
     </div>
 
-    {/* Spacer pushes Create Bot to bottom */}
-    <div className="flex-grow " />
-   
+    {/* Spacer */}
+    <div className="flex-grow" />
 
-    {/* Footer/Profile Menu */}
+    {/* Footer / User Menu */}
     <DropdownMenu>
-      <DropdownMenuTrigger className="mt-4 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
+      <DropdownMenuTrigger className="text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
         <span>{UserEmail}</span>
         <ChevronsUpDown className="w-4 h-4 text-gray-500" />
       </DropdownMenuTrigger>
@@ -472,38 +467,34 @@ export default function Home() {
 </div>
 
 
-   {sidebarOpen && (
-      <div
-        className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm transition-opacity duration-300 md:hidden"
-        onClick={() => setSidebarOpen(false)}
-      />
-    )}
-  <div
-     className={`transition-all duration-300 relative z-40 ${sidebarOpen ? "md:ml-[270px]" : "" }`}
-  >
 
-    <div className="relative">
-    <header
-        className={`fixed top-0 transition-all duration-300 z-50 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl
-        ${sidebarOpen ? "left-70" : "left-0"} right-0`}
-    >
-        <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
-        {!sidebarOpen && (
-            <span
-            className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
-            onClick={() => setSidebarOpen(true)}
-            >
-            ☰
-            </span>
-        )}
-        <span
-            className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
-        >
-            persona.ai
-        </span>
-        </div>
-    </header>
-    </div>
+{sidebarOpen && (
+  <div
+    className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
+
+<div className={`transition-all duration-300 relative z-10 overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
+
+<header className="fixed w-full max-w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
+
+      <div className="flex items-center gap-3 text-lg font-bold z-10 transition-transform duration-300 ease-in-out">
+         {!sidebarOpen && (
+                <span
+                  className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
+                  onClick={() => setSidebarOpen(true)}
+                >
+                  ☰
+                </span>
+              )}
+         <span
+             className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+         >
+             persona.ai
+         </span>
+         </div>
+     </header>
 
     {loading && (
     <div className="fixed top-0 left-0 w-full z-[1000]">
@@ -696,7 +687,7 @@ export default function Home() {
         </li>
 
         {Bots.map((bot) => (
-          <li key={bot.id} className="snap-start pl-2">
+          <li key={bot.id} className="snap-start pl-1">
             <Card
               className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
               onClick={() => {
