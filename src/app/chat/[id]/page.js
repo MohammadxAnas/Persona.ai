@@ -27,6 +27,7 @@ const App = () => {
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [botbarOpen, setBotbarOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [Text, setText] = useState("");
@@ -556,7 +557,9 @@ const App = () => {
         <h2 className="text-xs text-gray-400 uppercase">Welcome,</h2>
         <h3 className="font-semibold text-gray-800 truncate">{User}</h3>
       </div>
-      <button onClick={() => setSidebarOpen(false)}>
+      <button onClick={() => setSidebarOpen(false)
+                          
+      }>
         <ChevronsLeft className="text-gray-500 hover:text-black" />
       </button>
     </div>
@@ -690,52 +693,77 @@ const App = () => {
   
 {sidebarOpen && (
   <div
-    className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
+    className="fixed inset-0 z-10 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
     onClick={() => setSidebarOpen(false)}
   />
 )}
+{/* Botbar */}
+<div
+  className={`fixed top-18 right-0 h-full w-[270px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+    botbarOpen ? "translate-x-0" : "translate-x-full"
+  }`}
+>
+  <div>
+    Hello
+  </div>
+</div>
 
-  
+{botbarOpen && (
+  <div
+    className="fixed inset-0 z-30 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
+    onClick={() => setBotbarOpen(false)}
+  />
+)}
+
     {/* Main Content */}
-<div className={`transition-all duration-300 relative z-10 overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
+<div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
 <div className="relative">
-<header className="fixed w-full max-w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
-      <div className="flex items-center gap-3 text-lg font-bold z-10 transition-transform duration-300 ease-in-out">
-         {!sidebarOpen && (
-                <span
-                  className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  ☰
-                </span>
-              )}
-         <span
-             className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
-         >
-             persona.ai
-         </span>
-         </div>
-         <div className="flex items-center justify-center gap-1.5">
-        <Button
-          onClick={() => {
-            setCallActive(true);
-            handleCallClick();
-          }}
-          className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
-        >
-          <Phone className="w-7 h-7 text-white fill-current" />
-        </Button>
+<header
+  className={`fixed top-0 left-0 z-40 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
+    w-full ${sidebarOpen ? "md:ml-[270px] md:w-[calc(100%-270px)]" : ""}
+`}
+>
+  <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
+    {!sidebarOpen && (
+      <span
+        className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
+        onClick={() => {
+          setSidebarOpen(true);
+          setBotbarOpen(false);
+        }}
+      >
+        ☰
+      </span>
+    )}
+    <span
+      className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+    >
+      persona.ai
+    </span>
+  </div>
 
-        <Button
-          onClick={() => {
-    
-          }}
-          className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
-        >
-          <Ellipsis className="w-7 h-7 text-white fill-current" />
-        </Button>
-      </div>
-     </header>
+  <div className="flex items-center justify-center gap-1.5">
+    <Button
+      onClick={() => {
+        setCallActive(true);
+        handleCallClick();
+      }}
+      className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+    >
+      <Phone className="w-7 h-7 text-white fill-current" />
+    </Button>
+
+    <Button
+      onClick={() => {
+        setBotbarOpen(prev => !prev)
+        setSidebarOpen(false);
+      }}
+      className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+    >
+      <Ellipsis className="w-7 h-7 text-white fill-current" />
+    </Button>
+  </div>
+</header>
 
   </div>
 
@@ -819,7 +847,7 @@ const App = () => {
       {/* Input Bar */}
       {bot && (
         <div
-          className={`text-black fixed bottom-5 left-0 right-0 z-50 px-4 transition-all duration-300 ${
+          className={`text-black fixed bottom-5 left-0 right-0 z-30 px-4 transition-all duration-300 ${
             sidebarOpen ? "md:ml-[250px]" : ""
           }`}
         >

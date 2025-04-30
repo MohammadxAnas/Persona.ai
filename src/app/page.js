@@ -108,7 +108,7 @@ export default function Page() {
   return (
      <div className="text-white ">
   
-      <header className="container mx-auto flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
+      <header className="w-full max-w-full container  flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
         <div className="flex items-center gap-3 text-lg font-bold z-50 transition-transform duration-300 ease-in-out">
          
           <span
