@@ -3,6 +3,7 @@ import { Progress } from "@/components/ui/progress"
 import React, { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   DropdownMenu,
@@ -12,6 +13,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import {
   Avatar,
   AvatarFallback,
@@ -25,6 +37,10 @@ const App = () => {
   const { id } = useParams(); 
   const [bot, setBot] = useState(null);
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [Persona, setPersona] = useState({ userName: "", userDesc: "" });
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [botbarOpen, setBotbarOpen] = useState(false);
@@ -55,6 +71,11 @@ const App = () => {
 
   const [voices, setVoices] = useState([]);
 
+
+  const handleChange2 = (e) => {
+    const { name, value } = e.target;
+    setPersona((prev) => ({ ...prev, [name]: value }));
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -256,8 +277,9 @@ const App = () => {
           Stay fully in character while chatting.
           
           The user interacting with you has the following persona:
-          Name: ${User}
-          
+          Name: ${Persona.userName?.trim() ? Persona.userName : User}
+          Description: ${Persona.userDesc || ""}
+
           Engage with them in a way that aligns with your personality and background.`,
           }
           
@@ -365,6 +387,8 @@ const App = () => {
     setSidebarOpen(false);
   };
   
+ 
+
   const delSession = async (sesId) => {
     startLoading();
     try {
@@ -644,12 +668,13 @@ const App = () => {
         <span className="flex items-center ml-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <MoreHorizontal className="w-5 h-5 text-gray-500" />
-              </button>
+            <button
+              className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontal className="w-5 h-5 text-gray-500" />
+            </button>
+
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem
@@ -743,7 +768,6 @@ const App = () => {
             <Eye className="h-5 w-5" />
           </button>
 
-          {/* ✅ Move description outside the button */}
           <p className=" font-mono mt-4 text-gray-700 text-sm truncate whitespace-nowrap overflow-hidden w-full max-w-[220px]">
             {bot.description}
           </p>
@@ -769,17 +793,77 @@ const App = () => {
       <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
     </button>
 
-    <button
-      className="bg-gray-50 font-light w-full flex items-center justify-between px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
-    >
-      <div className="flex items-center justify-center gap-3">
-      <UserPen className="h-5 w-5"/>
-      <span className="text-sm font-medium">Persona</span>
+   
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <DialogTrigger asChild>
+          <button
+          className="bg-gray-50 font-light w-full flex items-center justify-between px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+        >
+          <div className="flex items-center justify-center gap-3">
+          <UserPen className="h-5 w-5"/>
+          <span className="text-sm font-medium">Persona</span>
+          </div>
+          <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
+          </button>
+        </DialogTrigger>
+
+        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
+        <DialogHeader>
+          <DialogTitle>Set Your Persona</DialogTitle>
+          <DialogDescription className="text-sm text-gray-500">
+            Introduce yourself to the AI. Your persona helps shape how characters interact with you during conversations.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-4">
+          <div>
+            <Label className="pb-1 block">Display Name</Label>
+            <input
+              name="userName"
+              type="text"
+              value={Persona.userName}
+              onChange={handleChange2}
+              placeholder="Enter your persona's name (e.g., 'Alex The Bold')"
+              required
+              maxLength={25}
+               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-300 text-sm text-gray-800 placeholder-gray-400 bg-white resize-none transition-all"
+            />
+          </div>
+
+          <div>
+          <Label className="pb-1 block">About You</Label>
+          <textarea
+            name="userDesc"
+            value={Persona.userDesc}
+            onChange={handleChange2}
+            placeholder="Write a little bit about your persona (e.g., 'A fearless hero on a mission to save the world')"
+            required
+            rows={3}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-300 text-sm text-gray-800 placeholder-gray-400 bg-white resize-none transition-all"
+
+          />
+        </div>
+
+        </div>
+
+        <DialogFooter>
+          <Button
+            onClick={()=>{
+              startNewChat();
+              setIsModalOpen(false);
+            }}
+            disabled={isDisabled}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+          >
+            Save Persona
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+
+      </Dialog>
+
       </div>
-      <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
-    </button>
-       </div>
-       
       </div>
     </>
   )}

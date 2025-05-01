@@ -415,7 +415,7 @@ export default function Home() {
     {/* Discover Button */}
     <div className="border-b border-gray-200 pb-4">
       <button
-        className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+        className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100 sm:bg-gray-50"
         onClick={() => {
           fetchUserBots();
           SetLoading(true);
@@ -485,26 +485,70 @@ export default function Home() {
   />
 )}
 
-<div className={`transition-all duration-300 relative z-10 overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
+<div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
+<div className="relative">
+<header
+  className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
+    w-full ${sidebarOpen ? "md:ml-[270px] md:w-[calc(100%-270px)]" : ""}
+`}
+>
+  <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
+    {!sidebarOpen && (
+      <span
+        className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
+        onClick={() => {
+          setSidebarOpen(true);
+          setBotbarOpen(false);
+          setHistoryOpen(false);
+          setBotdetailsOpen(false);
+        }}
+      >
+        ☰
+      </span>
+    )}
+    <span
+      className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+    >
+      persona.ai
+    </span>
+  </div>
 
-<header className="fixed w-full max-w-full flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl">
+  {/* Push input to the right */}
+  <div className="relative ml-auto group">
+  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg transition-colors duration-300 group-focus-within:text-indigo-500">
+    <Search className="w-6 h-6" />
+  </span>
 
-      <div className="flex items-center gap-3 text-lg font-bold z-10 transition-transform duration-300 ease-in-out">
-         {!sidebarOpen && (
-                <span
-                  className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
-                  onClick={() => setSidebarOpen(true)}
-                >
-                  ☰
-                </span>
-              )}
-         <span
-             className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
-         >
-             persona.ai
-         </span>
-         </div>
-     </header>
+  {/* Mobile input */}
+  <input
+    placeholder="Search characters..."
+    className="
+      w-50 h-8 block sm:hidden
+      pl-10 pr-4 py-2
+      rounded-full border border-gray-300
+      bg-white text-gray-800 placeholder-gray-400
+      shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:shadow-md
+      transition duration-200 ease-in-out
+    "
+  />
+
+  {/* Desktop input */}
+  <input
+    placeholder="Search for characters..."
+    className="
+      w-80 h-8 hidden sm:block
+      pl-12 pr-4 py-2
+      rounded-full border border-gray-300
+      bg-white text-gray-800 placeholder-gray-400
+      shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:shadow-md
+      transition duration-200 ease-in-out
+    "
+  />
+</div>
+
+</header>
+</div>
+
 
     {loading && (
     <div className="fixed top-0 left-0 w-full z-[1000]">
@@ -527,41 +571,6 @@ export default function Home() {
           Manage and interact with your AI bots here.
         </p>
       </div>
-
-      <div className="flex-1 min-w-0 mr-3">
-      <div className="relative">
-        <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg">
-          <Search className="w-6 h-6" />
-        </span>
-
-        {/* Shown on small screens: shorter placeholder */}
-        <Input
-          placeholder="Search..."
-          className="
-            w-full
-            block sm:hidden   
-            pl-12 pr-4 py-2
-            rounded-full border border-gray-300
-            bg-white text-gray-700
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-          "
-        />
-
-        {/* Shown on sm+ screens: full placeholder */}
-        <Input
-          placeholder="Search for characters..."
-          className="
-            w-full
-            hidden sm:block   
-            pl-12 pr-4 py-2
-            rounded-full border border-gray-300
-            bg-white text-gray-700
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-          "
-        />
-      </div>
-    </div>
-
     </div>
 
 
