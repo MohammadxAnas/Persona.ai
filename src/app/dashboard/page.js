@@ -47,16 +47,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function Home() {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
-  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botPersona: "", avatar: "", botGender: "" });
+  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botView: "", avatar: "", botGender: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [Loading, SetLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [User, setUser] = useState("");
   const [UserEmail, setUserEmail] = useState("");
-
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const [progress, setProgress] = useState(0);
 
@@ -123,7 +122,6 @@ export default function Home() {
   
   
   const fetchUserBots = async () => {
-    SetLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -132,7 +130,7 @@ export default function Home() {
       const userId = decoded._id;
       console.log(userId);
   
-      const response = await fetch(`${baseURL}/api/getBots?userId=${userId}`, {
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/getBots?userId=${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +154,7 @@ export default function Home() {
         throw new Error(data.error || "Failed to fetch bots");
       }
     } catch (err) {
-      console.error("Error fetching bots:", err.message);
+      console.log("Error fetching bots:", err.message);
       return [];
     } finally {
       SetLoading(false);
@@ -169,9 +167,10 @@ export default function Home() {
   };
 
   const handleCreatebot = async (e) => {
+    setIsDisabled(true);
     e.preventDefault();
-    const { botName, botDesc, botPersona } = BotData;
-    if (!botName || !botDesc || !botPersona) {
+    const { botName, botDesc, botView } = BotData;
+    if (!botName || !botDesc || !botView) {
       return toast.error("Bot info required!");
     }
     try {
@@ -182,7 +181,7 @@ export default function Home() {
       const userId = decoded._id;
       console.log(userId);
 
-      const response = await fetch(`${baseURL}/api/createBot`, {
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/createBot`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -210,15 +209,18 @@ export default function Home() {
       }
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
+    }finally{
+      setIsDisabled(false);
     }
   };
   
   const deleteBot = async (botId, fetchUserBots) => {
+    setIsDisabled(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
   
-      const response = await fetch(`${baseURL}/api/delBot?botId=${botId}`, {
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/delBot?botId=${botId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -244,7 +246,7 @@ export default function Home() {
       console.error("Error deleting bot:", err.message);
       toast.error(err.message || "Something went wrong");
     } finally{
-      
+      setIsDisabled(false);
     }
   };
 
@@ -259,7 +261,7 @@ export default function Home() {
       const userEmail = decodedToken.email;
       if (!userEmail) return toast.error("User ID not found in token.");
 
-      const response = await fetch(`${baseURL}/api/logout`, {
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -325,49 +327,49 @@ export default function Home() {
 
         <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
           <DialogHeader>
-            <DialogTitle>Create a Bot</DialogTitle>
+            <DialogTitle>Create a character</DialogTitle>
             <DialogDescription className="text-sm text-gray-500">
-              Fill out the details below to create a new bot.
+            Fill out the details below to bring your character to life.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
             <div>
-              <Label className="pb-1 block">Name</Label>
+              <Label className="pb-1 block">Character Name</Label>
               <Input
                 name="botName"
                 type="text"
                 value={BotData.botName}
                 onChange={handleChange2}
-                placeholder="e.g., Dr. Helper"
+                placeholder="e.g., Kwame 'Krazy K' Dolo"
                 required
                 maxLength={25}
               />
             </div>
             <div>
-              <Label className="pb-1 block">Description</Label>
+              <Label className="pb-1 block">Short Description</Label>
               <Input
                 name="botDesc"
                 type="text"
                 value={BotData.botDesc}
                 onChange={handleChange2}
-                placeholder="What does this bot do?"
+                placeholder="e.g., A wild and funny street legend"
                 required
               />
             </div>
             <div>
-              <Label className="pb-1 block">Personality</Label>
+              <Label className="pb-1 block">Backstory / Overview</Label>
               <Input
-                name="botPersona"
+                name="botView"
                 type="text"
-                value={BotData.botPersona}
+                value={BotData.botView}
                 onChange={handleChange2}
-                placeholder="e.g., Friendly, formal"
+                placeholder="e.g., Grew up in Soweto, known for wild antics"
                 required
               />
             </div>
             <div>
-              <Label className="pb-1 block">Avatar</Label>
+              <Label className="pb-1 block">Avatar Image URL</Label>
               <Input
                 name="avatar"
                 type="text"
@@ -396,9 +398,14 @@ export default function Home() {
           <DialogFooter>
             <Button
               onClick={handleCreatebot}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+              disabled={isDisabled}
+              className={`w-full py-2 rounded-lg
+                ${isDisabled 
+                  ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
+                  : '  bg-indigo-600 hover:bg-indigo-700 text-white'}`
+              }
             >
-              Create
+              Create Character
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -409,7 +416,10 @@ export default function Home() {
     <div className="border-b border-gray-200 pb-4">
       <button
         className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
-        onClick={fetchUserBots}
+        onClick={() => {
+          fetchUserBots();
+          SetLoading(true);
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -575,13 +585,13 @@ export default function Home() {
 
     {/* Bot List */}
     {!loading && !Loading && Bots && (
-      <ul className="ml-2 flex overflow-x-auto gap-4 px-4 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
+      <ul className="flex overflow-x-auto gap-4 px-4 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
 
-      <li className="snap-start pl-2">
+      <li className="snap-start">
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
       <Card
-        className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200 cursor-pointer"
+        className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200 cursor-pointer"
       >
         <div className="flex h-full items-center justify-between px-4">
           <div className="flex items-center gap-4">
@@ -593,10 +603,10 @@ export default function Home() {
 
             <div className="flex flex-col">
               <CardTitle className="text-base font-semibold text-indigo-700">
-                Create New Bot
+                Create New Character
               </CardTitle>
-              <CardDescription className="text-sm text-gray-600 w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
-                Start a conversation by building your own custom AI assistant.
+              <CardDescription className="text-sm text-gray-600 w-[300px] two-line-truncate">
+                Start a conversation by building your own custom AI Character.
               </CardDescription>
             </div>
           </div>
@@ -606,49 +616,49 @@ export default function Home() {
 
         <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
           <DialogHeader>
-            <DialogTitle>Create a Bot</DialogTitle>
+            <DialogTitle>Create a Character</DialogTitle>
             <DialogDescription className="text-sm text-gray-500">
               Fill out the details below to create a new bot.
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-4 py-4">
-            <div>
-              <Label className="pb-2">Name</Label>
+          <div>
+              <Label className="pb-1 block">Character Name</Label>
               <Input
                 name="botName"
                 type="text"
                 value={BotData.botName}
                 onChange={handleChange2}
-                placeholder="e.g., Dr. Helper"
+                placeholder="e.g., Kwame 'Krazy K' Dolo"
                 required
-                maxLength={25} 
+                maxLength={25}
               />
             </div>
             <div>
-              <Label className="pb-2">Description</Label>
+              <Label className="pb-1 block">Short Description</Label>
               <Input
                 name="botDesc"
                 type="text"
                 value={BotData.botDesc}
                 onChange={handleChange2}
-                placeholder="What does this bot do?"
+                placeholder="e.g., A wild and funny street legend"
                 required
               />
             </div>
             <div>
-              <Label className="pb-2">Personality</Label>
+              <Label className="pb-1 block">Backstory / Overview</Label>
               <Input
-                name="botPersona"
+                name="botView"
                 type="text"
-                value={BotData.botPersona}
+                value={BotData.botView}
                 onChange={handleChange2}
-                placeholder="e.g., Friendly, formal"
+                placeholder="e.g., Grew up in Soweto, known for wild antics"
                 required
               />
             </div>
             <div>
-              <Label className="pb-2">Avatar</Label>
+              <Label className="pb-2">Avatar Image URL</Label>
               <Input
                 name="avatar"
                 type="text"
@@ -677,9 +687,10 @@ export default function Home() {
           <DialogFooter>
             <Button
               onClick={handleCreatebot}
+              disabled={isDisabled}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
             >
-              Create
+              Create Character
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -706,9 +717,7 @@ export default function Home() {
                     <CardTitle className="text-base font-semibold text-indigo-700">
                       {bot.name}
                     </CardTitle>
-                    <CardDescription
-                      className="text-sm text-gray-600 w-[200px] overflow-hidden text-ellipsis whitespace-nowrap"
-                    >
+                    <CardDescription className="text-sm text-gray-600 w-[225px] two-line-truncate">
                       {bot.description}
                     </CardDescription>
 
@@ -732,13 +741,22 @@ export default function Home() {
                     <Button
                       variant="outline"
                       className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/chat/${bot.id}`);
+                      }}
                     >
                       <Phone className="w-4 h-4" />
                     </Button>
 
                     <Button
                       variant="outline"
-                      className="h-8 w-8 p-0 rounded-lg border-red-200 text-red-500"
+                      className={`h-8 w-8 p-0 rounded-lg border 
+                        ${isDisabled 
+                          ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
+                          : ' border-red-200 text-red-500'}`}
+                      
+                      disabled={isDisabled}
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteBot(bot.id, fetchUserBots);

@@ -126,3 +126,9 @@
     @apply bg-background text-foreground;
   }
 }
+.two-line-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;       /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

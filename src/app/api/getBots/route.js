@@ -27,6 +27,7 @@ export async function GET(req) {
 
     return NextResponse.json({ success: true, bots });
   } catch (err) {
+    console.error("Database error:", err);  
     return NextResponse.json({ success: false, error: "Failed to fetch bots" }, { status: 500 });
   }
 }

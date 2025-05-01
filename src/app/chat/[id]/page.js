@@ -18,7 +18,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis} from "lucide-react";
+import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis, Eye, ChevronRight, History, RotateCcw, UserPen} from "lucide-react";
 
 const App = () => {
 
@@ -28,6 +28,9 @@ const App = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [botbarOpen, setBotbarOpen] = useState(false);
+  const [botdetailsOpen, setBotdetailsOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [Text, setText] = useState("");
@@ -51,6 +54,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   const [voices, setVoices] = useState([]);
+
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -207,7 +211,6 @@ const App = () => {
     if (!sessionId) return ;
     
     fetchChatHistory();
-    console.log("messages:",messages);
   }, [sessionId]);
 
   const handleCall = async (txt) => {
@@ -246,8 +249,18 @@ const App = () => {
         role: "user",
         parts: [
           {
-            text: `You are a character named ${bot.name}. Your description is: "${bot.description}". Your personality is: "${bot.personality}". Stay in character while chatting.`,
-          },
+            text: `You are a character named ${bot.name}. 
+          Your description is: "${bot.description}". 
+          Backstory/Overview: "${bot.overview}". 
+          Gender: ${bot.gender || 'Unspecified'}.
+          Stay fully in character while chatting.
+          
+          The user interacting with you has the following persona:
+          Name: ${User}
+          
+          Engage with them in a way that aligns with your personality and background.`,
+          }
+          
         ],
       };
   
@@ -499,7 +512,7 @@ const App = () => {
     const disableMic = () => {
       if (Recognition && recognitionInProgress) {
         Recognition.stop();
-        RecognitionInProgress = false;
+        recognitionInProgress = false;
         Recognition = null;
         console.log("Microphone disabled.");
       } else {
@@ -564,7 +577,6 @@ const App = () => {
       </button>
     </div>
 
-    {/* Create Bot Button */}
     <div className="pt-2">
     <Button
         className="h-12 w-33 bg-white text-gray-800 border border-gray-300 rounded-full shadow-sm hover:bg-gray-100 hover:text-black transition-all duration-200 text-sm font-medium flex items-center justify-center gap-2"
@@ -619,7 +631,7 @@ const App = () => {
         className={`group flex justify-between items-center px-3 py-2 rounded-lg cursor-pointer transition-colors duration-200 text-sm
           ${
             isActive
-              ? "bg-indigo-100 text-indigo-900"
+              ? "bg-gray-100 text-indigo-900"
               : "text-gray-700 hover:bg-gray-100"
           }`}
         onClick={() => {
@@ -699,19 +711,190 @@ const App = () => {
 )}
 {/* Botbar */}
 <div
-  className={`fixed top-18 right-0 h-full w-[270px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+  className={`fixed top-16 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     botbarOpen ? "translate-x-0" : "translate-x-full"
   }`}
 >
-  <div>
-    Hello
+<div className="flex items-center text-left space-x-4 mb-6">
+  {bot && (
+    <>
+      <div className="flex flex-col mt-3">
+        <div className="flex items-center justify-center gap-3">
+          <img
+            src={bot.avatar || 'https://loremflickr.com/600/400/cat.jpg'}
+            alt={bot.name || 'Bot avatar'}
+            className="w-18 h-18 rounded-full object-cover shadow-lg"
+          />
+          <div>
+            <h2 className="-mt-2 text-xl text-black font-mono">{bot.name}</h2>
+            <p className="text-[14px] text-gray-600 w-[150px] truncate whitespace-nowrap overflow-hidden">
+              By @{User}
+            </p>
+            <p className="text-blue-900 text-[12px]">persona.ai</p>
+          </div>
+        </div>
+
+        <div className="pb-4 mt-4 border-b border-gray-200">
+          <button
+            className="bg-gray-100 font-light w-full flex items-center justify-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-200"
+            onClick={() => setBotdetailsOpen(true)}
+          >
+            <span className="text-sm font-medium">View Character Details</span>
+            <Eye className="h-5 w-5" />
+          </button>
+
+          {/* ✅ Move description outside the button */}
+          <p className=" font-mono mt-4 text-gray-700 text-sm truncate whitespace-nowrap overflow-hidden w-full max-w-[220px]">
+            {bot.description}
+          </p>
+        </div>
+       <div className="mt-4 flex flex-col gap-3">
+      <button
+          className="bg-gray-100 font-light h-14 w-36 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-gray-800 transition-all duration-200 hover:bg-gray-200"
+          onClick={startNewChat}
+        >
+          <Plus className=" w-8 h-8" />
+          <span className="text-sm font-medium" >New Chat</span>
+        </button>
+      <button
+      className="bg-gray-50 font-light w-full flex items-center justify-between px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+      onClick={() => {
+        setHistoryOpen(true);
+      }}
+    >
+      <div className="flex items-center justify-center gap-3">
+      <RotateCcw className="h-5 w-5"/>
+      <span className="text-sm font-medium">History</span>
+      </div>
+      <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
+    </button>
+
+    <button
+      className="bg-gray-50 font-light w-full flex items-center justify-between px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+    >
+      <div className="flex items-center justify-center gap-3">
+      <UserPen className="h-5 w-5"/>
+      <span className="text-sm font-medium">Persona</span>
+      </div>
+      <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
+    </button>
+       </div>
+       
+      </div>
+    </>
+  )}
+</div>
+</div>
+
+    {/* Bot details */}
+    <div
+      className={`fixed top-18 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+        botdetailsOpen ? "translate-x-0" : "translate-x-full"
+      }`}
+    >
+      <div className="text-black flex items-center text-left space-x-4 mb-6">
+        {bot && (
+          <>
+        <div className="flex flex-col space-y-4">
+      {/* Header with back button */}
+      <div className="flex items-center gap-1">
+          <ChevronRight 
+          className="text-black hover:text-gray-500" 
+          onClick={() => setBotdetailsOpen(false)}
+          />
+        <h2 className="text-md text-black font-mono">View Character Details</h2>
+      </div>
+
+      {/* Character Name */}
+      <div>
+        <h3 className="text-sm text-gray-500 font-medium">Name</h3>
+        <p className="text-sm text-gray-700">{bot.name}</p>
+      </div>
+
+      {/* Character Description */}
+      <div>
+        <h3 className="text-sm text-gray-500 font-medium">Description</h3>
+        <p className="text-sm text-gray-700">{bot.description || "No description provided."}</p>
+      </div>
+
+      {/* Character Overview */}
+      <div>
+        <h3 className="text-sm text-gray-500 font-medium">Overview</h3>
+        <p className="text-sm text-gray-700">{bot.overview || "No overview available."}</p>
+      </div>
+
+      {/* Character Gender */}
+      <div>
+        <h3 className="text-sm text-gray-500 font-medium">Gender</h3>
+        <p className="text-sm text-gray-700">{bot.gender || "Unspecified"}</p>
+      </div>
+    </div>
+          </>
+        )}
+      </div>
+    </div>
+
+   {/* chat history */}
+   <div
+  className={`fixed top-18 right-0 h-screen w-[290px] bg-white border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+    historyOpen ? "translate-x-0" : "translate-x-full"
+  }`}
+>
+  <div className="flex flex-col h-full">
+    {/* Header */}
+    <div className="flex items-center gap-1 mb-2 px-4 py-2 shrink-0">
+      <ChevronRight
+        className="text-black hover:text-gray-500 cursor-pointer"
+        onClick={() => setHistoryOpen(false)}
+      />
+      <h2 className="text-md text-black font-mono">Chat History</h2>
+    </div>
+
+    {/* Scrollable Content */}
+    <div className="flex-1 overflow-y-auto px-4 space-y-2">
+      {messages &&
+        [...messages].reverse().map((msg, index) =>
+          msg?.text ? (
+            <div key={index} className="py-2 border-b border-gray-100">
+              <p className="text-sm text-gray-600 font-semibold">
+                {msg.sender === "user" ? "You" : bot?.name || "Bot"}
+              </p>
+              <p className="text-sm text-gray-800">{msg.text}</p>
+            </div>
+          ) : null
+        )}
+    </div>
   </div>
 </div>
+
+
+
+{historyOpen && (
+  <div
+    className="fixed inset-0 z-30 duration-300 "
+    onClick={() =>{ 
+      setHistoryOpen(false);
+    }}
+  />
+)}
+
+{botdetailsOpen && (
+  <div
+    className="fixed inset-0 z-30 duration-300 "
+    onClick={() =>{ 
+      setBotdetailsOpen(false);
+    }}
+  />
+)}
 
 {botbarOpen && (
   <div
     className="fixed inset-0 z-30 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
-    onClick={() => setBotbarOpen(false)}
+    onClick={() =>{ 
+      setBotbarOpen(false)
+      setBotdetailsOpen(false);
+      setHistoryOpen(false);
+    }}
   />
 )}
 
@@ -730,6 +913,8 @@ const App = () => {
         onClick={() => {
           setSidebarOpen(true);
           setBotbarOpen(false);
+          setHistoryOpen(false);
+          setBotdetailsOpen(false);
         }}
       >
         ☰
@@ -742,13 +927,13 @@ const App = () => {
     </span>
   </div>
 
-  <div className="flex items-center justify-center gap-1.5">
+  <div className="flex items-center justify-center gap-2">
     <Button
       onClick={() => {
         setCallActive(true);
         handleCallClick();
       }}
-      className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+      className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
     >
       <Phone className="w-7 h-7 text-white fill-current" />
     </Button>
@@ -758,7 +943,7 @@ const App = () => {
         setBotbarOpen(prev => !prev)
         setSidebarOpen(false);
       }}
-      className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+      className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
     >
       <Ellipsis className="w-7 h-7 text-white fill-current" />
     </Button>
@@ -784,8 +969,8 @@ const App = () => {
 
       {/* Chat Section */}
       {bot ? (
-         <div className="flex flex-col items-center ">
-        <div className="w-6/7 max-w-3xl flex flex-col items-center flex-grow mt-20 pb-24">
+        <div className="flex flex-col h-screen items-center ">
+         <div className="w-19/20 max-w-3xl flex flex-col flex-grow mt-20 pb-24 ">
           {/* Bot Info */}
           <div className="flex flex-col items-center text-center space-y-3 mb-6">
           <img
@@ -798,17 +983,18 @@ const App = () => {
           </div>
   
           {/* Messages */}
-          <div className="flex flex-col gap-4 overflow-y-auto flex-grow pb-20">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`rounded-2xl px-4 py-2 max-w-[75%] text-sm md:text-base break-words ${
-                msg.sender === "user"
-                  ? "self-end bg-blue-100 text-blue-900"
-                  : "self-start bg-gray-100 text-gray-800"
-              }`}
-            >
-              {msg.text}
+          <div className="flex flex-col gap-4 flex-grow min-h-0 overflow-y-auto pb-20 px-2">
+          {messages?.map((msg, index) => (
+            msg?.text && (
+              <div
+                key={index}
+                className={`rounded-2xl px-4 py-2 max-w-[75%] text-sm md:text-base break-words ${
+                  msg.sender === "user"
+                    ? "self-end bg-blue-100 text-blue-900"
+                    : "self-start bg-gray-100 text-gray-800"
+                }`}
+              >
+                {msg.text}
 
               {/* Show Play button only for bot messages */}
               {msg.sender !== "user" && (
@@ -827,7 +1013,7 @@ const App = () => {
               </div>
               )}
             </div>
-          ))}
+          )))}
 
             {isTyping && (
               <div className="self-start bg-gray-100 text-black px-4 py-2 rounded-xl max-w-[70%]">
@@ -840,7 +1026,7 @@ const App = () => {
         </div>
       ) : (
         <div className="flex flex-col items-center mt-40 space-y-4">
-          <div className="text-gray-400">Loading bot info...</div>
+          <div className="text-gray-400">Loading Character...</div>
         </div>
       )}
   

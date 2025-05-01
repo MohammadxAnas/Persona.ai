@@ -23,6 +23,7 @@ export default function Page() {
   const [signupData, setSignupData] = useState({ name: "", email: "", password: "" });
  
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -43,6 +44,7 @@ export default function Page() {
 
 
   const handleLogin = async (e) => {
+    setIsDisabled(true);
     e.preventDefault();
     toast("Logging in...");
     console.log("baseURL:",baseURL);
@@ -75,10 +77,13 @@ export default function Page() {
       }
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
+    }finally{
+      setIsDisabled(false);
     }
   };
 
   const handleSignup = async (e) => {
+    setIsDisabled(true);
     e.preventDefault();
     const { name, email, password } = signupData;
     if (!name || !email || !password) {
@@ -103,6 +108,8 @@ export default function Page() {
       }
     } catch (err) {
       toast.error("Something went wrong. Please try again.");
+    }finally{
+      setIsDisabled(false);
     }
   };
   return (
@@ -167,7 +174,10 @@ export default function Page() {
                   <Button
                     type="submit"
                     onClick={handleSignup}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl"
+                    disabled={isDisabled}
+                    className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl
+                      ${isDisabled? 'brightness-110' :''}
+                      `}
                   >
                     Continue
                   </Button>
@@ -215,7 +225,10 @@ export default function Page() {
                   <Button
                     type="submit"
                     onClick={handleLogin}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl"
+                    disabled={isDisabled}
+                    className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl
+                      ${isDisabled? 'brightness-110' :''}
+                      `}
                   >
                     Continue
                   </Button>

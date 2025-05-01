@@ -28,7 +28,7 @@ model AICharacter {
   name        String
   avatar      String?
   description String
-  personality String
+  overview    String
   gender      String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
