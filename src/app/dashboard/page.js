@@ -48,7 +48,7 @@ import { Label } from "@/components/ui/label";
 
 export default function Home() {
 
-  const [BotData, setBotData] = useState({ botname: "", botDesc: "", botView: "", avatar: "", botGender: "" });
+  const [BotData, setBotData] = useState({botName: "", botDesc: "", botView: "", avatar: "", botGender: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [Loading, SetLoading] = useState(true);
@@ -170,6 +170,7 @@ export default function Home() {
     setIsDisabled(true);
     e.preventDefault();
     const { botName, botDesc, botView } = BotData;
+    console.log(botName);
     if (!botName || !botDesc || !botView) {
       return toast.error("Bot info required!");
     }
@@ -211,6 +212,7 @@ export default function Home() {
       toast.error("Something went wrong. Please try again.");
     }finally{
       setIsDisabled(false);
+      setBotData({botName: "", botDesc: "", botView: "", avatar: "", botGender: "" })
     }
   };
   
@@ -519,31 +521,32 @@ export default function Home() {
     <Search className="w-6 h-6" />
   </span>
 
-  {/* Mobile input */}
-  <input
-    placeholder="Search characters..."
-    className="
-      w-50 h-8 block sm:hidden
-      pl-10 pr-4 py-2
-      rounded-full border border-gray-300
-      bg-white text-gray-800 placeholder-gray-400
-      shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:shadow-md
-      transition duration-200 ease-in-out
-    "
-  />
+ {/* Mobile input */}
+<input
+  placeholder="Search characters..."
+  className="
+    w-full max-w-sm h-10 block sm:hidden
+    pl-10 pr-4 py-2
+    rounded-full border border-gray-300
+    bg-white text-gray-800 placeholder-gray-400
+    shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
+    transition duration-200 ease-in-out
+  "
+/>
 
-  {/* Desktop input */}
-  <input
-    placeholder="Search for characters..."
-    className="
-      w-80 h-8 hidden sm:block
-      pl-12 pr-4 py-2
-      rounded-full border border-gray-300
-      bg-white text-gray-800 placeholder-gray-400
-      shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:shadow-md
-      transition duration-200 ease-in-out
-    "
-  />
+{/* Desktop input */}
+<input
+  placeholder="Search for characters..."
+  className="
+    w-full max-w-md h-10 hidden sm:block
+    pl-12 pr-4 py-2
+    rounded-full border border-gray-300
+    bg-white text-gray-800 placeholder-gray-400
+    shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
+    transition duration-200 ease-in-out
+  "
+/>
+
 </div>
 
 </header>
@@ -560,12 +563,12 @@ export default function Home() {
     )}
 
 
-    <main className="pt-15">
+    <main className="pt-20">
 
     {/* Your Created Bots Label */}
    <div className="flex items-center justify-between">
       {/* Left panel */}
-      <div className="px-6 py-4 flex-1">
+      <div className="px-6 flex-1">
         <h2 className="text-2xl font-bold text-gray-900">Your Created Bots</h2>
         <p className="text-gray-600 text-sm mt-2">
           Manage and interact with your AI bots here.

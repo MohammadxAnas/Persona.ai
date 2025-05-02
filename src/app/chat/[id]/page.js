@@ -736,77 +736,73 @@ const App = () => {
 )}
 {/* Botbar */}
 <div
-  className={`fixed top-16 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+  className={`fixed top-18 right-0 h-full w-[290px] bg-white p-6 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     botbarOpen ? "translate-x-0" : "translate-x-full"
   }`}
 >
-<div className="flex items-center text-left space-x-4 mb-6">
+<div className="flex flex-col space-y-4 text-left">
   {bot && (
     <>
-      <div className="flex flex-col mt-3">
-        <div className="flex items-center justify-center gap-3">
-          <img
-            src={bot.avatar || 'https://loremflickr.com/600/400/cat.jpg'}
-            alt={bot.name || 'Bot avatar'}
-            className="w-18 h-18 rounded-full object-cover shadow-lg"
-          />
-          <div>
-            <h2 className="-mt-2 text-xl text-black font-mono">{bot.name}</h2>
-            <p className="text-[14px] text-gray-600 w-[150px] truncate whitespace-nowrap overflow-hidden">
-              By @{User}
-            </p>
-            <p className="text-blue-900 text-[12px]">persona.ai</p>
-          </div>
+      {/* Avatar and Info */}
+      <div className="flex items-center gap-4">
+        <img
+          src={bot.avatar || 'https://loremflickr.com/600/400/cat.jpg'}
+          alt={bot.name || 'Bot avatar'}
+          className="w-16 h-16 rounded-full object-cover shadow"
+        />
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900">{bot.name}</h2>
+          <p className="text-sm text-gray-500 truncate w-[150px]">By @{User}</p>
+          <p className="text-xs text-blue-700">persona.ai</p>
         </div>
-
-        <div className="pb-4 mt-4 border-b border-gray-200">
-          <button
-            className="bg-gray-100 font-light w-full flex items-center justify-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-200"
-            onClick={() => setBotdetailsOpen(true)}
-          >
-            <span className="text-sm font-medium">View Character Details</span>
-            <Eye className="h-5 w-5" />
-          </button>
-
-          <p className=" font-mono mt-4 text-gray-700 text-sm truncate whitespace-nowrap overflow-hidden w-full max-w-[220px]">
-            {bot.description}
-          </p>
-        </div>
-       <div className="mt-4 flex flex-col gap-3">
-      <button
-          className="bg-gray-100 font-light h-14 w-36 flex items-center justify-center gap-2 px-4 py-2 rounded-full text-gray-800 transition-all duration-200 hover:bg-gray-200"
-          onClick={startNewChat}
-        >
-          <Plus className=" w-8 h-8" />
-          <span className="text-sm font-medium" >New Chat</span>
-        </button>
-      <button
-      className="bg-gray-50 font-light w-full flex items-center justify-between px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
-      onClick={() => {
-        setHistoryOpen(true);
-      }}
-    >
-      <div className="flex items-center justify-center gap-3">
-      <RotateCcw className="h-5 w-5"/>
-      <span className="text-sm font-medium">History</span>
       </div>
-      <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
-    </button>
 
-   
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-          <button
-          className="bg-gray-50 font-light w-full flex items-center justify-between px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+      {/* Description + Character Details Button */}
+      <div className="border-b border-gray-200 pb-4">
+        <button
+          onClick={() => setBotdetailsOpen(true)}
+          className=" w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm text-gray-800 transition"
         >
-          <div className="flex items-center justify-center gap-3">
-          <UserPen className="h-5 w-5"/>
-          <span className="text-sm font-medium">Persona</span>
+          <Eye className="w-5 h-5" />
+          <span>View Character Details</span>
+        </button>
+        <p className="text-sm text-gray-700 ml-0.5 mt-3 truncate max-w-xs">{bot.description}</p>
+      </div>
+      
+
+      {/* Action Buttons */}
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={startNewChat}
+          className="h-12 w-35 flex items-center justify-center gap-2 px-4 rounded-full bg-gray-100 hover:bg-gray-200 text-sm text-gray-800 transition"
+        >
+          <Plus className="w-5 h-5" />
+          <span>New Chat</span>
+        </button>
+
+        {/* History Button */}
+        <button
+          onClick={() => setHistoryOpen(true)}
+          className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition"
+        >
+          <div className="flex items-center gap-2">
+            <RotateCcw className="w-5 h-5" />
+            <span>History</span>
           </div>
-          <div><ChevronRight className="h-5 w-5 text-gray-500"/></div>
-          </button>
-        </DialogTrigger>
+          <ChevronRight className="w-5 h-5 text-gray-500" />
+        </button>
+
+        {/* Persona Dialog Trigger */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <button className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition">
+              <div className="flex items-center gap-2">
+                <UserPen className="w-5 h-5" />
+                <span>Persona</span>
+              </div>
+              <ChevronRight className="w-5 h-5 text-gray-500" />
+            </button>
+          </DialogTrigger>
 
         <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
         <DialogHeader>
@@ -864,7 +860,6 @@ const App = () => {
       </Dialog>
 
       </div>
-      </div>
     </>
   )}
 </div>
@@ -886,7 +881,7 @@ const App = () => {
           className="text-black hover:text-gray-500" 
           onClick={() => setBotdetailsOpen(false)}
           />
-        <h2 className="text-md text-black font-mono">View Character Details</h2>
+        <h2 className="text-md text-black font-mono">Character Details</h2>
       </div>
 
       {/* Character Name */}
@@ -1017,7 +1012,7 @@ const App = () => {
         setCallActive(true);
         handleCallClick();
       }}
-      className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+      className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
     >
       <Phone className="w-7 h-7 text-white fill-current" />
     </Button>
@@ -1025,9 +1020,11 @@ const App = () => {
     <Button
       onClick={() => {
         setBotbarOpen(prev => !prev)
+        setHistoryOpen(false);
+        setBotdetailsOpen(false);
         setSidebarOpen(false);
       }}
-      className="h-8 w-8 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
+      className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
     >
       <Ellipsis className="w-7 h-7 text-white fill-current" />
     </Button>
