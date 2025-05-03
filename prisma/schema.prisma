@@ -17,7 +17,8 @@ model User {
   isVerified       Boolean       @default(false)
   codeExpiresAt    DateTime
 
-  persona          Persona?      @relation("UserPersona", fields: [id], references: [id])
+  persona          Persona?      @relation("UserPersona")
+
   aiCharacters     AICharacter[] @relation("UserAICharacters")
   chatSessions     ChatSession[] @relation("UserChatSessions")
   messages         Message[]     @relation("UserMessages")
@@ -48,7 +49,7 @@ model ChatSession {
   startedAt   DateTime    @default(now())
   endedAt     DateTime?
   
-  persona      Persona?     @relation(fields: [id], references: [id])
+  persona     Persona?    @relation("SessionPersona")
   user        User        @relation("UserChatSessions", fields: [userId], references: [id])
   character   AICharacter @relation("CharacterChatSessions", fields: [characterId], references: [id])
   messages    Message[]
@@ -77,14 +78,16 @@ model Message {
 }
 
 model Persona {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  description   String
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  description     String
 
-  user          User?    @relation("UserPersona")
-  chatSession   ChatSession?
+  userId          String?       @unique @db.ObjectId
+  user            User?         @relation("UserPersona", fields: [userId], references: [id])
+
+  chatSessionId   String?       @unique @db.ObjectId
+  chatSession     ChatSession?  @relation("SessionPersona", fields: [chatSessionId], references: [id])
 }
-
 
 enum Sender {
   USER

@@ -1,6 +1,7 @@
 "use client";
 import { Progress } from "@/components/ui/progress"
 import React, { useState, useEffect, useRef } from "react";
+import { jwtDecode } from "jwt-decode";
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -41,6 +42,7 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Persona, setPersona] = useState({ userName: "", userDesc: "" });
   const [isDisabled, setIsDisabled] = useState(false);
+  const [currPersona, setcurrPersona] = useState();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [botbarOpen, setBotbarOpen] = useState(false);
@@ -71,11 +73,100 @@ const App = () => {
 
   const [voices, setVoices] = useState([]);
 
-
-  const handleChange2 = (e) => {
+  const handlePersona = (e) => {
     const { name, value } = e.target;
     setPersona((prev) => ({ ...prev, [name]: value }));
+  
   };
+  const createPersona = async (e) => {
+    setIsDisabled(true);
+    e.preventDefault();
+    const { userName, userDesc } = Persona;
+    console.log(userName);
+    if (!userName || !userDesc ) {
+      return toast.error("Info required!");
+    }
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+      console.log(userId);
+      console.log(sessionId);
+
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/persona`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...Persona,      
+          sessionId          
+        }),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        console.log(data.persona);
+        setIsModalOpen(false);
+        toast.success(data.message);
+        setIsDisabled(false);
+        setPersona({userName: "", userDesc: "" })
+      } else {
+        toast.error(data.error || "Failed");
+        setIsDisabled(false);
+        setPersona({userName: "", userDesc: "" })
+      }
+    } catch (err) {
+      setIsDisabled(false);
+      setPersona({userName: "", userDesc: "" })
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+  const fetchPersona = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+      console.log(sessionId);
+  
+      const res = await fetch(`${baseURL}/api/getPersona?userId=${userId}&chatSessionId=${sessionId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (res.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+  
+      const data = await res.json();
+      console.log(data);
+  
+      if (data.success) {
+        setcurrPersona(data.persona);
+      } else {
+        console.error("Error fetching persona:", data.error);
+      }
+  
+    } catch (err) {
+      console.error("Failed to fetch persona:", err);
+    }
+  };
+  
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -669,6 +760,7 @@ const App = () => {
           }`}
         onClick={() => {
           setSessionId(ses.id);
+          fetchPersona();
           fetchChatHistory();
         }}
       >
@@ -745,7 +837,7 @@ const App = () => {
 )}
 {/* Botbar */}
 <div
-  className={`fixed top-18 right-0 h-full w-[290px] bg-white p-6 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+  className={`fixed top-18 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     botbarOpen ? "translate-x-0" : "translate-x-full"
   }`}
 >
@@ -767,7 +859,7 @@ const App = () => {
       </div>
 
       {/* Description + Character Details Button */}
-      <div className="border-b border-gray-200 pb-4">
+      <div className="border-b border-gray-200 pb-5">
         <button
           onClick={() => setBotdetailsOpen(true)}
           className=" w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm text-gray-800 transition"
@@ -775,12 +867,11 @@ const App = () => {
           <Eye className="w-5 h-5" />
           <span>View Character Details</span>
         </button>
-        <p className="text-sm text-gray-700 ml-0.5 mt-3 truncate max-w-xs">{bot.description}</p>
       </div>
       
 
       {/* Action Buttons */}
-      <div className="flex flex-col gap-3">
+      <div className="mt-1 flex flex-col gap-5">
         <button
           onClick={startNewChat}
           className="h-12 w-35 flex items-center justify-center gap-2 px-4 rounded-full bg-gray-100 hover:bg-gray-200 text-sm text-gray-800 transition"
@@ -801,7 +892,7 @@ const App = () => {
           <ChevronRight className="w-5 h-5 text-gray-500" />
         </button>
 
-        {/* Persona Dialog Trigger */}
+        {/* Persona */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
             <button className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition">
@@ -828,7 +919,7 @@ const App = () => {
               name="userName"
               type="text"
               value={Persona.userName}
-              onChange={handleChange2}
+              onChange={handlePersona}
               placeholder="Enter your persona's name (e.g., 'Alex The Bold')"
               required
               maxLength={25}
@@ -841,7 +932,7 @@ const App = () => {
           <textarea
             name="userDesc"
             value={Persona.userDesc}
-            onChange={handleChange2}
+            onChange={handlePersona}
             placeholder="Write a little bit about your persona (e.g., 'A fearless hero on a mission to save the world')"
             required
             rows={3}
@@ -854,12 +945,13 @@ const App = () => {
 
         <DialogFooter>
           <Button
-            onClick={()=>{
-              startNewChat();
-              setIsModalOpen(false);
-            }}
+            onClick={createPersona}
             disabled={isDisabled}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+            className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
+              ${isDisabled 
+                ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
+                : ''}`
+            }
           >
             Save Persona
           </Button>
@@ -924,13 +1016,13 @@ const App = () => {
 
    {/* chat history */}
    <div
-  className={`fixed top-18 right-0 h-screen w-[290px] bg-white border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+  className={`fixed top-18 right-0 h-screen w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     historyOpen ? "translate-x-0" : "translate-x-full"
   }`}
 >
   <div className="flex flex-col h-full">
     {/* Header */}
-    <div className="flex items-center gap-1 mb-2 px-4 py-2 shrink-0">
+    <div className="flex items-center gap-1 mb-2  shrink-0">
       <ChevronRight
         className="text-black hover:text-gray-500 cursor-pointer"
         onClick={() => setHistoryOpen(false)}

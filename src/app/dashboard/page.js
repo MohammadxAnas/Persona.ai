@@ -57,6 +57,7 @@ export default function Home() {
   const [User, setUser] = useState("");
   const [UserEmail, setUserEmail] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
+  const [isdisabled, setIsdisabled] = useState(false);
   const [Persona, setPersona] = useState({ userName: "", userDesc: "" });
 
   const [progress, setProgress] = useState(0);
@@ -162,10 +163,61 @@ export default function Home() {
       SetLoading(false);
     }
   };
+
   const handlePersona = (e) => {
     const { name, value } = e.target;
     setPersona((prev) => ({ ...prev, [name]: value }));
+  
   };
+  const createPersona = async (e) => {
+    setIsdisabled(true);
+    e.preventDefault();
+    const { userName, userDesc } = Persona;
+    console.log(userName);
+    if (!userName || !userDesc ) {
+      return toast.error("Info required!");
+    }
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+      console.log(userId);
+
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/persona`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...Persona,      
+          userId,          
+        }),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        console.log(data.persona);
+        setIsPModalOpen(false);
+        toast.success(data.message);
+      } else {
+        toast.error(data.error || "Failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    }finally{
+      setIsdisabled(false);
+      setPersona({userName: "", userDesc: "" })
+    }
+  };
+  
   const handleChange2 = (e) => {
     const { name, value } = e.target;
     setBotData((prev) => ({ ...prev, [name]: value }));
@@ -501,11 +553,13 @@ export default function Home() {
 
         <DialogFooter>
           <Button
-            onClick={()=>{
-              setIsModalOpen(false);
-            }}
-            disabled={isDisabled}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+            onClick={createPersona}
+            disabled={isdisabled}
+            className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
+              ${isDisabled 
+                ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
+                : ''}`
+            }
           >
             Save Persona
           </Button>
@@ -598,7 +652,7 @@ export default function Home() {
 <input
   placeholder="Search characters..."
   className="
-    w-full max-w-sm h-10 block sm:hidden
+    w-50 max-w-sm h-10 block sm:hidden
     pl-10 pr-4 py-2
     rounded-full border border-gray-300
     bg-white text-gray-800 placeholder-gray-400
@@ -641,7 +695,7 @@ export default function Home() {
     {/* Your Created Bots Label */}
    <div className="flex items-center justify-between">
       {/* Left panel */}
-      <div className="px-6 flex-1">
+      <div className="px-4 flex-1">
         <h2 className="text-2xl font-bold text-gray-900">Your Created Bots</h2>
         <p className="text-gray-600 text-sm mt-2">
           Manage and interact with your AI bots here.
@@ -670,7 +724,7 @@ export default function Home() {
 
     {/* Bot List */}
     {!loading && !Loading && Bots && (
-      <ul className="flex overflow-x-auto gap-4 px-4 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
+      <ul className="flex overflow-x-auto gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
 
       <li className="snap-start">
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
