@@ -30,7 +30,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis, Eye, ChevronRight, History, RotateCcw, UserPen} from "lucide-react";
+import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis, Eye, ChevronRight, RotateCcw, UserPen} from "lucide-react";
 
 const App = () => {
 
@@ -234,16 +234,7 @@ const App = () => {
     fetchChatHistory();
   }, [sessionId]);
 
-  const handleCall = async (txt) => {
-    try {
-      await handlePlay(txt);
-      if (callActive){
-        handleCallClick();
-      }
-    } catch (error) {
-      console.error('Error in handleCall:', error);
-    }
-  };
+  
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
@@ -464,6 +455,18 @@ const App = () => {
       }
     };
 
+    const handleCall = async (txt) => {
+      try {
+        await handlePlay(txt);
+        if (callActive && !recognitionInProgress) {
+          handleCallClick();
+        }
+      } catch (error) {
+        console.error('Error in handleCall:', error);
+      }
+    };
+    
+
     const handlePlay = (text) => {
       return new Promise((resolve, reject) => {
         if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -509,7 +512,7 @@ const App = () => {
 
     let Recognition = null;
     let recognitionInProgress = false;
-
+    
     const handleCallClick = () => {
       if (typeof window !== 'undefined' && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -527,22 +530,28 @@ const App = () => {
           }
         };
     
+        Recognition.onend = () => {
+          console.log("Recognition ended.");
+          recognitionInProgress = false;
+          Recognition = null; sbvlw
+        };
+    
         Recognition.start();
         recognitionInProgress = true;
       } else {
         alert('Your browser does not support Speech Recognition.');
       }
     };
+    
     const disableMic = () => {
       if (Recognition && recognitionInProgress) {
-        Recognition.stop();
-        recognitionInProgress = false;
-        Recognition = null;
-        console.log("Microphone disabled.");
+        Recognition.stop(); // async; onend will handle cleanup
+        console.log("Requested microphone to stop...");
       } else {
         console.log("No active microphone to disable.");
       }
     };
+    
     
     let recognition = null;
 
@@ -1009,6 +1018,7 @@ const App = () => {
   <div className="flex items-center justify-center gap-2">
     <Button
       onClick={() => {
+        setBotbarOpen(false);
         setCallActive(true);
         handleCallClick();
       }}
@@ -1039,8 +1049,8 @@ const App = () => {
             variant="destructive"
             className="h-12 w-12 p-0 rounded-full bg-red-600 hover:bg-red-700 text-white"
             onClick={() => {
-              setCallActive(false);
               disableMic();
+              setCallActive(false);
             }}
           >
             <Phone className="w-6 h-6 rotate-135" />

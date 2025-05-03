@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass, UserPen } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
 
 
@@ -50,12 +50,14 @@ export default function Home() {
 
   const [BotData, setBotData] = useState({botName: "", botDesc: "", botView: "", avatar: "", botGender: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPModalOpen, setIsPModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [Loading, SetLoading] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [User, setUser] = useState("");
   const [UserEmail, setUserEmail] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
+  const [Persona, setPersona] = useState({ userName: "", userDesc: "" });
 
   const [progress, setProgress] = useState(0);
 
@@ -160,7 +162,10 @@ export default function Home() {
       SetLoading(false);
     }
   };
-  
+  const handlePersona = (e) => {
+    const { name, value } = e.target;
+    setPersona((prev) => ({ ...prev, [name]: value }));
+  };
   const handleChange2 = (e) => {
     const { name, value } = e.target;
     setBotData((prev) => ({ ...prev, [name]: value }));
@@ -415,7 +420,7 @@ export default function Home() {
     </div>
 
     {/* Discover Button */}
-    <div className="border-b border-gray-200 pb-4">
+    <div>
       <button
         className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100 sm:bg-gray-50"
         onClick={() => {
@@ -441,6 +446,74 @@ export default function Home() {
         </svg>
         <span className="text-sm font-medium">Discover</span>
       </button>
+    </div>
+
+    <div className="border-b border-gray-200 pb-4">
+    <Dialog open={isPModalOpen} onOpenChange={setIsPModalOpen}>
+          <DialogTrigger asChild>
+          <button
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100 sm:bg-gray-50"
+          >
+          <UserPen className="w-6 h-6 text-gray-500 fill-grey-500" />
+
+            <span className="text-sm font-medium">Persona</span>
+          </button>
+          </DialogTrigger>
+
+        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
+        <DialogHeader>
+          <DialogTitle>Set Your Persona</DialogTitle>
+          <DialogDescription className="text-sm text-gray-500">
+            Introduce yourself to the AI. Your persona helps shape how characters interact with you during conversations.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid gap-4 py-4">
+          <div>
+            <Label className="pb-1 block">Display Name</Label>
+            <input
+              name="userName"
+              type="text"
+              value={Persona.userName}
+              onChange={handlePersona}
+              placeholder="Enter your persona's name (e.g., 'Alex The Bold')"
+              required
+              maxLength={25}
+               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-300 text-sm text-gray-800 placeholder-gray-400 bg-white resize-none transition-all"
+            />
+          </div>
+
+          <div>
+          <Label className="pb-1 block">About You</Label>
+          <textarea
+            name="userDesc"
+            value={Persona.userDesc}
+            onChange={handlePersona}
+            placeholder="Write a little bit about your persona (e.g., 'A fearless hero on a mission to save the world')"
+            required
+            rows={3}
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-300 text-sm text-gray-800 placeholder-gray-400 bg-white resize-none transition-all"
+
+          />
+        </div>
+
+        </div>
+
+        <DialogFooter>
+          <Button
+            onClick={()=>{
+              setIsModalOpen(false);
+            }}
+            disabled={isDisabled}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
+          >
+            Save Persona
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+
+      </Dialog>
+    
     </div>
 
     {/* Recent Bots Section */}
