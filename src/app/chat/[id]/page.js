@@ -31,7 +31,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis, Eye, ChevronRight, RotateCcw, UserPen} from "lucide-react";
+import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, PlayIcon, ChevronsUpDown, Mic, Plus, Ellipsis, Eye, ChevronRight, RotateCcw, UserPen, UserPlus} from "lucide-react";
 
 const App = () => {
 
@@ -42,12 +42,16 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [Persona, setPersona] = useState({ userName: "", userDesc: "" });
   const [isDisabled, setIsDisabled] = useState(false);
-  const [currPersona, setcurrPersona] = useState();
+  const [currPersona, setcurrPersona] = useState({ userName: "", userDesc: "" });
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [botbarOpen, setBotbarOpen] = useState(false);
   const [botdetailsOpen, setBotdetailsOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [personasOpen, setPersonasOpen] = useState(false);
+
+  const [Personas, setPersonas] = useState(false);
+
 
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -73,6 +77,7 @@ const App = () => {
 
   const [voices, setVoices] = useState([]);
 
+
   const handlePersona = (e) => {
     const { name, value } = e.target;
     setPersona((prev) => ({ ...prev, [name]: value }));
@@ -93,9 +98,8 @@ const App = () => {
       const decoded = jwtDecode(token);
       const userId = decoded._id;
       console.log(userId);
-      console.log(sessionId);
 
-      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/persona`, {
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/personaIn`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +107,7 @@ const App = () => {
         },
         body: JSON.stringify({
           ...Persona,      
-          sessionId          
+          id          
         }),
       });
 
@@ -131,16 +135,15 @@ const App = () => {
     }
   };
 
-  const fetchPersona = async () => {
+  const fetchall = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return toast.error("You must be logged in.");
   
       const decoded = jwtDecode(token);
       const userId = decoded._id;
-      console.log(sessionId);
   
-      const res = await fetch(`${baseURL}/api/getPersona?userId=${userId}&chatSessionId=${sessionId}`, {
+      const res = await fetch(`${baseURL}/api/getPersona?userId=${userId}&characterId=${id}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -157,7 +160,7 @@ const App = () => {
       console.log(data);
   
       if (data.success) {
-        setcurrPersona(data.persona);
+        setPersonas(data.persona);
       } else {
         console.error("Error fetching persona:", data.error);
       }
@@ -191,6 +194,19 @@ const App = () => {
       sendMessage();
     }
   }, [Text]);
+
+  useEffect(() => {
+    const namedft = localStorage.getItem("Name");
+    console.log("name:",namedft);
+    const descdft = localStorage.getItem("Desc");
+    console.log("desc:",descdft);
+    setcurrPersona({
+      userName: namedft,
+      userDesc: descdft
+    });
+    
+    console.log(currPersona);
+  }, []);
   
 
   useEffect(() => {
@@ -274,7 +290,8 @@ const App = () => {
     console.log("Updated Id =",sessionId);
     console.log("Sessions =",sessions);
     console.log("Gender=",gender);
-  }, [bot, sessionId, sessions]);
+    console.log("persona",currPersona);
+  }, [bot, sessionId, sessions,currPersona]);
   
   useEffect(() => {
     if (bottomRef.current) {
@@ -359,8 +376,8 @@ const App = () => {
           Stay fully in character while chatting.
           
           The user interacting with you has the following persona:
-          Name: ${Persona.userName?.trim() ? Persona.userName : User}
-          Description: ${Persona.userDesc || ""}
+          Name: ${currPersona.userName?.trim() ? currPersona.userName : User}
+          Description: ${currPersona.userDesc || ""}
 
           Engage with them in a way that aligns with your personality and background.`,
           }
@@ -760,7 +777,6 @@ const App = () => {
           }`}
         onClick={() => {
           setSessionId(ses.id);
-          fetchPersona();
           fetchChatHistory();
         }}
       >
@@ -892,13 +908,24 @@ const App = () => {
           <ChevronRight className="w-5 h-5 text-gray-500" />
         </button>
 
+        <button
+          onClick={() => setPersonasOpen(true)}
+          className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition"
+        >
+          <div className="flex items-center gap-2">
+            <UserPen className="w-5 h-5" />
+            <span>Personas</span>
+          </div>
+          <ChevronRight className="w-5 h-5 text-gray-500" />
+        </button>
+
         {/* Persona */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
             <button className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition">
               <div className="flex items-center gap-2">
-                <UserPen className="w-5 h-5" />
-                <span>Persona</span>
+                <UserPlus className="w-5 h-5" />
+                <span>Add Persona</span>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-500" />
             </button>
@@ -1047,7 +1074,41 @@ const App = () => {
   </div>
 </div>
 
+    {/* persona */}
+    <div
+      className={`fixed top-18 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+        personasOpen ? "translate-x-0" : "translate-x-full"
+      }`}
+    >
+      <div className="text-black flex items-center text-left space-x-4 mb-6">
+        {bot && (
+          <>
+        <div className="flex flex-col space-y-4">
+      {/* Header with back button */}
+      <div className="flex items-center gap-1">
+          <ChevronRight 
+          className="text-black hover:text-gray-500" 
+          onClick={() => setPersonasOpen(false)}
+          />
+        <h2 className="text-md text-black font-mono">Personas</h2>
+      </div>
 
+     
+     </div>
+          </>
+        )}
+      </div>
+    </div>
+
+
+    {personasOpen && (
+  <div
+    className="fixed inset-0 z-30 duration-300 "
+    onClick={() =>{ 
+      setPersonasOpen(false);
+    }}
+  />
+)}
 
 {historyOpen && (
   <div

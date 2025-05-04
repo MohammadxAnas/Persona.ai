@@ -1,95 +1,97 @@
 generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "mongodb"
-  url      = env("NEXT_PUBLIC_DATABASE_URL")
-}
-
-model User {
-  id               String        @id @default(auto()) @map("_id") @db.ObjectId
-  name             String
-  email            String        @unique
-  password         String
-  sessionToken     String?
-  confirmationCode String
-  isVerified       Boolean       @default(false)
-  codeExpiresAt    DateTime
-
-  persona          Persona?      @relation("UserPersona")
-
-  aiCharacters     AICharacter[] @relation("UserAICharacters")
-  chatSessions     ChatSession[] @relation("UserChatSessions")
-  messages         Message[]     @relation("UserMessages")
-}
-
-model AICharacter {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String   @db.ObjectId
-  name        String
-  avatar      String?
-  description String
-  overview    String
-  gender      String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  user        User     @relation("UserAICharacters", fields: [userId], references: [id])
-  chatSessions ChatSession[] @relation("CharacterChatSessions")
-  messages    Message[] @relation("CharacterMessages")
-
-  @@index([userId])
-}
-
-model ChatSession {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String      @db.ObjectId
-  characterId String      @db.ObjectId
-  startedAt   DateTime    @default(now())
-  endedAt     DateTime?
-  
-  persona     Persona?    @relation("SessionPersona")
-  user        User        @relation("UserChatSessions", fields: [userId], references: [id])
-  character   AICharacter @relation("CharacterChatSessions", fields: [characterId], references: [id])
-  messages    Message[]
-
-  @@index([userId])
-  @@index([characterId])
-}
-
-model Message {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String      @db.ObjectId
-  characterId   String      @db.ObjectId
-  chatSessionId String      @db.ObjectId
-  sender        Sender
-  content       String
-  createdAt     DateTime    @default(now())
-
+   provider = "prisma-client-js"
+ }
  
-  user          User        @relation("UserMessages", fields: [userId], references: [id])
-  character     AICharacter @relation("CharacterMessages", fields: [characterId], references: [id])
-  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+ datasource db {
+   provider = "mongodb"
+   url      = env("NEXT_PUBLIC_DATABASE_URL")
+ }
+ 
+ model User {
+   id               String        @id @default(auto()) @map("_id") @db.ObjectId
+   name             String
+   email            String        @unique
+   password         String
+   sessionToken     String?
+   confirmationCode String
+   isVerified       Boolean       @default(false)
+   codeExpiresAt    DateTime
+ 
+   persona          Persona?      @relation("UserPersona")
+ 
+   aiCharacters     AICharacter[] @relation("UserAICharacters")
+   chatSessions     ChatSession[] @relation("UserChatSessions")
+   messages         Message[]     @relation("UserMessages")
+ }
+ 
+ model AICharacter {
+   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+   userId      String   @db.ObjectId
+   name        String
+   avatar      String?
+   description String
+   overview    String
+   gender      String?
+   createdAt   DateTime @default(now())
+   updatedAt   DateTime @updatedAt
+ 
+   user        User     @relation("UserAICharacters", fields: [userId], references: [id])
+   chatSessions ChatSession[] @relation("CharacterChatSessions")
+   messages    Message[] @relation("CharacterMessages")
 
-  @@index([userId])
-  @@index([characterId])
-  @@index([chatSessionId])
-}
+   personas     Persona[]     @relation("CharacterPersonas") 
+ 
+   @@index([userId])
+ }
+ 
+ model ChatSession {
+   id          String      @id @default(auto()) @map("_id") @db.ObjectId
+   userId      String      @db.ObjectId
+   characterId String      @db.ObjectId
+   startedAt   DateTime    @default(now())
+   endedAt     DateTime?
+   
+   user        User        @relation("UserChatSessions", fields: [userId], references: [id])
+   character   AICharacter @relation("CharacterChatSessions", fields: [characterId], references: [id])
+   messages    Message[]
+ 
+   @@index([userId])
+   @@index([characterId])
+ }
+ 
+ model Message {
+   id            String      @id @default(auto()) @map("_id") @db.ObjectId
+   userId        String      @db.ObjectId
+   characterId   String      @db.ObjectId
+   chatSessionId String      @db.ObjectId
+   sender        Sender
+   content       String
+   createdAt     DateTime    @default(now())
+ 
+  
+   user          User        @relation("UserMessages", fields: [userId], references: [id])
+   character     AICharacter @relation("CharacterMessages", fields: [characterId], references: [id])
+   chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+ 
+   @@index([userId])
+   @@index([characterId])
+   @@index([chatSessionId])
+ }
+ 
+ model Persona {
+   id              String    @id @default(auto()) @map("_id") @db.ObjectId
+   name            String
+   description     String
+ 
+   userId          String?       @unique @db.ObjectId
+   user            User?         @relation("UserPersona", fields: [userId], references: [id])
+ 
+   characterId     String      @db.ObjectId
+   character       AICharacter @relation("CharacterPersonas", fields: [characterId], references: [id])
 
-model Persona {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  description     String
-
-  userId          String?       @unique @db.ObjectId
-  user            User?         @relation("UserPersona", fields: [userId], references: [id])
-
-  chatSessionId   String?       @unique @db.ObjectId
-  chatSession     ChatSession?  @relation("SessionPersona", fields: [chatSessionId], references: [id])
-}
-
-enum Sender {
-  USER
-  AI
-}
+ }
+ 
+ enum Sender {
+   USER
+   AI
+ }

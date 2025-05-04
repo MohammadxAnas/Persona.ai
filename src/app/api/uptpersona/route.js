@@ -24,11 +24,11 @@ export async function POST(req) {
       }, { status: 400 });
     }
 
-    const persona = await prisma.persona.create({
+    const persona = await prisma.persona.update({
+      where: {userId},  
       data: {
         name: userName,
         description: userDesc,
-        userId: userId
       },
     });
 

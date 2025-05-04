@@ -11,24 +11,17 @@ export async function GET(req) {
   }
 
   const { searchParams } = new URL(req.url);
-  const chatSessionId = searchParams.get("chatSessionId");
   const userId = searchParams.get("userId");
 
   try {
 
-    let persona = null;
-
-    if (chatSessionId) {
-      persona = await prisma.persona.findUnique({
-        where: { chatSessionId },
-      });
+    if (!userId) {
+      return NextResponse.json({ success: false, error: "User ID required" }, { status: 400 });
     }
 
-    if (!persona && userId) {
-      persona = await prisma.persona.findUnique({
-        where: { userId },
-      });
-    }
+    const persona = await prisma.persona.findUnique({
+      where: { userId },
+    });
 
     return NextResponse.json({ success: true, persona });
 

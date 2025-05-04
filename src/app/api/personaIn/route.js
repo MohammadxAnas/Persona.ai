@@ -11,15 +11,15 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { userName, userDesc, userId } = body;
+    const { userName, userDesc, id } = body;
 
     if (!userName || !userDesc) {
       return Response.json({ message: "Missing required persona fields", success: false }, { status: 400 });
     }
 
-    if (!userId) {
+    if (!id) {
       return Response.json({
-        message: "User ID is required to create persona",
+        message: "Character is required to create persona",
         success: false
       }, { status: 400 });
     }
@@ -28,7 +28,7 @@ export async function POST(req) {
       data: {
         name: userName,
         description: userDesc,
-        userId: userId
+        characterId: id
       },
     });
 

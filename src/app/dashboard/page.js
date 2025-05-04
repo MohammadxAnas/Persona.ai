@@ -59,6 +59,7 @@ export default function Home() {
   const [isDisabled, setIsDisabled] = useState(false);
   const [isdisabled, setIsdisabled] = useState(false);
   const [Persona, setPersona] = useState({ userName: "", userDesc: "" });
+ const [currPersona, setcurrPersona] = useState({ userName: "", userDesc: "" });
 
   const [progress, setProgress] = useState(0);
 
@@ -107,9 +108,12 @@ export default function Home() {
   
   }, []);
 
+
+
   useEffect(() => {
     const loadBots = async () => {
       const bots = await fetchUserBots();
+      await fetchPersona();
       setBots(bots);
     };
     loadBots();
@@ -217,6 +221,104 @@ export default function Home() {
       setPersona({userName: "", userDesc: "" })
     }
   };
+
+  const updatePersona = async (e) => {
+    setIsdisabled(true);
+    e.preventDefault();
+    const { userName, userDesc } = Persona;
+    console.log(userName);
+    if (!userName || !userDesc ) {
+      return toast.error("Info required!");
+    }
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+      console.log(userId);
+
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/uptpersona`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          ...Persona,      
+          userId,          
+        }),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        fetchPersona();
+        console.log(data.persona);
+        setIsPModalOpen(false);
+        toast.success(data.message);
+      } else {
+        toast.error(data.error || "Failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    }finally{
+      setIsdisabled(false);
+      setPersona({userName: "", userDesc: "" })
+    }
+  };
+
+  const fetchPersona = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return toast.error("You must be logged in.");
+    
+        const decoded = jwtDecode(token);
+        const userId = decoded._id;
+    
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/getPersona?userId=${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
+        if (res.status === 401) {
+          handleUnauthorized();
+          return;
+        }
+    
+        const data = await res.json();
+        console.log(data);
+    
+        if (data.success) {
+          console.log("persona:",data.persona);
+          localStorage.setItem("Name",data.persona.name);
+          localStorage.setItem("Desc",data.persona.description);
+        } else {
+          console.error("Error fetching persona:", data.error);
+        }
+    
+      } catch (err) {
+        console.error("Failed to fetch persona:", err);
+      }
+    };
+  
+    useEffect(() => {
+      const namedft = localStorage.getItem("Name");
+      console.log("name:",namedft);
+      const descdft = localStorage.getItem("Desc");
+      console.log("desc:",descdft);
+      setcurrPersona({
+        userName: namedft,
+        userDesc: descdft
+      });
+  },[]);
   
   const handleChange2 = (e) => {
     const { name, value } = e.target;
@@ -335,6 +437,8 @@ export default function Home() {
         localStorage.removeItem("token");
         localStorage.removeItem("loggedInUser");
         localStorage.removeItem("UserEmail");
+        localStorage.removeItem("Name");
+        localStorage.removeItem("Desc");
         setUser("");          
         setUserEmail(""); 
         toast.success(result.message);
@@ -517,8 +621,10 @@ export default function Home() {
           <DialogTitle>Set Your Persona</DialogTitle>
           <DialogDescription className="text-sm text-gray-500">
             Introduce yourself to the AI. Your persona helps shape how characters interact with you during conversations.
+            This persona will be used as the default, but you can create or switch personas anytime during a conversation.
           </DialogDescription>
         </DialogHeader>
+
 
         <div className="grid gap-4 py-4">
           <div>
@@ -528,7 +634,11 @@ export default function Home() {
               type="text"
               value={Persona.userName}
               onChange={handlePersona}
-              placeholder="Enter your persona's name (e.g., 'Alex The Bold')"
+              placeholder={
+                currPersona.userName
+                  ? currPersona.userName
+                  : "Enter your persona's name (e.g., 'Alex The Bold')"
+            }
               required
               maxLength={25}
                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-300 text-sm text-gray-800 placeholder-gray-400 bg-white resize-none transition-all"
@@ -541,7 +651,11 @@ export default function Home() {
             name="userDesc"
             value={Persona.userDesc}
             onChange={handlePersona}
-            placeholder="Write a little bit about your persona (e.g., 'A fearless hero on a mission to save the world')"
+            placeholder={
+              currPersona.userDesc
+                ? currPersona.userDesc
+                : "Write a little bit about your persona (e.g., 'A fearless hero on a mission to save the world')"
+          }
             required
             rows={3}
             className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-0 focus:border-gray-300 text-sm text-gray-800 placeholder-gray-400 bg-white resize-none transition-all"
@@ -552,18 +666,31 @@ export default function Home() {
         </div>
 
         <DialogFooter>
-          <Button
-            onClick={createPersona}
-            disabled={isdisabled}
-            className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
-              ${isDisabled 
-                ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
-                : ''}`
-            }
-          >
-            Save Persona
-          </Button>
+          {currPersona.userName === "" && currPersona.userDesc === "" ? (
+            <Button
+              onClick={createPersona}
+              disabled={isdisabled}
+              className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
+                ${isdisabled 
+                  ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
+                  : ''}`}
+            >
+              Save Persona
+            </Button>
+          ) : (
+            <Button
+              onClick={updatePersona}
+              disabled={isdisabled}
+              className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
+                ${isdisabled 
+                  ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
+                  : ''}`}
+            >
+              Update Persona
+            </Button>
+          )}
         </DialogFooter>
+
       </DialogContent>
 
       </Dialog>
@@ -627,9 +754,6 @@ export default function Home() {
         className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
         onClick={() => {
           setSidebarOpen(true);
-          setBotbarOpen(false);
-          setHistoryOpen(false);
-          setBotdetailsOpen(false);
         }}
       >
         ☰
