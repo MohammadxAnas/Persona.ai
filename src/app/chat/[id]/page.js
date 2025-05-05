@@ -107,7 +107,7 @@ const App = () => {
         },
         body: JSON.stringify({
           ...Persona,      
-          id          
+          userId          
         }),
       });
 
@@ -143,7 +143,7 @@ const App = () => {
       const decoded = jwtDecode(token);
       const userId = decoded._id;
   
-      const res = await fetch(`${baseURL}/api/getPersona?userId=${userId}&characterId=${id}`, {
+      const res = await fetch(`${baseURL}/api/personaIn?userId=${userId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -160,7 +160,8 @@ const App = () => {
       console.log(data);
   
       if (data.success) {
-        setPersonas(data.persona);
+        console.log(data.personas)
+        setPersonas(data.personas);
       } else {
         console.error("Error fetching persona:", data.error);
       }
@@ -273,6 +274,7 @@ const App = () => {
   useEffect(() => {
     if (id) {
       fetchBot();
+      fetchall();
     }
   }, [id]);
 
@@ -291,7 +293,8 @@ const App = () => {
     console.log("Sessions =",sessions);
     console.log("Gender=",gender);
     console.log("persona",currPersona);
-  }, [bot, sessionId, sessions,currPersona]);
+    console.log("personas",Personas);
+  }, [bot, sessionId, sessions,currPersona,Personas]);
   
   useEffect(() => {
     if (bottomRef.current) {
@@ -908,17 +911,6 @@ const App = () => {
           <ChevronRight className="w-5 h-5 text-gray-500" />
         </button>
 
-        <button
-          onClick={() => setPersonasOpen(true)}
-          className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition"
-        >
-          <div className="flex items-center gap-2">
-            <UserPen className="w-5 h-5" />
-            <span>Personas</span>
-          </div>
-          <ChevronRight className="w-5 h-5 text-gray-500" />
-        </button>
-
         {/* Persona */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
@@ -987,7 +979,18 @@ const App = () => {
 
       </Dialog>
 
+      <button
+          onClick={() => setPersonasOpen(true)}
+          className="flex items-center justify-between px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-sm text-gray-800 transition"
+        >
+          <div className="flex items-center gap-2">
+            <UserPen className="w-5 h-5" />
+            <span>Personas</span>
+          </div>
+          <ChevronRight className="w-5 h-5 text-gray-500" />
+        </button>
       </div>
+
     </>
   )}
 </div>
@@ -1011,7 +1014,7 @@ const App = () => {
           />
         <h2 className="text-md text-black font-mono">Character Details</h2>
       </div>
-
+      <div className="flex-1 overflow-y-auto px-2 space-y-2">
       {/* Character Name */}
       <div>
         <h3 className="text-sm text-gray-500 font-medium">Name</h3>
@@ -1036,6 +1039,7 @@ const App = () => {
         <p className="text-sm text-gray-700">{bot.gender || "Unspecified"}</p>
       </div>
     </div>
+    </div>
           </>
         )}
       </div>
@@ -1058,7 +1062,7 @@ const App = () => {
     </div>
 
     {/* Scrollable Content */}
-    <div className="flex-1 overflow-y-auto px-4 space-y-2">
+    <div className="flex-1 overflow-y-auto px-2 space-y-2">
       {messages &&
         [...messages].reverse().map((msg, index) =>
           msg?.text ? (
@@ -1093,7 +1097,34 @@ const App = () => {
         <h2 className="text-md text-black font-mono">Personas</h2>
       </div>
 
-     
+      <div className="flex-1 overflow-y-auto px-2 space-y-4">
+        {Personas.map((pers, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-2xl shadow p-4 border border-gray-200"
+          >
+            <div className="mb-2">
+              <h3 className="text-base font-bold text-gray-800">{pers.name}</h3>
+              <p className="text-sm text-gray-600">{pers.description}</p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => handleSetPersona(pers.id)}
+                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Set
+              </button>
+              <button
+                onClick={() => handleDeletePersona(pers.id)}
+                className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
      </div>
           </>
         )}
@@ -1135,6 +1166,7 @@ const App = () => {
       setBotbarOpen(false)
       setBotdetailsOpen(false);
       setHistoryOpen(false);
+      setPersonasOpen(false);
     }}
   />
 )}
@@ -1156,6 +1188,7 @@ const App = () => {
           setBotbarOpen(false);
           setHistoryOpen(false);
           setBotdetailsOpen(false);
+          setPersonasOpen(false);
         }}
       >
         ☰

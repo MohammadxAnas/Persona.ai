@@ -28,7 +28,8 @@ export async function POST(req) {
       data: {
         name: userName,
         description: userDesc,
-        userId: userId
+        userId: userId,
+        default: true
       },
     });
 

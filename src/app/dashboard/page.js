@@ -154,6 +154,12 @@ export default function Home() {
         return;
       }
     
+      if (response.status === 404) {
+        
+        return;
+      }
+    
+
       if (response.ok) {
         localStorage.removeItem("session");
         return data.bots; 
@@ -208,6 +214,10 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
+        setcurrPersona({
+          userName: data.persona.name,
+          userDesc: data.persona.description
+        });
         console.log(data.persona);
         setIsPModalOpen(false);
         toast.success(data.message);
@@ -257,6 +267,10 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
+        setcurrPersona({
+          userName: data.persona.name,
+          userDesc: data.persona.description
+        });
         fetchPersona();
         console.log(data.persona);
         setIsPModalOpen(false);
@@ -288,8 +302,11 @@ export default function Home() {
           },
         });
     
-        if (res.status === 401) {
-          handleUnauthorized();
+        if (res.status === 404) {
+          setcurrPersona({
+            userName: "",
+            userDesc: ""
+          });
           return;
         }
     
@@ -374,6 +391,11 @@ export default function Home() {
       setBotData({botName: "", botDesc: "", botView: "", avatar: "", botGender: "" })
     }
   };
+
+    useEffect(() => {
+      console.log("persona",currPersona);
+      fetchPersona();
+    }, [currPersona]);
   
   const deleteBot = async (botId, fetchUserBots) => {
     setIsDisabled(true);

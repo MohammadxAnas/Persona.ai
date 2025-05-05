@@ -19,9 +19,15 @@ export async function GET(req) {
       return NextResponse.json({ success: false, error: "User ID required" }, { status: 400 });
     }
 
-    const persona = await prisma.persona.findUnique({
-      where: { userId },
+    const persona = await prisma.persona.findFirst({
+      where: { userId : userId,
+               default: true
+      },
     });
+
+    if (!persona) {
+      return NextResponse.json({ success: false, error: "Default persona not found" }, { status: 404 });
+    }
 
     return NextResponse.json({ success: true, persona });
 

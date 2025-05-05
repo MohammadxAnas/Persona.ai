@@ -17,7 +17,7 @@ generator client {
    isVerified       Boolean       @default(false)
    codeExpiresAt    DateTime
  
-   persona          Persona?      @relation("UserPersona")
+   personas          Persona[]      @relation("UserPersonas")
  
    aiCharacters     AICharacter[] @relation("UserAICharacters")
    chatSessions     ChatSession[] @relation("UserChatSessions")
@@ -38,8 +38,6 @@ generator client {
    user        User     @relation("UserAICharacters", fields: [userId], references: [id])
    chatSessions ChatSession[] @relation("CharacterChatSessions")
    messages    Message[] @relation("CharacterMessages")
-
-   personas     Persona[]     @relation("CharacterPersonas") 
  
    @@index([userId])
  }
@@ -79,15 +77,13 @@ generator client {
  }
  
  model Persona {
-   id              String    @id @default(auto()) @map("_id") @db.ObjectId
+   id              String     @id @default(auto()) @map("_id") @db.ObjectId
    name            String
    description     String
+   default         Boolean    @default(false)
  
-   userId          String?       @unique @db.ObjectId
-   user            User?         @relation("UserPersona", fields: [userId], references: [id])
- 
-   characterId     String      @db.ObjectId
-   character       AICharacter @relation("CharacterPersonas", fields: [characterId], references: [id])
+   userId          String     @db.ObjectId
+   user            User       @relation("UserPersonas", fields: [userId], references: [id])
 
  }
  

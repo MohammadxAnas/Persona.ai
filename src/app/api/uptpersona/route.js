@@ -24,8 +24,21 @@ export async function POST(req) {
       }, { status: 400 });
     }
 
+    const existing = await prisma.persona.findFirst({
+      where: {
+        userId: userId,
+        default: true,
+      },
+    });
+    
+    if (!existing) {
+      return Response.json({ message: "Internal Server Error", success: false }, { status: 500 });
+    }
+    
     const persona = await prisma.persona.update({
-      where: {userId},  
+      where: {
+        id: existing.id, 
+      },
       data: {
         name: userName,
         description: userDesc,
