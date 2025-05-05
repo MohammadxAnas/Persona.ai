@@ -36,7 +36,7 @@ import { Trash2, Phone, MoreHorizontal, Share, ChevronsLeft, User2, LogOut, Play
 const App = () => {
 
   const { id } = useParams(); 
-  const [bot, setBot] = useState(null);
+  const [bot, setBot] = useState();
   const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,7 +50,7 @@ const App = () => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [personasOpen, setPersonasOpen] = useState(false);
 
-  const [Personas, setPersonas] = useState(false);
+  const [Personas, setPersonas] = useState([]);
 
 
   const [messages, setMessages] = useState([]);
@@ -118,6 +118,7 @@ const App = () => {
 
       const data = await response.json();
       if (data.success) {
+        fetchall();
         console.log(data.persona);
         setIsModalOpen(false);
         toast.success(data.message);
@@ -209,6 +210,12 @@ const App = () => {
     console.log(currPersona);
   }, []);
   
+const handleSetPersona = (name,desc) => {
+  setcurrPersona({
+    userName: name,
+    userDesc: desc
+  });
+}
 
   useEffect(() => {
     if (loading) {
@@ -274,9 +281,12 @@ const App = () => {
   useEffect(() => {
     if (id) {
       fetchBot();
-      fetchall();
     }
   }, [id]);
+
+  useEffect(() => {
+      fetchall();
+  }, []);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("loggedInUser");
@@ -300,7 +310,7 @@ const App = () => {
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, isTyping]);
+  }, [messages, isTyping,]);
 
   useEffect(() => {
     const savedSession = localStorage.getItem("session");
@@ -1047,89 +1057,102 @@ const App = () => {
 
    {/* chat history */}
    <div
-  className={`fixed top-18 right-0 h-screen w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
-    historyOpen ? "translate-x-0" : "translate-x-full"
-  }`}
->
-  <div className="flex flex-col h-full">
-    {/* Header */}
-    <div className="flex items-center gap-1 mb-2  shrink-0">
-      <ChevronRight
-        className="text-black hover:text-gray-500 cursor-pointer"
-        onClick={() => setHistoryOpen(false)}
-      />
-      <h2 className="text-md text-black font-mono">Chat History</h2>
-    </div>
+      className={`fixed top-18 right-0 h-screen w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+        historyOpen ? "translate-x-0" : "translate-x-full"
+      }`}
+    >
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center gap-1 mb-2  shrink-0">
+          <ChevronRight
+            className="text-black hover:text-gray-500 cursor-pointer"
+            onClick={() => setHistoryOpen(false)}
+          />
+          <h2 className="text-md text-black font-mono">Chat History</h2>
+        </div>
 
-    {/* Scrollable Content */}
-    <div className="flex-1 overflow-y-auto px-2 space-y-2">
-      {messages &&
-        [...messages].reverse().map((msg, index) =>
-          msg?.text ? (
-            <div key={index} className="py-2 border-b border-gray-100">
-              <p className="text-sm text-gray-600 font-semibold">
-                {msg.sender === "user" ? "You" : bot?.name || "Bot"}
-              </p>
-              <p className="text-sm text-gray-800">{msg.text}</p>
-            </div>
-          ) : null
-        )}
+
+        <div className="flex-1 overflow-y-auto px-2 space-y-2">
+          {messages &&
+            [...messages].reverse().map((msg, index) =>
+              msg?.text ? (
+                <div key={index} className="py-2 border-b border-gray-100">
+                  <p className="text-sm text-gray-600 font-semibold">
+                    {msg.sender === "user" ? "You" : bot?.name || "Bot"}
+                  </p>
+                  <p className="text-sm text-gray-800">{msg.text}</p>
+                </div>
+              ) : null
+            )}
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
     {/* persona */}
     <div
-      className={`fixed top-18 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+      className={`fixed top-18 right-0 h-screen w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
         personasOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >
-      <div className="text-black flex items-center text-left space-x-4 mb-6">
-        {bot && (
-          <>
-        <div className="flex flex-col space-y-4">
-      {/* Header with back button */}
-      <div className="flex items-center gap-1">
-          <ChevronRight 
-          className="text-black hover:text-gray-500" 
-          onClick={() => setPersonasOpen(false)}
+      <div className="flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center gap-1 mb-4 shrink-0">
+          <ChevronRight
+            className="text-black hover:text-gray-500 cursor-pointer"
+            onClick={() => setPersonasOpen(false)}
           />
-        <h2 className="text-md text-black font-mono">Personas</h2>
-      </div>
+          <h2 className="text-md text-black font-mono">Personas</h2>
+        </div>
 
-      <div className="flex-1 overflow-y-auto px-2 space-y-4">
-        {Personas.map((pers, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-2xl shadow p-4 border border-gray-200"
-          >
-            <div className="mb-2">
-              <h3 className="text-base font-bold text-gray-800">{pers.name}</h3>
-              <p className="text-sm text-gray-600">{pers.description}</p>
-            </div>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => handleSetPersona(pers.id)}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                Set
-              </button>
-              <button
-                onClick={() => handleDeletePersona(pers.id)}
-                className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+        {/* Scrollable Persona List */}
+        <div className="flex-1 overflow-y-auto px-2 space-y-4 mb-16">
+          {Personas?.map((pers, index) => {
+            const isSelected =
+              pers.name === currPersona.userName &&
+              pers.description === currPersona.userDesc;
 
-     </div>
-          </>
-        )}
+            return (
+              <div
+                key={index}
+                className={`flex flex-col justify-between bg-gray-50 border ${
+                  isSelected ? "border-blue-500" : "border-gray-300"
+                } rounded-xl p-4 shadow-sm hover:shadow-md transition duration-200`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-base font-semibold text-gray-800">{pers.name}</h3>
+                    {isSelected && (
+                      <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full">
+                        ✅ Selected
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">{pers.description}</p>
+                </div>
+
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    onClick={() => handleSetPersona(pers.name, pers.description)}
+                    className="px-4 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition"
+                  >
+                    Set
+                  </button>
+                  {!pers.default && (
+                    <button
+                      onClick={() => handleDeletePersona(pers.id)}
+                      className="px-4 py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
+
 
 
     {personasOpen && (
@@ -1219,6 +1242,7 @@ const App = () => {
         setHistoryOpen(false);
         setBotdetailsOpen(false);
         setSidebarOpen(false);
+        setPersonasOpen(false);
       }}
       className="h-10 w-10 flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 shadow hover:brightness-110 transition-all duration-300"
     >
