@@ -73,3 +73,33 @@ export async function GET(req) {
     return NextResponse.json({ success: false, error: "Failed to fetch persona" }, { status: 500 });
   }
 }
+
+
+export async function DELETE(req) {
+  const session = await validateSession(req);
+  if (session.status !== 200) {
+    return NextResponse.json({ message: session.message, success: false }, { status: session.status });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const Id = searchParams.get("Id");
+
+  try {
+
+    if (!Id) {
+      return NextResponse.json({ success: false, error: "ID required" }, { status: 400 });
+    }
+
+    const personas = await prisma.persona.delete({
+      where: { id : Id,
+      },
+    });
+
+  
+    return NextResponse.json({ success: true, message: "Deleted Successfully" });
+
+  } catch (err) {
+    console.error("Error deleting persona:", err);
+    return NextResponse.json({ success: false, error: "Failed to delete persona" }, { status: 500 });
+  }
+}
