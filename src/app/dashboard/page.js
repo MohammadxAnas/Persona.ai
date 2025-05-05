@@ -185,6 +185,7 @@ export default function Home() {
     const { userName, userDesc } = Persona;
     console.log(userName);
     if (!userName || !userDesc ) {
+      setIsdisabled(false);
       return toast.error("Info required!");
     }
     try {
@@ -238,6 +239,7 @@ export default function Home() {
     const { userName, userDesc } = Persona;
     console.log(userName);
     if (!userName || !userDesc ) {
+      setIsdisabled(false)
       return toast.error("Info required!");
     }
     try {
@@ -348,6 +350,7 @@ export default function Home() {
     const { botName, botDesc, botView } = BotData;
     console.log(botName);
     if (!botName || !botDesc || !botView) {
+      setIsDisabled(false);
       return toast.error("Bot info required!");
     }
     try {
@@ -600,7 +603,7 @@ export default function Home() {
     {/* Discover Button */}
     <div>
       <button
-        className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100 sm:bg-gray-50"
+        className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-200 sm:bg-gray-100"
         onClick={() => {
           fetchUserBots();
           SetLoading(true);
@@ -630,7 +633,7 @@ export default function Home() {
     <Dialog open={isPModalOpen} onOpenChange={setIsPModalOpen}>
           <DialogTrigger asChild>
           <button
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100 sm:bg-gray-50"
+            className="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-200 sm:bg-gray-100"
           >
           <UserPen className="w-6 h-6 text-gray-500 fill-grey-500" />
 
@@ -727,10 +730,9 @@ export default function Home() {
       </ul>
     </div>
 
-    {/* Spacer */}
     <div className="flex-grow" />
 
-    {/* Footer / User Menu */}
+  
     <DropdownMenu>
       <DropdownMenuTrigger className="text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
         <span>{UserEmail}</span>
@@ -758,16 +760,16 @@ export default function Home() {
 
 {sidebarOpen && (
   <div
-    className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 md:hidden"
+    className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 lg:hidden"
     onClick={() => setSidebarOpen(false)}
   />
 )}
 
-<div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
+<div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? ":ml-[270px]" : ""}`}>
 <div className="relative">
 <header
   className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
-    w-full ${sidebarOpen ? "md:ml-[270px] md:w-[calc(100%-270px)]" : ""}
+    w-full ${sidebarOpen ? "lg:ml-[270px] lg:w-[calc(100%-270px)]" : ""}
 `}
 >
   <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
@@ -789,17 +791,17 @@ export default function Home() {
   </div>
 
   {/* Push input to the right */}
-  <div className="relative ml-auto group">
-  <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg transition-colors duration-300 group-focus-within:text-indigo-500">
-    <Search className="w-6 h-6" />
+  <div className="relative ml-auto mr-7 group">
+  <span className="pl-2 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg transition-colors duration-300 group-focus-within:text-indigo-500">
+    <Search className="w-4 h-4" />
   </span>
 
  {/* Mobile input */}
 <input
-  placeholder="Search characters..."
+  placeholder="Search Characters..."
   className="
     w-50 max-w-sm h-10 block sm:hidden
-    pl-10 pr-4 py-2
+    pl-11 pr-4 py-2 pt-[5px]
     rounded-full border border-gray-300
     bg-white text-gray-800 placeholder-gray-400
     shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
@@ -809,10 +811,10 @@ export default function Home() {
 
 {/* Desktop input */}
 <input
-  placeholder="Search for characters..."
+  placeholder="Search for Characters..."
   className="
-    w-full max-w-md h-10 hidden sm:block
-    pl-12 pr-4 py-2
+    w-80 max-w-md h-10 hidden sm:block
+    pl-12 pr-4 py-2 pt-[5px]
     rounded-full border border-gray-300
     bg-white text-gray-800 placeholder-gray-400
     shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
@@ -870,7 +872,7 @@ export default function Home() {
 
     {/* Bot List */}
     {!loading && !Loading && Bots && (
-      <ul className="flex overflow-x-auto gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
+      <ul className="flex overflow-x-auto scrollbar-hide gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
 
       <li className="snap-start">
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

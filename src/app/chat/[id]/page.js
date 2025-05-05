@@ -777,7 +777,7 @@ const handleSetPersona = (name,desc) => {
   </div>
   <div className="pb-4 border-b border-gray-200">
     <button
-      className="font-light w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-100"
+      className="font-light w-full flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 transition-all duration-200 hover:bg-gray-200 sm:bg-gray-100"
       onClick={() => {
         router.push('/dashboard');
       }}
@@ -1144,55 +1144,55 @@ const handleSetPersona = (name,desc) => {
               pers.description === currPersona.userDesc;
 
             return (
-<div
-  key={index}
-  className={`flex flex-col justify-between bg-white border rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out
-${isSelected 
-  ? "border-blue-200 shadow-[0_0_10px_2px_rgba(59,130,246,0.15)] backdrop-blur-sm" 
-  : "border-gray-200"}`}
+          <div
+            key={index}
+            className={`flex flex-col justify-between bg-white border rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out
+          ${isSelected 
+            ? "border-blue-200 shadow-[0_0_10px_2px_rgba(59,130,246,0.15)] backdrop-blur-sm" 
+            : "border-gray-200"}`}
 
->
-  {/* Header */}
-  <div className="flex items-start justify-between mb-2">
-    <div>
-      <h3 className="text-base font-semibold text-gray-900 tracking-tight">
-        {pers.name}
-      </h3>
-      <p className="text-sm text-gray-600 mt-1">{pers.description}</p>
-    </div>
-    {isSelected && (
-      <span className="text-xs px-2 py-0.5 bg-blue-10 font-medium ml-2 animate-pulse">
-        ✅ 
-      </span>
-    )}
-  </div>
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <h3 className="text-base font-semibold text-gray-900 tracking-tight">
+                  {pers.name}
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">{pers.description}</p>
+              </div>
+              {isSelected && (
+                <span className="text-xs px-2 py-0.5 bg-blue-10 font-medium ml-2 animate-pulse">
+                  ✅ 
+                </span>
+              )}
+            </div>
 
-  {/* Buttons */}
-  <div className="flex justify-end items-center gap-2 mt-4">
-    <button
-      onClick={() => handleSetPersona(pers.name, pers.description)}
-      className="px-4 py-1.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
-    >
-      Set
-    </button>
+            {/* Buttons */}
+            <div className="flex justify-end items-center gap-2 mt-4">
+              <button
+                onClick={() => handleSetPersona(pers.name, pers.description)}
+                className="px-4 py-1.5 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+              >
+                Set
+              </button>
 
-    {!pers.default && (
-      <button
-        onClick={() => handleDeletePersona(pers.id)}
-        disabled={isDisabled}
-        title="Delete this persona"
-        className={`relative group flex items-center justify-center px-3 py-1.5 text-sm rounded-lg transition
-          ${isDisabled 
-            ? "bg-red-300 cursor-not-allowed text-white" 
-            : "bg-red-500 hover:bg-red-600 text-white"
-          }`}
-      >
-        <Trash2 className="w-4 h-4" />
-        
-      </button>
-    )}
-  </div>
-</div>
+              {!pers.default && (
+                <button
+                  onClick={() => handleDeletePersona(pers.id)}
+                  disabled={isDisabled}
+                  title="Delete this persona"
+                  className={`relative group flex items-center justify-center px-3 py-1.5 text-sm rounded-lg transition
+                    ${isDisabled 
+                      ? "bg-red-300 cursor-not-allowed text-white" 
+                      : "bg-red-500 hover:bg-red-600 text-white"
+                    }`}
+                >
+                  <Trash2 className="w-4 h-4" />
+                  
+                </button>
+              )}
+            </div>
+          </div>
 
             );
           })}
@@ -1338,28 +1338,26 @@ ${isSelected
                 key={index}
                 className={`rounded-2xl px-4 py-2 max-w-[75%] text-sm md:text-base break-words ${
                   msg.sender === "user"
-                    ? "self-end bg-blue-100 text-blue-900"
-                    : "self-start bg-gray-100 text-gray-800"
+                    ? "self-end bg-gray-100 text-gray-800"
+                    : "self-start text-gray-800"
                 }`}
               >
+                    {msg.sender !== "user" && (
+                    <div className="mt-2 flex items-center justify-start gap-1">
+                      <div>
+                      <Avatar className="text-black w-5 h-5 rounded-full object-cover shadow-lg">
+                        <AvatarImage src={bot.avatar} alt={bot.name} />
+                        <AvatarFallback>CN</AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className="group relative p-1 rounded-full cursor-pointer bg-white shadow-md hover:bg-blue-100 hover:shadow-lg transform transition-all duration-300 ease-out hover:scale-110">
+                      <PlayIcon className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-300" 
+                                onClick={() => handlePlay(msg.text)}
+                      />
+                    </div>
+                    </div>
+                    )}
                 {msg.text}
-
-              {/* Show Play button only for bot messages */}
-              {msg.sender !== "user" && (
-              <div className="mt-2 flex items-center justify-start gap-1">
-                <div>
-                <Avatar className="text-black w-5 h-5 rounded-full object-cover shadow-lg">
-                  <AvatarImage src={bot.avatar} alt={bot.name} />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="group relative p-1 rounded-full cursor-pointer bg-white shadow-md hover:bg-blue-100 hover:shadow-lg transform transition-all duration-300 ease-out hover:scale-110">
-                <PlayIcon className="w-4 h-4 text-blue-500 group-hover:text-blue-600 transition-colors duration-300" 
-                          onClick={() => handlePlay(msg.text)}
-                />
-              </div>
-              </div>
-              )}
             </div>
           )))}
 
