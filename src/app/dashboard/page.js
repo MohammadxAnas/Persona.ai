@@ -758,74 +758,74 @@ export default function Home() {
 
 
 
-{sidebarOpen && (
-  <div
-    className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 lg:hidden"
-    onClick={() => setSidebarOpen(false)}
-  />
-)}
-
-<div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? ":ml-[270px]" : ""}`}>
-<div className="relative">
-<header
-  className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
-    w-full ${sidebarOpen ? "lg:ml-[270px] lg:w-[calc(100%-270px)]" : ""}
-`}
->
-  <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
-    {!sidebarOpen && (
-      <span
-        className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
-        onClick={() => {
-          setSidebarOpen(true);
-        }}
-      >
-        ☰
-      </span>
+    {sidebarOpen && (
+      <div
+        className="fixed inset-0 z-40 bg-neutral-50/50 transition-opacity duration-300 lg:hidden"
+        onClick={() => setSidebarOpen(false)}
+      />
     )}
-    <span
-      className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+
+    <div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? ":ml-[270px]" : ""}`}>
+    <div className="relative">
+    <header
+      className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
+        w-full ${sidebarOpen ? "lg:ml-[270px] lg:w-[calc(100%-270px)]" : ""}
+    `}
     >
-      persona.ai
-    </span>
-  </div>
+      <div className="flex items-center gap-3 text-lg font-bold transition-transform duration-300 ease-in-out">
+        {!sidebarOpen && (
+          <span
+            className="cursor-pointer text-white hover:text-gray-200 transition-all duration-300"
+            onClick={() => {
+              setSidebarOpen(true);
+            }}
+          >
+            ☰
+          </span>
+        )}
+        <span
+          className={`text-3xl font-bold tracking-wide ${sidebarOpen ? "ml-7 md:ml-0" : ""} cursor-pointer -mt-1`}
+        >
+          persona.ai
+        </span>
+      </div>
 
-  {/* Push input to the right */}
-  <div className="relative ml-auto mr-7 group">
-  <span className="pl-2 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg transition-colors duration-300 group-focus-within:text-indigo-500">
-    <Search className="w-4 h-4" />
-  </span>
+      {/* Push input to the right */}
+      <div className="relative ml-auto mr-7 group">
+      <span className="pl-2 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg transition-colors duration-300 group-focus-within:text-indigo-500">
+        <Search className="w-4 h-4" />
+      </span>
 
- {/* Mobile input */}
-<input
-  placeholder="Search Characters..."
-  className="
-    w-50 max-w-sm h-10 block sm:hidden
-    pl-11 pr-4 py-2 pt-[5px]
-    rounded-full border border-gray-300
-    bg-white text-gray-800 placeholder-gray-400
-    shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
-    transition duration-200 ease-in-out
-  "
-/>
+    {/* Mobile input */}
+    <input
+      placeholder="Search Characters..."
+      className="
+        w-50 max-w-sm h-10 block sm:hidden
+        pl-11 pr-4 py-2 pt-[5px]
+        rounded-full border border-gray-300
+        bg-white text-gray-800 placeholder-gray-400
+        shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
+        transition duration-200 ease-in-out
+      "
+    />
 
-{/* Desktop input */}
-<input
-  placeholder="Search for Characters..."
-  className="
-    w-80 max-w-md h-10 hidden sm:block
-    pl-12 pr-4 py-2 pt-[5px]
-    rounded-full border border-gray-300
-    bg-white text-gray-800 placeholder-gray-400
-    shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
-    transition duration-200 ease-in-out
-  "
-/>
+    {/* Desktop input */}
+    <input
+      placeholder="Search for Characters..."
+      className="
+        w-80 max-w-md h-10 hidden sm:block
+        pl-12 pr-4 py-2 pt-[5px]
+        rounded-full border border-gray-300
+        bg-white text-gray-800 placeholder-gray-400
+        shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
+        transition duration-200 ease-in-out
+      "
+    />
 
-</div>
+    </div>
 
-</header>
-</div>
+    </header>
+    </div>
 
 
     {loading && (
@@ -838,7 +838,7 @@ export default function Home() {
     )}
 
 
-    <main className="pt-20">
+    <main className={`pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
 
     {/* Your Created Bots Label */}
    <div className="flex items-center justify-between">
@@ -854,20 +854,22 @@ export default function Home() {
 
     {/* Loading state */}
     {Loading && (
-    <div className="flex justify-center items-center py-12">
-      {/* Container to hold skeletons horizontally */}
-      <div className="flex space-x-8">
-        {/* First Skeleton Loader */}
-        <div className="flex items-center space-x-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-          </div>
+        <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+          {[...Array(5)].map((_, index) => (
+            <div
+              key={index}
+              className="w-[400px] h-[140px] bg-white rounded-xl border border-gray-200 p-4 shadow animate-pulse flex items-center gap-4 pr-7"
+            >
+              <div className="w-12 h-12 bg-gray-200 rounded-full" />
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-[260px] bg-gray-200 rounded" />
+                <div className="h-4 w-[220px] bg-gray-200 rounded" />
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    </div>
-  )}
+      )}
+
 
 
     {/* Bot List */}
