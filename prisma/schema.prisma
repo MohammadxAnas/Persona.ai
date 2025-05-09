@@ -15,7 +15,7 @@ generator client {
    sessionToken     String?
    confirmationCode String
    isVerified       Boolean       @default(false)
-   codeExpiresAt    DateTime
+   codeExpiresAt    DateTime 
  
    personas          Persona[]      @relation("UserPersonas")
  
@@ -41,6 +41,19 @@ generator client {
  
    @@index([userId])
  }
+
+ model DFTcharacter {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  overview    String
+  avatar      String?
+  gender      String?
+
+  chatSessions ChatSession[] @relation("DFTSessions")
+  messages     Message[]     @relation("DFTMessages")
+}
+
  
  model ChatSession {
    id          String      @id @default(auto()) @map("_id") @db.ObjectId
@@ -51,6 +64,7 @@ generator client {
    
    user        User        @relation("UserChatSessions", fields: [userId], references: [id])
    character   AICharacter @relation("CharacterChatSessions", fields: [characterId], references: [id])
+   dcharacter   DFTcharacter  @relation("DFTSessions", fields: [characterId], references: [id])
    messages    Message[]
  
    @@index([userId])
@@ -66,10 +80,10 @@ generator client {
    content       String
    createdAt     DateTime    @default(now())
  
-  
-   user          User        @relation("UserMessages", fields: [userId], references: [id])
-   character     AICharacter @relation("CharacterMessages", fields: [characterId], references: [id])
-   chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+   user          User         @relation("UserMessages", fields: [userId], references: [id])
+   character     AICharacter  @relation("CharacterMessages", fields: [characterId], references: [id])
+   chatSession   ChatSession  @relation(fields: [chatSessionId], references: [id])
+   dcharacter     DFTcharacter @relation("DFTMessages", fields: [characterId], references: [id])
  
    @@index([userId])
    @@index([characterId])

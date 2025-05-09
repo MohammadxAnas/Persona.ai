@@ -311,6 +311,7 @@ const handleSetPersona = (name,desc) => {
     }
   };
 
+
   useEffect(() => {
     if (id) {
       fetchBot();
@@ -899,7 +900,7 @@ const handleSetPersona = (name,desc) => {
 )}
 {/* Botbar */}
 <div
-  className={`fixed top-18 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
+  className={`font-sans fixed top-18 right-0 h-full w-[290px] bg-white p-4 border-l border-gray-200 transition-transform duration-300 z-50 shadow-md ${
     botbarOpen ? "translate-x-0" : "translate-x-full"
   }`}
 >
