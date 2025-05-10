@@ -874,7 +874,7 @@ export default function Home() {
     )}
 
 
-    <main className={`pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
+  <main className={`pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
 
     {/* Your Created Bots Label */}
    <div className="flex items-center justify-between">
@@ -909,16 +909,97 @@ export default function Home() {
 
 
     {/* Bot List */}
+      {!loading && !Loading && Bots && (
+        <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+          {Bots.map((bot, index) => (
+            <li
+              key={bot.id}
+              className="snap-start"
+            >
+              <Card
+                className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
+                onClick={() => {
+                  router.push(`/chat/${bot.id}`);
+                }}
+              >
+                <div className="flex h-full items-center justify-between px-4">
+                  <div className="flex items-center gap-4">
+                    <Avatar className="w-12 h-12 border border-indigo-200 shadow-sm">
+                      <AvatarImage src={bot.avatar} alt={bot.name} />
+                      <AvatarFallback>AI</AvatarFallback>
+                    </Avatar>
+
+                    <div className="flex flex-col">
+                      <CardTitle className="text-base font-semibold text-indigo-700">
+                        {bot.name}
+                      </CardTitle>
+                      <CardDescription className="text-sm text-gray-600 w-[225px] two-line-truncate">
+                        {bot.description}
+                      </CardDescription>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2 items-end">
+                    <Button
+                      className="h-8 px-3 text-xs rounded-lg gap-1 border-indigo-300 text-indigo-700"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/chat/${bot.id}`);
+                      }}
+                    >
+                      <Mail className="w-4 h-4" />
+                      Chat
+                    </Button>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          router.push(`/chat/${bot.id}`);
+                        }}
+                      >
+                        <Phone className="w-4 h-4" />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className={`h-8 w-8 p-0 rounded-lg border 
+                          ${isDisabled
+                            ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
+                            : 'border-red-200 text-red-500'}`}
+                        disabled={isDisabled}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteBot(bot.id, fetchDftBots);
+                        }}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </li>
+          ))}
+        </ul>
+      )}
+
+
     {!loading && !Loading && Bots && (
-      <ul className="flex overflow-x-auto scrollbar-hide gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
-           {Bots.map((bot) => (
-          <li key={bot.id} className="snap-start pl-1">
+      <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+        {Dbots.map((bot, index) => (
+          <li
+            key={bot.id}
+            className="snap-start"
+          >
             <Card
-              className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
+              className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
               onClick={() => {
                 router.push(`/chat/${bot.id}`);
               }}
-              
             >
               <div className="flex h-full items-center justify-between px-4">
                 <div className="flex items-center gap-4">
@@ -934,137 +1015,15 @@ export default function Home() {
                     <CardDescription className="text-sm text-gray-600 w-[225px] two-line-truncate">
                       {bot.description}
                     </CardDescription>
-
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2 items-end">
-                  <Button
-                    className="h-8 px-3 text-xs rounded-lg gap-1 border-indigo-300 text-indigo-700"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/chat/${bot.id}`);
-                    }}
-                  >
-                    <Mail className="w-4 h-4" />
-                    Chat
-                  </Button>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/chat/${bot.id}`);
-                      }}
-                    >
-                      <Phone className="w-4 h-4" />
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      className={`h-8 w-8 p-0 rounded-lg border 
-                        ${isDisabled 
-                          ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
-                          : ' border-red-200 text-red-500'}`}
-                      
-                      disabled={isDisabled}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteBot(bot.id, fetchDftBots);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
+             </div>
             </Card>
-            
           </li>
         ))}
-        </ul>
-      
+      </ul>
     )}
-
-     <ul className="flex overflow-x-auto scrollbar-hide gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
-           {Dbots.map((bot) => (
-          <li key={bot.id} className="snap-start pl-1">
-            <Card
-              className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
-              onClick={() => {
-                router.push(`/chat/${bot.id}`);
-              }}
-              
-            >
-              <div className="flex h-full items-center justify-between px-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12 border border-indigo-200 shadow-sm">
-                    <AvatarImage src={bot.avatar} alt={bot.name} />
-                    <AvatarFallback>AI</AvatarFallback>
-                  </Avatar>
-
-                  <div className="flex flex-col">
-                    <CardTitle className="text-base font-semibold text-indigo-700">
-                      {bot.name}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-gray-600 w-[225px] two-line-truncate">
-                      {bot.description}
-                    </CardDescription>
-
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2 items-end">
-                  <Button
-                    className="h-8 px-3 text-xs rounded-lg gap-1 border-indigo-300 text-indigo-700"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/chat/${bot.id}`);
-                    }}
-                  >
-                    <Mail className="w-4 h-4" />
-                    Chat
-                  </Button>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/chat/${bot.id}`);
-                      }}
-                    >
-                      <Phone className="w-4 h-4" />
-                    </Button>
-
-                    <Button
-                      variant="outline"
-                      className={`h-8 w-8 p-0 rounded-lg border 
-                        ${isDisabled 
-                          ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
-                          : ' border-red-200 text-red-500'}`}
-                      
-                      disabled={isDisabled}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteBot(bot.id, fetchDftBots);
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </Card>
-            
-          </li>
-        ))}
-        </ul>
     </main>
   </div>
 </div>
