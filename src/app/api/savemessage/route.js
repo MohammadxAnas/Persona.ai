@@ -12,6 +12,28 @@ export async function POST(req) {
 
     const body = await req.json();
     const { userId, characterId, messages, sessionId } = body;
+    console.log("logs->",userId,characterId,messages,sessionId);
+
+    const bot = await prisma.dFTcharacter.findUnique({
+      where:{
+        id: characterId,
+        userId: userId
+      }
+    })
+    const Bot = await prisma.aICharacter.findUnique({
+       where:{
+        id: characterId,
+        userId: userId
+      }
+    })
+    if(!bot && !Bot){
+      await prisma.dFTcharacter.update({
+        where: {id: characterId},
+        data:{
+          userId: userId
+        }
+      })
+    }
 
     let chatSession;
 
@@ -26,7 +48,9 @@ export async function POST(req) {
 
    else{
        chatSession = await prisma.chatSession.findUnique({
-        where: {id: sessionId}
+        where: {id: sessionId,
+          userId: userId
+        }
        })
    }
    
@@ -41,12 +65,14 @@ export async function POST(req) {
    })
    const sessions = await prisma.chatSession.findMany({
     where: {
-      characterId : characterId
+      characterId : characterId,
+      userId: userId
     },
     orderBy : {
       startedAt : "desc"
     }
    })
+   console.log(sessions)
     return Response.json({ 
       sessionId: chatSession.id , 
       session: sessions,  

@@ -355,14 +355,19 @@ const handleSetPersona = (name,desc) => {
   
  
   const fetchChatHistory = async () => {
-    const token = localStorage.getItem("token");
+     const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+
     const res = await fetch("/api/fetchHistory", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ sessionId, id }),
+      body: JSON.stringify({ sessionId, id , userId }),
     });
 
     if (res.status === 401) {
@@ -457,6 +462,10 @@ const handleSetPersona = (name,desc) => {
   
       typeMessage(botText);
       const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
 
       const saveResponse = await fetch("/api/savemessage", {
         method: "POST",
@@ -464,7 +473,7 @@ const handleSetPersona = (name,desc) => {
           Authorization: `Bearer ${token}`,
          },
         body: JSON.stringify({
-          userId: bot.userId, 
+          userId: userId, 
           characterId: id,
           sessionId : sessionId,
           messages: [

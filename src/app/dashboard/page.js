@@ -115,7 +115,6 @@ export default function Home() {
     const loadBots = async () => {
       const bots = await fetchUserBots();
       const Dbots = await fetchDftBots();
-      await fetchPersona();
       setBots(bots);
       setDbots(Dbots);
     };
@@ -435,7 +434,7 @@ export default function Home() {
     useEffect(() => {
       console.log("persona",currPersona);
       fetchPersona();
-    }, [currPersona]);
+    }, [Bots]);
   
   const deleteBot = async (botId, fetchUserBots) => {
     setIsDisabled(true);
@@ -912,118 +911,7 @@ export default function Home() {
     {/* Bot List */}
     {!loading && !Loading && Bots && (
       <ul className="flex overflow-x-auto scrollbar-hide gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
-
-      <li className="snap-start">
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <DialogTrigger asChild>
-      <Card
-        className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200 cursor-pointer"
-      >
-        <div className="flex h-full items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="w-12 h-12 border border-indigo-200 shadow-sm bg-indigo-100">
-              <div className="flex items-center justify-center w-full h-full">
-                <Plus className="w-6 h-6 text-indigo-600" />
-              </div>
-            </Avatar>
-
-            <div className="flex flex-col">
-              <CardTitle className="text-base font-semibold text-indigo-700">
-                Create New Character
-              </CardTitle>
-              <CardDescription className="text-sm text-gray-600 w-[300px] two-line-truncate">
-                Start a conversation by building your own custom AI Character.
-              </CardDescription>
-            </div>
-          </div>
-        </div>
-      </Card>
-        </DialogTrigger>
-
-        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
-          <DialogHeader>
-            <DialogTitle>Create a Character</DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
-              Fill out the details below to create a new bot.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-          <div>
-              <Label className="pb-1 block">Character Name</Label>
-              <Input
-                name="botName"
-                type="text"
-                value={BotData.botName}
-                onChange={handleChange2}
-                placeholder="e.g., Kwame 'Krazy K' Dolo"
-                required
-                maxLength={25}
-              />
-            </div>
-            <div>
-              <Label className="pb-1 block">Short Description</Label>
-              <Input
-                name="botDesc"
-                type="text"
-                value={BotData.botDesc}
-                onChange={handleChange2}
-                placeholder="e.g., A wild and funny street legend"
-                required
-              />
-            </div>
-            <div>
-              <Label className="pb-1 block">Backstory / Overview</Label>
-              <Input
-                name="botView"
-                type="text"
-                value={BotData.botView}
-                onChange={handleChange2}
-                placeholder="e.g., Grew up in Soweto, known for wild antics"
-                required
-              />
-            </div>
-            <div>
-              <Label className="pb-2">Avatar Image URL</Label>
-              <Input
-                name="avatar"
-                type="text"
-                value={BotData.avatar || ""}
-                onChange={handleChange2}
-                placeholder="Image URL"
-              />
-            </div>
-            <div>
-              <Label className="pb-2">Gender</Label>
-              <select
-                name="botGender"
-                value={BotData.botGender}
-                onChange={handleChange2}
-                required
-                className="w-full border border-gray-300 rounded-md p-2 text-sm"
-              >
-                <option value="">Select gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              onClick={handleCreatebot}
-              disabled={isDisabled}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg"
-            >
-              Create Character
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-        </li>
-
-        {Bots.map((bot) => (
+           {Bots.map((bot) => (
           <li key={bot.id} className="snap-start pl-1">
             <Card
               className="w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
@@ -1085,7 +973,7 @@ export default function Home() {
                       disabled={isDisabled}
                       onClick={(e) => {
                         e.stopPropagation();
-                        deleteBot(bot.id, fetchUserBots);
+                        deleteBot(bot.id, fetchDftBots);
                       }}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -1097,9 +985,11 @@ export default function Home() {
             
           </li>
         ))}
-      </ul>
+        </ul>
       
     )}
+
+     <ul className="flex overflow-x-auto scrollbar-hide gap-2 px-2 py-3 list-none scrollbar-hide scroll-smooth snap-x snap-mandatory">
            {Dbots.map((bot) => (
           <li key={bot.id} className="snap-start pl-1">
             <Card
@@ -1174,6 +1064,7 @@ export default function Home() {
             
           </li>
         ))}
+        </ul>
     </main>
   </div>
 </div>

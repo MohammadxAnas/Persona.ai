@@ -44,6 +44,7 @@ generator client {
 
  model DFTcharacter {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String?   @db.ObjectId
   name        String
   description String
   overview    String
@@ -64,7 +65,7 @@ generator client {
    
    user        User        @relation("UserChatSessions", fields: [userId], references: [id])
    character   AICharacter @relation("CharacterChatSessions", fields: [characterId], references: [id])
-   dcharacter   DFTcharacter  @relation("DFTSessions", fields: [characterId], references: [id])
+   dcharacter  DFTcharacter  @relation("DFTSessions", fields: [characterId], references: [id])
    messages    Message[]
  
    @@index([userId])

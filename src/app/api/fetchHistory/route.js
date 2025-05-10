@@ -11,9 +11,9 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { sessionId, id } = body;
+    const { sessionId, id , userId } = body;
 
-    if (!sessionId || !id) {
+    if (!sessionId || !id || !userId) {
       return Response.json({ message: "sessionId and id are required", success: false }, { status: 400 });
     }
 
@@ -21,6 +21,7 @@ export async function POST(req) {
       where: {
         chatSessionId: sessionId,
         characterId: id,
+        userId: userId
       },
       orderBy: {
         createdAt: "asc",
