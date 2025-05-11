@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import validateSession from "@/middlewares/validateSession"; 
+import validateSession from "@/middlewares/validateSession";
 
 const prisma = new PrismaClient();
 
@@ -11,17 +11,32 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { sessionId, id , userId } = body;
+    const { sessionId, id, userId } = body;
 
     if (!sessionId || !id || !userId) {
-      return Response.json({ message: "sessionId and id are required", success: false }, { status: 400 });
+      return Response.json({ message: "sessionId, id, and userId are required", success: false }, { status: 400 });
     }
 
+    // Check if character is AICharacter or DFTcharacter
+    let bot = await prisma.aICharacter.findUnique({ where: { id } });
+    let isDFT = false;
+
+    if (!bot) {
+      bot = await prisma.dFTcharacter.findUnique({ where: { id } });
+      if (!bot) {
+        return Response.json({ message: "Bot not found", success: false }, { status: 404 });
+      }
+      isDFT = true;
+    }
+
+    // Query messages based on correct character field
     const messages = await prisma.message.findMany({
       where: {
         chatSessionId: sessionId,
-        characterId: id,
-        userId: userId
+        userId,
+        ...(isDFT
+          ? { dftCharacter: { id: id } }
+          : { aiCharacterId: id }),
       },
       orderBy: {
         createdAt: "asc",

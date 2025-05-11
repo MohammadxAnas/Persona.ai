@@ -50,46 +50,53 @@ generator client {
   overview    String
   avatar      String?
   gender      String?
+  category    String?
 
   chatSessions ChatSession[] @relation("DFTSessions")
   messages     Message[]     @relation("DFTMessages")
 }
 
  
- model ChatSession {
-   id          String      @id @default(auto()) @map("_id") @db.ObjectId
-   userId      String      @db.ObjectId
-   characterId String      @db.ObjectId
-   startedAt   DateTime    @default(now())
-   endedAt     DateTime?
-   
-   user        User        @relation("UserChatSessions", fields: [userId], references: [id])
-   character   AICharacter @relation("CharacterChatSessions", fields: [characterId], references: [id])
-   dcharacter  DFTcharacter  @relation("DFTSessions", fields: [characterId], references: [id])
-   messages    Message[]
+model ChatSession {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  aiCharacterId String?       @db.ObjectId
+  dftCharacterId String?      @db.ObjectId
+  startedAt     DateTime      @default(now())
+  endedAt       DateTime?
+
+  user          User          @relation("UserChatSessions", fields: [userId], references: [id])
+  aiCharacter   AICharacter?  @relation("CharacterChatSessions", fields: [aiCharacterId], references: [id])
+  dftCharacter  DFTcharacter? @relation("DFTSessions", fields: [dftCharacterId], references: [id])
+  messages      Message[]
+
+  @@index([userId])
+  @@index([aiCharacterId])
+  @@index([dftCharacterId])
+}
+
  
-   @@index([userId])
-   @@index([characterId])
- }
- 
- model Message {
-   id            String      @id @default(auto()) @map("_id") @db.ObjectId
-   userId        String      @db.ObjectId
-   characterId   String      @db.ObjectId
-   chatSessionId String      @db.ObjectId
-   sender        Sender
-   content       String
-   createdAt     DateTime    @default(now())
- 
-   user          User         @relation("UserMessages", fields: [userId], references: [id])
-   character     AICharacter  @relation("CharacterMessages", fields: [characterId], references: [id])
-   chatSession   ChatSession  @relation(fields: [chatSessionId], references: [id])
-   dcharacter     DFTcharacter @relation("DFTMessages", fields: [characterId], references: [id])
- 
-   @@index([userId])
-   @@index([characterId])
-   @@index([chatSessionId])
- }
+model Message {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  chatSessionId String        @db.ObjectId
+  aiCharacterId String?       @db.ObjectId
+  dftCharacterId String?      @db.ObjectId
+  sender        Sender
+  content       String
+  createdAt     DateTime      @default(now())
+
+  user          User          @relation("UserMessages", fields: [userId], references: [id])
+  chatSession   ChatSession   @relation(fields: [chatSessionId], references: [id])
+  aiCharacter   AICharacter?  @relation("CharacterMessages", fields: [aiCharacterId], references: [id])
+  dftCharacter  DFTcharacter? @relation("DFTMessages", fields: [dftCharacterId], references: [id])
+
+  @@index([userId])
+  @@index([chatSessionId])
+  @@index([aiCharacterId])
+  @@index([dftCharacterId])
+}
+
  
  model Persona {
    id              String     @id @default(auto()) @map("_id") @db.ObjectId

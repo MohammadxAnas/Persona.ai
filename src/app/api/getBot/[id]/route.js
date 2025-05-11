@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 
 export async function GET(req, { params }) {
   const session = await validateSession(req);
+  console.log(">",session.user.id)
   if (session.status !== 200) {
     return NextResponse.json({ message: session.message, success: false }, { status: session.status });
   }
@@ -16,23 +17,28 @@ export async function GET(req, { params }) {
   }
 
   try {
-
     let bot = await prisma.aICharacter.findUnique({ where: { id } });
     let botType = "USER";
+    let isDFT = false;
 
   
     if (!bot) {
       bot = await prisma.dFTcharacter.findUnique({ where: { id } });
       botType = "DEFAULT";
+      isDFT = true;
     }
 
     if (!bot) {
       return NextResponse.json({ success: false, error: "Bot not found" }, { status: 404 });
     }
 
-
     const chatSessions = await prisma.chatSession.findMany({
-      where: { characterId: bot.id },
+      where: {
+        userId: session.user.id,
+        ...(isDFT
+          ? { dftCharacterId: bot.id }
+          : { aiCharacterId: bot.id }),
+      },
       orderBy: { startedAt: "desc" },
     });
 
@@ -42,7 +48,7 @@ export async function GET(req, { params }) {
       success: true,
       bot,
       botType,
-      chatSessionId: latestSession ? latestSession.id : null,
+      chatSessionId: latestSession?.id || null,
       chatSessions,
     });
 
