@@ -3,11 +3,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass, UserPen } from "lucide-react";
+import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass, UserPen, MoreVertical } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
 
-
-import { Skeleton } from "@/components/ui/skeleton"
 
 import {
   DropdownMenu,
@@ -66,6 +64,8 @@ export default function Home() {
   const [Bots, setBots] = useState([]);
   const [Dbots, setDbots] = useState([]);
 
+  const [groupedByCategory, setGroupedByCategory] = useState({});
+
   useEffect(() => {
     if (loading) {
       const interval = setInterval(() => {
@@ -121,6 +121,19 @@ export default function Home() {
     loadBots();
   }, []);
 
+  useEffect(() => {
+ 
+  const grouped = Dbots.reduce((acc, bot) => {
+    if (!acc[bot.category]) {
+      acc[bot.category] = [];
+    }
+    acc[bot.category].push(bot);
+    return acc;
+  }, {});
+
+  setGroupedByCategory(grouped);
+}, [Dbots]);
+
   const handleUnauthorized = () => {
     toast.error("You’ve been logged out because you signed in on another device.");
     localStorage.removeItem("token");
@@ -129,6 +142,7 @@ export default function Home() {
   };
   
   const fetchDftBots = async () => {
+    SetLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -169,6 +183,7 @@ export default function Home() {
   };
   
   const fetchUserBots = async () => {
+    SetLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
@@ -436,7 +451,7 @@ export default function Home() {
       fetchPersona();
     }, [Bots]);
   
-  const deleteBot = async (botId, fetchUserBots) => {
+  const deleteBot = async (botId) => {
     setIsDisabled(true);
     try {
       const token = localStorage.getItem("token");
@@ -516,7 +531,7 @@ export default function Home() {
 
   return (
 
-  <div className=" text-white ">
+  <div className=" text-white scrollbar-hide">
     <div
       className={`fixed top-0 left-0 h-full w-[270px] bg-white p-4 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -876,154 +891,669 @@ export default function Home() {
 
   <main className={`pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
 
-    {/* Your Created Bots Label */}
-   <div className="flex items-center justify-between">
-      {/* Left panel */}
-      <div className="px-4 flex-1">
-        <h2 className="text-2xl font-bold text-gray-900">Your Created Bots</h2>
-        <p className="text-gray-600 text-sm mt-2">
-          Manage and interact with your AI bots here.
-        </p>
-      </div>
-    </div>
-
-
-    {/* Loading state */}
-    {Loading && (
-        <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
-          {[...Array(5)].map((_, index) => (
-            <div
-              key={index}
-              className="w-[400px] h-[140px] bg-white rounded-xl border border-gray-200 p-4 shadow animate-pulse flex items-center gap-4 pr-7"
-            >
-              <div className="w-12 h-12 bg-gray-200 rounded-full" />
-              <div className="flex flex-col gap-2">
-                <div className="h-4 w-[260px] bg-gray-200 rounded" />
-                <div className="h-4 w-[220px] bg-gray-200 rounded" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-
 
     {/* Bot List */}
-      {!loading && !Loading && Bots && (
+      {!Loading && Bots && (
+        
+        <>
+         <div className="pl-4">
+            <h1 className="text-2xl font-bold text-indigo-700">Your Characters</h1>
+            <p className="text-gray-600 text-sm mt-1">
+              Browse and manage your AI personas.
+            </p>
+          </div>
         <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
           {Bots.map((bot, index) => (
             <li
               key={bot.id}
               className="snap-start"
             >
-              <Card
-                className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
-                onClick={() => {
-                  router.push(`/chat/${bot.id}`);
-                }}
-              >
-                <div className="flex h-full items-center justify-between px-4">
-                  <div className="flex items-center gap-4">
-                    <Avatar className="w-12 h-12 border border-indigo-200 shadow-sm">
-                      <AvatarImage src={bot.avatar} alt={bot.name} />
-                      <AvatarFallback>AI</AvatarFallback>
-                    </Avatar>
 
-                    <div className="flex flex-col">
-                      <CardTitle className="text-base font-semibold text-indigo-700">
-                        {bot.name}
-                      </CardTitle>
-                      <CardDescription className="text-sm text-gray-600 w-[225px] two-line-truncate">
-                        {bot.description}
-                      </CardDescription>
-                    </div>
+            <Card
+              className="relative ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+              onClick={() => router.push(`/chat/${bot.id}`)}
+            >
+              {/* Dropdown Menu Trigger */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="outline-none absolute top-2 right-2 p-1 rounded hover:bg-gray-100"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreVertical className="w-5 h-5 text-gray-500" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={5} className="w-32">
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteBot(bot.id);
+                    }}
+                    disabled={isDisabled}
+                    className={isDisabled ? 'text-gray-400 cursor-not-allowed' : 'text-red-500'}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Card Content */}
+              <div className="flex h-full items-center px-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                    <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
                   </div>
+                  <div className="flex flex-col justify-center">
+                    <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                      {bot.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                      {bot.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
 
-                  <div className="flex flex-col gap-2 items-end">
-                    <Button
-                      className="h-8 px-3 text-xs rounded-lg gap-1 border-indigo-300 text-indigo-700"
-                      variant="outline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/chat/${bot.id}`);
-                      }}
-                    >
-                      <Mail className="w-4 h-4" />
-                      Chat
-                    </Button>
+            </li>
+          ))}
+        </ul>
+        </>
+      )}
 
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        className="h-8 w-8 p-0 rounded-lg border-indigo-300 text-indigo-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/chat/${bot.id}`);
-                        }}
-                      >
-                        <Phone className="w-4 h-4" />
-                      </Button>
 
-                      <Button
-                        variant="outline"
-                        className={`h-8 w-8 p-0 rounded-lg border 
-                          ${isDisabled
-                            ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed'
-                            : 'border-red-200 text-red-500'}`}
-                        disabled={isDisabled}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteBot(bot.id, fetchDftBots);
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+  {/* Loading state */}
+    <div>
+       <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Anime</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+
+      {!Loading && Bots && groupedByCategory["ANIME"] && (
+        <div>
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["ANIME"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+              <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
                     </div>
                   </div>
                 </div>
               </Card>
-            </li>
-          ))}
-        </ul>
+
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Historical</h2>
 
-    {!loading && !Loading && Bots && (
-      <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
-        {Dbots.map((bot, index) => (
-          <li
-            key={bot.id}
-            className="snap-start"
-          >
-            <Card
-              className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-indigo-200"
-              onClick={() => {
-                router.push(`/chat/${bot.id}`);
-              }}
-            >
-              <div className="flex h-full items-center justify-between px-4">
-                <div className="flex items-center gap-4">
-                  <Avatar className="w-12 h-12 border border-indigo-200 shadow-sm">
-                    <AvatarImage src={bot.avatar} alt={bot.name} />
-                    <AvatarFallback>AI</AvatarFallback>
-                  </Avatar>
-
-                  <div className="flex flex-col">
-                    <CardTitle className="text-base font-semibold text-indigo-700">
-                      {bot.name}
-                    </CardTitle>
-                    <CardDescription className="text-sm text-gray-600 w-[225px] two-line-truncate">
-                      {bot.description}
-                    </CardDescription>
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
                   </div>
                 </div>
+              ))}
+            </div>
+          )}
+          </div>
+      { !Loading && Bots && groupedByCategory["Historical"] && (
+        <div>
 
-             </div>
-            </Card>
-          </li>
-        ))}
-      </ul>
-    )}
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Historical"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Fantasy</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      {!Loading && Bots && groupedByCategory["Fantasy"] && (
+        <div>
+        
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Fantasy"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+         <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Real_Person</h2>
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      {!Loading && Bots && groupedByCategory["Real_Person"] && (
+        <div>
+        
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Real_Person"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+          <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Celebrity</h2>
+
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      {!Loading && Bots && groupedByCategory["Celebrity"] && (
+        <div>
+        
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Celebrity"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Mythological</h2>
+
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      {!Loading && Bots && groupedByCategory["Mythological"] && (
+        <div>
+        
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Mythological"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Superhero</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      {!Loading && Bots && groupedByCategory["Superhero"] && (
+        <div>
+
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Superhero"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Villain</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      { !Loading && Bots && groupedByCategory["Villain"] && (
+        <div>
+
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Villain"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Sci-Fi</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      {!Loading && Bots && groupedByCategory["Sci-Fi"] && (
+        <div>
+        
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Sci-Fi"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Game</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      { !Loading && Bots && groupedByCategory["Game"] && (
+        <div>
+
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Game"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+            <h2 className="text-xl font-bold text-indigo-700 py-2 pl-4">Custom</h2>
+
+            {/* Conditional Loading Skeleton */}
+          {Loading && (
+            <div className="flex justify-start scrollbar-hide items-center py-4 overflow-x-auto px-2 space-x-2">
+              {[...Array(5)].map((_, index) => (
+                <div
+                  key={index}
+                  className="ml-2 w-[400px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-lg border border-indigo-200 p-4 animate-pulse flex items-center"
+                >
+                  <div className="w-12 h-12 bg-gray-200 rounded-full border border-indigo-200 shadow-sm" />
+                  <div className="flex flex-col gap-2 ml-4">
+                    <div className="h-4 w-[180px] bg-gray-200 rounded" />
+                    <div className="h-4 w-[225px] bg-gray-200 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          </div>
+      { !Loading && Bots && groupedByCategory["Custom"] && (
+        <div>
+        
+          <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
+            {groupedByCategory["Custom"].map((bot) => (
+              <li key={bot.id} className="snap-start">
+                <Card
+                className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+                onClick={() => router.push(`/chat/${bot.id}`)}
+              >
+                <div className="flex h-full items-center px-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                      <img src={bot.avatar} alt={bot.name} className="w-full h-full object-cover" />
+                    </div>
+
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-base font-semibold text-indigo-700 leading-tight">
+                        {bot.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 w-[225px] line-clamp-2 leading-snug">
+                        {bot.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </main>
   </div>
 </div>
