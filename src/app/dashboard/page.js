@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
-import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass, UserPen, MoreVertical } from "lucide-react";
+import {  Trash2, LogOut, ChevronsLeft, User2, ChevronsUpDown, Plus, UserPen, MoreVertical } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
 import Footer from "@/components/Main/footer";
+import { motion } from "framer-motion";
 
 
 import {
@@ -56,11 +57,31 @@ export default function Home() {
  const [currPersona, setcurrPersona] = useState({ userName: "", userDesc: "" });
 
   const [progress, setProgress] = useState(0);
+  const [query, setQuery] = useState("");
 
   const [Bots, setBots] = useState([]);
   const [Dbots, setDbots] = useState([]);
 
   const [groupedByCategory, setGroupedByCategory] = useState({});
+
+  const ref = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => ref.current && observer.unobserve(ref.current);
+  }, []);
+
+ const characters = [...Bots, ...Dbots];
+
+  const filtered = characters.filter((char) =>
+    char.name.toLowerCase().includes(query.toLowerCase())
+  );
+
 
   useEffect(() => {
     if (loading) {
@@ -534,8 +555,9 @@ export default function Home() {
   };
 
   return (
+<div className="overflow-x-hidden scrollbar-hide">
 
-  <div className=" text-white scrollbar-hide">
+  <div className=" text-white ">
     <div
       className={`fixed top-0 left-0 h-full w-[270px] bg-white p-4 border-r border-gray-200 transition-transform duration-300 z-50 shadow-md ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
@@ -823,7 +845,7 @@ export default function Home() {
     <div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? ":ml-[270px]" : ""}`}>
     <div className="relative">
     <header
-      className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
+      className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg  transition-all duration-300 
         w-full ${sidebarOpen ? "lg:ml-[270px] lg:w-[calc(100%-270px)]" : ""}
     `}
     >
@@ -858,8 +880,69 @@ export default function Home() {
     )}
 
 
-  <main className={` mb-20 pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
+  <main className={` mb-20 pt-20 transition-all duration-300 relative space-x-4 overflow-x-hidden scrollbar-hide ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
+   
+ <div className="w-full max-w-3xl mx-auto px-4 mb-5 relative ">
+      {/* Search Input Container */}
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search characters..."
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="w-full py-3 pl-5 pr-14 rounded-xl border border-gray-200 bg-white text-gray-700
+            shadow-sm hover:shadow-md
+            focus:outline-none focus:ring-2 focus:ring-gray-100 focus:border-gray-300
+            transition-all duration-200"
+        />
+        {/* Search Icon Button */}
+        <button
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+          type="button"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z"
+            />
+          </svg>
+        </button>
 
+        {query && (
+          <div className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-2 max-h-64 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <p className="text-gray-500 px-4 py-3 text-sm">No characters found.</p>
+            ) : (
+              filtered.map((char, i) => (
+                <div
+                  key={i}
+                  onClick={() => router.push(`/chat/${char.id}`)}
+                  className="px-4 py-3 border-b last:border-none hover:bg-gray-50 cursor-pointer"
+                >
+                  <div className="flex items-center  gap-2">
+                  <div className="w-9 h-9 rounded-full border border-indigo-200 shadow-sm overflow-hidden">
+                     <img src={char.avatar} alt={char.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-800">{char.name}</h3>
+                    <p className="text-sm text-gray-500">{char.description}</p>
+                  </div>
+                   </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    </div>
 
     {/* Bot List */}
       {!Loading && Bots.length > 0 && (
@@ -956,7 +1039,7 @@ export default function Home() {
           )}
           </div>
 
-      {!Loading && Bots && groupedByCategory["ANIME"] && (
+      {!Loading && Dbots && groupedByCategory["ANIME"] && (
         <div>
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
             {groupedByCategory["ANIME"].map((bot) => (
@@ -1010,7 +1093,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      { !Loading && Bots && groupedByCategory["Historical"] && (
+      { !Loading && Dbots && groupedByCategory["Historical"] && (
         <div>
 
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1064,7 +1147,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      {!Loading && Bots && groupedByCategory["Fantasy"] && (
+      {!Loading && Dbots && groupedByCategory["Fantasy"] && (
         <div>
         
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1116,7 +1199,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      {!Loading && Bots && groupedByCategory["Real_Person"] && (
+      {!Loading && Dbots && groupedByCategory["Real_Person"] && (
         <div>
         
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1169,7 +1252,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      {!Loading && Bots && groupedByCategory["Celebrity"] && (
+      {!Loading && Dbots && groupedByCategory["Celebrity"] && (
         <div>
         
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1222,7 +1305,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      {!Loading && Bots && groupedByCategory["Mythological"] && (
+      {!Loading && Dbots && groupedByCategory["Mythological"] && (
         <div>
         
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1276,7 +1359,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      {!Loading && Bots && groupedByCategory["Superhero"] && (
+      {!Loading && Dbots && groupedByCategory["Superhero"] && (
         <div>
 
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1330,7 +1413,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      { !Loading && Bots && groupedByCategory["Villain"] && (
+      { !Loading && Dbots && groupedByCategory["Villain"] && (
         <div>
 
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1384,7 +1467,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      {!Loading && Bots && groupedByCategory["Sci-Fi"] && (
+      {!Loading && Dbots && groupedByCategory["Sci-Fi"] && (
         <div>
         
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1438,7 +1521,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      { !Loading && Bots && groupedByCategory["Game"] && (
+      { !Loading && Dbots && groupedByCategory["Game"] && (
         <div>
 
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1492,7 +1575,7 @@ export default function Home() {
             </div>
           )}
           </div>
-      { !Loading && Bots && groupedByCategory["Custom"] && (
+      { !Loading && Dbots && groupedByCategory["Custom"] && (
         <div>
         
           <ul className="flex overflow-x-auto scrollbar-hide py-3 list-none scroll-smooth snap-x snap-mandatory">
@@ -1524,9 +1607,119 @@ export default function Home() {
           </ul>
         </div>
       )}
+       <div ref={ref}   className="w-full mt-20 flex items-center justify-center overflow-x-hidden scrollbar-hide px-4">
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white px-6 py-6 rounded-xl shadow-xl w-full max-w-3xl text-center"
+        >
+          <h2 className="text-2xl font-semibold mb-2">Ready to Create Your Own Character?</h2>
+          <p className="text-white/80 mb-4">
+            Craft personalized AI characters with unique traits and behavior — just the way you imagine.
+          </p>
+           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogTrigger asChild>
+         <button className="flex items-center gap-2 bg-white text-indigo-600 font-semibold px-5 py-2 rounded-lg shadow hover:bg-gray-100 transition">
+            <Plus size={18} /> Create Character
+          </button>
+        </DialogTrigger>
+
+        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle>Create a character</DialogTitle>
+            <DialogDescription className="text-sm text-gray-500">
+            Fill out the details below to bring your character to life.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div>
+              <Label className="pb-1 block">Character Name</Label>
+              <Input
+                name="botName"
+                type="text"
+                value={BotData.botName}
+                onChange={handleChange2}
+                placeholder="e.g., Kwame 'Krazy K' Dolo"
+                required
+                maxLength={25}
+              />
+            </div>
+            <div>
+              <Label className="pb-1 block">Short Description</Label>
+              <Input
+                name="botDesc"
+                type="text"
+                value={BotData.botDesc}
+                onChange={handleChange2}
+                placeholder="e.g., A wild and funny street legend"
+                required
+              />
+            </div>
+            <div>
+              <Label className="pb-1 block">Backstory / Overview</Label>
+              <Input
+                name="botView"
+                type="text"
+                value={BotData.botView}
+                onChange={handleChange2}
+                placeholder="e.g., Grew up in Soweto, known for wild antics"
+                required
+              />
+            </div>
+            <div>
+              <Label className="pb-1 block">Avatar Image URL</Label>
+              <Input
+                name="avatar"
+                type="text"
+                value={BotData.avatar || ""}
+                onChange={handleChange2}
+                placeholder="Image URL"
+              />
+            </div>
+            <div>
+              <Label className="pb-1 block">Gender</Label>
+              <select
+                name="botGender"
+                value={BotData.botGender}
+                onChange={handleChange2}
+                required
+                className="w-full border border-gray-300 rounded-md p-2 text-sm"
+              >
+                <option value="">Select gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              onClick={handleCreatebot}
+              disabled={isDisabled}
+              className={`w-full py-2 rounded-lg
+                ${isDisabled 
+                  ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
+                  : '  bg-indigo-600 hover:bg-indigo-700 text-white'}`
+              }
+            >
+              Create Character
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+  
+        </motion.div>
+      )}
+    </div>
     </main>
   </div>
+ 
   <Footer sidebarOpen={sidebarOpen} />
+</div>
 </div>
 
   )
