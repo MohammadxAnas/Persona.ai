@@ -18,6 +18,7 @@ generator client {
    codeExpiresAt    DateTime 
  
    personas          Persona[]      @relation("UserPersonas")
+   recentBots      RecentBot[]    @relation("UserRecentBots")
  
    aiCharacters     AICharacter[] @relation("UserAICharacters")
    chatSessions     ChatSession[] @relation("UserChatSessions")
@@ -35,6 +36,7 @@ generator client {
    createdAt   DateTime @default(now())
    updatedAt   DateTime @updatedAt
  
+   recentBots      RecentBot[]    @relation("AICharacterRecentBots")
    user        User     @relation("UserAICharacters", fields: [userId], references: [id])
    chatSessions ChatSession[] @relation("CharacterChatSessions")
    messages    Message[] @relation("CharacterMessages")
@@ -54,6 +56,7 @@ generator client {
 
   chatSessions ChatSession[] @relation("DFTSessions")
   messages     Message[]     @relation("DFTMessages")
+  recentBots      RecentBot[]    @relation("DFTCharacterRecentBots")
 }
 
  
@@ -108,6 +111,25 @@ model Message {
    user            User       @relation("UserPersonas", fields: [userId], references: [id])
 
  }
+
+model RecentBot {
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String         @db.ObjectId
+  aiCharacterId  String?        @db.ObjectId
+  dftCharacterId String?        @db.ObjectId
+  viewedAt       DateTime       @default(now())
+
+  user           User           @relation("UserRecentBots", fields: [userId], references: [id])
+  aiCharacter    AICharacter?   @relation("AICharacterRecentBots", fields: [aiCharacterId], references: [id])
+  dftCharacter   DFTcharacter?  @relation("DFTCharacterRecentBots", fields: [dftCharacterId], references: [id])
+
+  @@index([userId])
+  @@index([aiCharacterId])
+  @@index([dftCharacterId])
+  @@unique([userId, aiCharacterId])
+  @@unique([userId, dftCharacterId])
+}
+
  
  enum Sender {
    USER

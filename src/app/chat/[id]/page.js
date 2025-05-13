@@ -65,6 +65,7 @@ const App = () => {
   const [UserEmail, setUserEmail] = useState("");
 
   const [gender, setGender] = useState("");
+  const [botType, setBotType] = useState("");
 
   const [callActive, setCallActive] = useState(false);
 
@@ -78,6 +79,46 @@ const App = () => {
   const [voices, setVoices] = useState([]);
 
 
+  const recentBot = async () => {
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("You must be logged in.");
+  
+      const decoded = jwtDecode(token);
+      const userId = decoded._id;
+      console.log(userId);
+
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/recentBots`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          botId: id,      
+          userId,   
+          type: botType,       
+        }),
+      });
+
+      if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
+          console.log("ok");
+      } else {
+        toast.error(data.error || "Failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong. Please try again.");
+    }
+  };
+
+ 
   const handlePersona = (e) => {
     const { name, value } = e.target;
     setPersona((prev) => ({ ...prev, [name]: value }));
@@ -303,6 +344,7 @@ const handleSetPersona = (name,desc) => {
         setGender(data.bot.gender);
         setSessionId(data.chatSessionId);
         setSessions(data.chatSessions);
+        setBotType(data.botType);
       } else {
         console.error("Error fetching bot:", data.error);
       }
@@ -398,7 +440,7 @@ const handleSetPersona = (name,desc) => {
 
   const sendMessage = async () => {
     if (input.trim() === "") return;
-  
+    
     const userMessage = { text: input, sender: "user" };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
@@ -455,6 +497,8 @@ const handleSetPersona = (name,desc) => {
   
       const data = await response.json();
       console.log("response:", data);
+
+      recentBot();
      
       const botText =
         data.candidates?.[0]?.content?.parts?.[0]?.text ||
