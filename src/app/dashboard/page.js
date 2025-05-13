@@ -844,41 +844,6 @@ export default function Home() {
           persona.ai
         </span>
       </div>
-
-      {/* Push input to the right */}
-      <div className="relative ml-auto mr-7 group">
-      <span className="pl-2 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg transition-colors duration-300 group-focus-within:text-indigo-500">
-        <Search className="w-4 h-4" />
-      </span>
-
-    {/* Mobile input */}
-    <input
-      placeholder="Search Characters..."
-      className="
-        w-50 max-w-sm h-10 block sm:hidden
-        pl-11 pr-4 py-2 pt-[5px]
-        rounded-full border border-gray-300
-        bg-white text-gray-800 placeholder-gray-400
-        shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
-        transition duration-200 ease-in-out
-      "
-    />
-
-    {/* Desktop input */}
-    <input
-      placeholder="Search for Characters..."
-      className="
-        w-80 max-w-md h-10 hidden sm:block
-        pl-12 pr-4 py-2 pt-[5px]
-        rounded-full border border-gray-300
-        bg-white text-gray-800 placeholder-gray-400
-        shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:shadow-md
-        transition duration-200 ease-in-out
-      "
-    />
-
-    </div>
-
     </header>
     </div>
 

@@ -10,7 +10,7 @@ const Footer = ({ sidebarOpen }) => {
         bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-4 px-6 md:px-20
         bottom-0 left-0 z-10
         transition-all duration-300
-        w-full
+        w-full rounded-t-xl
         ${sidebarOpen ? "lg:ml-[270px] lg:w-[calc(100%-270px)]" : ""}
       `}
     >
