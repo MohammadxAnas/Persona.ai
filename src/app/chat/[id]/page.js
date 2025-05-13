@@ -1310,20 +1310,55 @@ const handleSetPersona = (name,desc) => {
 
   </div>
 
-  {callActive && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-black/30 flex items-center justify-center z-50">
-          <Button
-            variant="destructive"
-            className="h-12 w-12 p-0 rounded-full bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => {
-              disableMic();
-              setCallActive(false);
-            }}
-          >
-            <Phone className="w-6 h-6 rotate-135" />
-          </Button>
-        </div>
-      )}
+{callActive && (
+  
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+    <div className="absolute inset-0 bg-[url('/blurred-pattern.jpg')] bg-cover bg-center blur-sm" />
+    <div className="absolute inset-0 bg-black/70" />
+
+
+    <div className="relative z-10 p-6 animate-fadeIn ...">
+    <div className="relative z-10 p-6 bg-white rounded-2xl shadow-2xl max-w-sm w-full text-center space-y-5">
+
+      <img
+        src={bot.avatar}
+        alt={bot.name}
+        className="w-24 h-24 mx-auto rounded-full shadow-md object-cover"
+      />
+
+ 
+      <h2 className="text-xl font-semibold text-gray-800">{bot.name}</h2>
+      <p className="text-gray-500 text-sm">Calling AI Companion...</p>
+
+      
+      <div className="flex justify-center gap-4 mt-4">
+        <Button
+          className="bg-gray-200 text-gray-800 hover:bg-gray-300"
+          onClick={() => {
+            disableMic();
+          }}
+        >
+          Mute
+        </Button>
+
+        <Button
+          variant="destructive"
+          className="bg-red-600 hover:bg-red-700 text-white"
+          onClick={() => {
+            disableMic();
+            setCallActive(false);
+          }}
+        >
+          <Phone className="w-5 h-5 rotate-135 mr-2" />
+          End Call
+        </Button>
+      </div>
+    </div>
+  </div>
+  </div>
+)}
+
 
       {/* Chat Section */}
       {bot ? (
