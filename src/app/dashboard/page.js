@@ -963,14 +963,14 @@ export default function Home() {
             >
 
             <Card
-              className="relative ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
+              className="ml-2 w-[340px] h-[140px] bg-gradient-to-r from-indigo-50 to-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-indigo-200"
               onClick={() => router.push(`/chat/${bot.id}`)}
             >
               {/* Dropdown Menu Trigger */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className="outline-none absolute top-2 right-2 p-1 rounded hover:bg-gray-100"
+                    className="outline-none absolute ml-75 rounded hover:bg-gray-100"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <MoreVertical className="w-5 h-5 text-gray-500" />
@@ -1608,119 +1608,119 @@ export default function Home() {
         </div>
       )}
        <div ref={ref}   className="w-full mt-20 flex items-center justify-center overflow-x-hidden scrollbar-hide px-4">
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white px-6 py-6 rounded-xl shadow-xl w-full max-w-3xl text-center"
-        >
-          <h2 className="text-2xl font-semibold mb-2">Ready to Create Your Own Character?</h2>
-          <p className="text-white/80 mb-4">
-            Craft personalized AI characters with unique traits and behavior — just the way you imagine.
-          </p>
-           <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogTrigger asChild>
-         <button className="flex items-center gap-2 bg-white text-indigo-600 font-semibold px-5 py-2 rounded-lg shadow hover:bg-gray-100 transition">
-            <Plus size={18} /> Create Character
-          </button>
-        </DialogTrigger>
-
-        <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
-          <DialogHeader>
-            <DialogTitle>Create a character</DialogTitle>
-            <DialogDescription className="text-sm text-gray-500">
-            Fill out the details below to bring your character to life.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div>
-              <Label className="pb-1 block">Character Name</Label>
-              <Input
-                name="botName"
-                type="text"
-                value={BotData.botName}
-                onChange={handleChange2}
-                placeholder="e.g., Kwame 'Krazy K' Dolo"
-                required
-                maxLength={25}
-              />
-            </div>
-            <div>
-              <Label className="pb-1 block">Short Description</Label>
-              <Input
-                name="botDesc"
-                type="text"
-                value={BotData.botDesc}
-                onChange={handleChange2}
-                placeholder="e.g., A wild and funny street legend"
-                required
-              />
-            </div>
-            <div>
-              <Label className="pb-1 block">Backstory / Overview</Label>
-              <Input
-                name="botView"
-                type="text"
-                value={BotData.botView}
-                onChange={handleChange2}
-                placeholder="e.g., Grew up in Soweto, known for wild antics"
-                required
-              />
-            </div>
-            <div>
-              <Label className="pb-1 block">Avatar Image URL</Label>
-              <Input
-                name="avatar"
-                type="text"
-                value={BotData.avatar || ""}
-                onChange={handleChange2}
-                placeholder="Image URL"
-              />
-            </div>
-            <div>
-              <Label className="pb-1 block">Gender</Label>
-              <select
-                name="botGender"
-                value={BotData.botGender}
-                onChange={handleChange2}
-                required
-                className="w-full border border-gray-300 rounded-md p-2 text-sm"
-              >
-                <option value="">Select gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              onClick={handleCreatebot}
-              disabled={isDisabled}
-              className={`w-full py-2 rounded-lg
-                ${isDisabled 
-                  ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
-                  : '  bg-indigo-600 hover:bg-indigo-700 text-white'}`
-              }
+          {isVisible && (
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="bg-gradient-to-br from-indigo-600 to-purple-600 text-white px-6 py-6 rounded-xl shadow-xl w-full max-w-3xl text-center"
             >
-              Create Character
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-  
-        </motion.div>
-      )}
+              <h2 className="text-2xl font-semibold mb-2">Ready to Create Your Own Character?</h2>
+              <p className="text-white/80 mb-4">
+                Craft personalized AI characters with unique traits and behavior — just the way you imagine.
+              </p>
+              <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogTrigger asChild>
+            <button className="flex items-center gap-2 bg-white text-indigo-600 font-semibold px-5 py-2 rounded-lg shadow hover:bg-gray-100 transition">
+                <Plus size={18} /> Create Character
+              </button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-[450px] bg-white p-6 rounded-xl shadow-xl">
+              <DialogHeader>
+                <DialogTitle>Create a character</DialogTitle>
+                <DialogDescription className="text-sm text-gray-500">
+                Fill out the details below to bring your character to life.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="grid gap-4 py-4">
+                <div>
+                  <Label className="pb-1 block">Character Name</Label>
+                  <Input
+                    name="botName"
+                    type="text"
+                    value={BotData.botName}
+                    onChange={handleChange2}
+                    placeholder="e.g., Kwame 'Krazy K' Dolo"
+                    required
+                    maxLength={25}
+                  />
+                </div>
+                <div>
+                  <Label className="pb-1 block">Short Description</Label>
+                  <Input
+                    name="botDesc"
+                    type="text"
+                    value={BotData.botDesc}
+                    onChange={handleChange2}
+                    placeholder="e.g., A wild and funny street legend"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label className="pb-1 block">Backstory / Overview</Label>
+                  <Input
+                    name="botView"
+                    type="text"
+                    value={BotData.botView}
+                    onChange={handleChange2}
+                    placeholder="e.g., Grew up in Soweto, known for wild antics"
+                    required
+                  />
+                </div>
+                <div>
+                  <Label className="pb-1 block">Avatar Image URL</Label>
+                  <Input
+                    name="avatar"
+                    type="text"
+                    value={BotData.avatar || ""}
+                    onChange={handleChange2}
+                    placeholder="Image URL"
+                  />
+                </div>
+                <div>
+                  <Label className="pb-1 block">Gender</Label>
+                  <select
+                    name="botGender"
+                    value={BotData.botGender}
+                    onChange={handleChange2}
+                    required
+                    className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                  >
+                    <option value="">Select gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button
+                  onClick={handleCreatebot}
+                  disabled={isDisabled}
+                  className={`w-full py-2 rounded-lg
+                    ${isDisabled 
+                      ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
+                      : '  bg-indigo-600 hover:bg-indigo-700 text-white'}`
+                  }
+                >
+                  Create Character
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+      
+            </motion.div>
+          )}
+        </div>
+        </main>
+      </div>
+    
+      <Footer sidebarOpen={sidebarOpen} />
     </div>
-    </main>
-  </div>
- 
-  <Footer sidebarOpen={sidebarOpen} />
-</div>
-</div>
+    </div>
 
   )
 };
