@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 import { Mail, Phone, Trash2, LogOut, ChevronsLeft, User2, Search, ChevronsUpDown, Plus, Ghost, Compass, UserPen, MoreVertical } from "lucide-react";
 import { Progress } from "@/components/ui/progress"
+import Footer from "@/components/Main/footer";
 
 
 import {
@@ -35,11 +36,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -114,12 +110,19 @@ export default function Home() {
   useEffect(() => {
     const loadBots = async () => {
       const bots = await fetchUserBots();
-      const Dbots = await fetchDftBots();
+      const DBots = await fetchDftBots();
       setBots(bots);
-      setDbots(Dbots);
+      console.log(">>",Bots);
+      setDbots(DBots);
+      console.log(">>>",Dbots);
     };
     loadBots();
   }, []);
+
+    useEffect(() => {
+      console.log(">>",Bots);
+      console.log(">>>",Dbots);
+  }, [Bots, Dbots]);
 
   useEffect(() => {
  
@@ -213,6 +216,7 @@ export default function Home() {
 
       if (response.ok) {
         localStorage.removeItem("session");
+        setBots(data.bots);
         return data.bots; 
       } else {
         throw new Error(data.error || "Failed to fetch bots");
@@ -889,13 +893,14 @@ export default function Home() {
     )}
 
 
-  <main className={`pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
+  <main className={` mb-20 pt-20 transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
 
 
     {/* Bot List */}
-      {!Loading && Bots && (
+      {!Loading && Bots.length > 0 && (
         
         <>
+        {console.log("Bots:", Bots)}
          <div className="pl-4">
             <h1 className="text-2xl font-bold text-indigo-700">Your Characters</h1>
             <p className="text-gray-600 text-sm mt-1">
@@ -1556,6 +1561,8 @@ export default function Home() {
       )}
     </main>
   </div>
+  <Footer sidebarOpen={sidebarOpen} />
 </div>
+
   )
 };
