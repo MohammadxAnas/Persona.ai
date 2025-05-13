@@ -880,7 +880,7 @@ export default function Home() {
     )}
 
 
-  <main className={`ml-3 mb-20 pt-22 transition-all duration-300 relative space-x-4 overflow-x-hidden scrollbar-hide ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
+  <main className={`mx-2 mb-20 pt-22 transition-all duration-300 relative overflow-x-hidden scrollbar-hide ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
    
  <div className="w-full max-w-3xl mx-auto px-4 mb-5 relative ">
       {/* Search Input Container */}
