@@ -1255,7 +1255,7 @@ const handleSetPersona = (name,desc) => {
 <div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? "md:ml-[270px]" : ""}`}>
 <div className="relative">
 <header
-  className={`fixed top-0 left-0 z-40 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg rounded-b-xl transition-all duration-300 
+  className={`fixed top-0 left-0 z-40 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg  transition-all duration-300 
     w-full ${sidebarOpen ? "md:ml-[270px] md:w-[calc(100%-270px)]" : ""}
 `}
 >

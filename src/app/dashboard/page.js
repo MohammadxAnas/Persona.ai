@@ -845,7 +845,7 @@ export default function Home() {
     <div className={`transition-all duration-300 relative  overflow-x-hidden ${sidebarOpen ? ":ml-[270px]" : ""}`}>
     <div className="relative">
     <header
-      className={`fixed top-0 left-0 z-10 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg  transition-all duration-300 
+      className={`fixed top-0 left-0 z-30 flex items-center justify-between pl-6 pr-4 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg  transition-all duration-300 
         w-full ${sidebarOpen ? "lg:ml-[270px] lg:w-[calc(100%-270px)]" : ""}
     `}
     >
@@ -880,7 +880,7 @@ export default function Home() {
     )}
 
 
-  <main className={` mb-20 pt-20 transition-all duration-300 relative space-x-4 overflow-x-hidden scrollbar-hide ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
+  <main className={`ml-3 mb-20 pt-22 transition-all duration-300 relative space-x-4 overflow-x-hidden scrollbar-hide ${sidebarOpen ? "lg:ml-[270px]" : ""}`}>
    
  <div className="w-full max-w-3xl mx-auto px-4 mb-5 relative ">
       {/* Search Input Container */}
@@ -917,7 +917,7 @@ export default function Home() {
         </button>
 
         {query && (
-          <div className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-2 max-h-64 overflow-y-auto">
+          <div className="absolute z-10 top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg mt-2 max-h-64 overflow-y-auto">
             {filtered.length === 0 ? (
               <p className="text-gray-500 px-4 py-3 text-sm">No characters found.</p>
             ) : (
@@ -950,7 +950,7 @@ export default function Home() {
         <>
         {console.log("Bots:", Bots)}
          <div className="pl-4">
-            <h1 className="text-2xl font-bold text-indigo-700">Your Characters</h1>
+            <h1 className="text-xl font-bold text-indigo-700">Your Characters</h1>
             <p className="text-gray-600 text-sm mt-1">
               Browse and manage your AI personas.
             </p>
