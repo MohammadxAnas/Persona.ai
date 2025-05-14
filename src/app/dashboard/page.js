@@ -707,11 +707,9 @@ export default function Home() {
             <Button
               onClick={handleCreatebot}
               disabled={isDisabled}
-              className={`w-full py-2 rounded-lg
-                ${isDisabled 
-                  ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
-                  : '  bg-indigo-600 hover:bg-indigo-700 text-white'}`
-              }
+              className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl
+                      ${isDisabled? 'brightness-110' :''}
+                      `}
             >
               Create Character
             </Button>
@@ -815,10 +813,9 @@ export default function Home() {
             <Button
               onClick={createPersona}
               disabled={isdisabled}
-              className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
-                ${isdisabled 
-                  ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
-                  : ''}`}
+              className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl
+                        ${isdisabled? 'brightness-110' :''}
+                      `}
             >
               Save Persona
             </Button>
@@ -1773,11 +1770,9 @@ export default function Home() {
                 <Button
                   onClick={handleCreatebot}
                   disabled={isDisabled}
-                  className={`w-full py-2 rounded-lg
-                    ${isDisabled 
-                      ? 'bg-gray-200 border-gray-300 text-gray-400 cursor-not-allowed' 
-                      : '  bg-indigo-600 hover:bg-indigo-700 text-white'}`
-                  }
+                  className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl
+                        ${isDisabled? 'brightness-110' :''}
+                      `}
                 >
                   Create Character
                 </Button>

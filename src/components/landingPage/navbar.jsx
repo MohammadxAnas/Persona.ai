@@ -116,22 +116,22 @@ const NavBar = () => {
       };
 
   return (
-    <div className="fixed w-full md:px-20 px-4 py-4">
-      <div className="h-14 w-full flex items-center justify-between border border-blue-800 rounded-2xl px-4 bg-gradient-to-r from-blue-700 to-indigo-800 bg-opacity-60 backdrop-blur-md shadow-md">
+   <div className="fixed w-full md:px-20 px-3 py-3 z-50">
+      <div className="h-14 w-full flex items-center justify-between border border-blue-800 rounded-xl px-3 md:px-4 bg-gradient-to-r from-blue-700 to-indigo-800 bg-opacity-60 backdrop-blur-md shadow-md">
 
-        <div className="flex gap-3 items-center">
-          <p className="text-xl font-mono font-bold text-white tracking-wide">
+        <div className="flex items-center">
+          <p className="text-base md:text-xl font-mono font-bold text-white tracking-wide">
             persona.ai
           </p>
         </div>
 
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-2 md:gap-3 items-center">
 
         <Dialog>
               <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold px-5 py-2 rounded-xl shadow hover:brightness-110 transition duration-200">
-                    Sign Up to Chat
-                </Button>
+             <Button className="text-xs md:text-sm px-3 py-1.5 md:px-5 md:py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-lg md:rounded-xl shadow hover:brightness-110 transition duration-200">
+                Sign Up to Chat
+              </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px] rounded-2xl shadow-lg border-none">
                 <DialogHeader>
@@ -188,9 +188,9 @@ const NavBar = () => {
 
             <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
               <DialogTrigger asChild>
-              <Button className="px-5 py-2 bg-white text-indigo-700 border border-indigo-600 rounded-xl font-semibold shadow hover:bg-indigo-50 hover:shadow-md transition duration-200">
-                    Login
-                </Button>
+               <Button className="text-xs md:text-sm px-3 py-1.5 md:px-5 md:py-2 bg-white text-indigo-700 border border-indigo-600 rounded-lg md:rounded-xl font-semibold shadow hover:bg-indigo-50 hover:shadow-md transition duration-200">
+                Login
+              </Button>
     
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px] rounded-2xl shadow-lg border-none">

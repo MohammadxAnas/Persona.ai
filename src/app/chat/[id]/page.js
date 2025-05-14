@@ -1063,11 +1063,9 @@ const handleSetPersona = (name,desc) => {
           <Button
             onClick={createPersona}
             disabled={isDisabled}
-            className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-lg
-              ${isDisabled 
-                ? 'bg-gray-400 border-gray-300 text-gray-50 cursor-not-allowed' 
-                : ''}`
-            }
+            className={`w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium hover:brightness-110 rounded-xl
+                      ${isDisabled? 'brightness-110' :''}
+                      `}
           >
             Save Persona
           </Button>
@@ -1190,7 +1188,7 @@ const handleSetPersona = (name,desc) => {
           <h2 className="text-md text-black font-mono">Personas</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-2 space-y-4 mb-16">
+        <div className="flex-1 overflow-y-auto px-2 space-y-4 mb-25">
           {Personas?.map((pers, index) => {
             const isSelected =
               pers.name === currPersona.userName &&
