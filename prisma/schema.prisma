@@ -53,6 +53,8 @@ generator client {
   avatar      String?
   gender      String?
   category    String?
+  by          String?
+  
 
   chatSessions ChatSession[] @relation("DFTSessions")
   messages     Message[]     @relation("DFTMessages")

@@ -969,7 +969,7 @@ const handleSetPersona = (name,desc) => {
         />
         <div>
           <h2 className="text-lg font-semibold text-gray-900">{bot.name}</h2>
-          <p className="text-sm text-gray-500 truncate w-[150px]">By @{User}</p>
+          <p className="text-sm text-gray-500 truncate w-[150px]">By @{bot.by?  bot.by : User}</p>
           <p className="text-xs text-blue-700">persona.ai</p>
         </div>
       </div>
@@ -986,7 +986,7 @@ const handleSetPersona = (name,desc) => {
       </div>
       
 
-      {/* Action Buttons */}
+      {/* Buttons */}
       <div className="mt-1 flex flex-col gap-5">
         <button
           onClick={startNewChat}
@@ -1103,7 +1103,7 @@ const handleSetPersona = (name,desc) => {
         {bot && (
           <>
         <div className="flex flex-col space-y-4">
-      {/* Header with back button */}
+
       <div className="flex items-center gap-1">
           <ChevronRight 
           className="text-black hover:text-gray-500" 
@@ -1112,25 +1112,24 @@ const handleSetPersona = (name,desc) => {
         <h2 className="text-md text-black font-mono">Character Details</h2>
       </div>
       <div className="flex-1 overflow-y-auto px-2 space-y-2">
-      {/* Character Name */}
+   
       <div>
         <h3 className="text-sm text-gray-500 font-medium">Name</h3>
         <p className="text-sm text-gray-700">{bot.name}</p>
       </div>
 
-      {/* Character Description */}
+
       <div>
         <h3 className="text-sm text-gray-500 font-medium">Description</h3>
         <p className="text-sm text-gray-700">{bot.description || "No description provided."}</p>
       </div>
 
-      {/* Character Overview */}
+
       <div>
         <h3 className="text-sm text-gray-500 font-medium">Overview</h3>
         <p className="text-sm text-gray-700">{bot.overview || "No overview available."}</p>
       </div>
 
-      {/* Character Gender */}
       <div>
         <h3 className="text-sm text-gray-500 font-medium">Gender</h3>
         <p className="text-sm text-gray-700">{bot.gender || "Unspecified"}</p>
