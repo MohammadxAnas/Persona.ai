@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/landing.png" alt="persona.ai landing" width="800"/>
+</p>
+
 # persona.ai 🤖
 
 **persona.ai** is an AI-powered conversational platform designed to bring dynamic and intelligent digital characters to life. Users can interact with predefined or custom personas through text and voice, explore rich conversational experiences, and create their own imaginative characters with unique traits and personalities.
@@ -24,25 +28,9 @@
 - Talk to your characters in real-time using voice.
 - Speech recognition and TTS enable fluid back-and-forth dialogue.
 
-### 📷 Visual Showcase
-- Screenshot sections demonstrate:
-  - Multi-character main chat interface
-  - Persona creation UI
-  - In-chat persona switching
-  - Voice calling interface
 
 ---
 
-## 📸 Screenshots
-
-| Feature | Screenshot |
-|--------|------------|
-| Landing Page       | `public/landing.png` |
-| Main Character Hub | `public/main.png`   |
-
-
-
----
 
 ## 💻 Tech Stack
 
@@ -89,7 +77,7 @@ For support, questions, or just to say hi, reach out via:
 
 - **GitHub:** [@MohammadxAnas](https://github.com/MohammadxAnas)
 - **LinkedIn:** [Mohammad Anas Qadar](https://www.linkedin.com/in/mohammad-anas-qadar-602b30323/)
-- **Email:** xenospryzen786@gmail.com (replace with your actual email if you'd like)
+- **Email:** xenospryzen786@gmail.com 
 
 ---
 
