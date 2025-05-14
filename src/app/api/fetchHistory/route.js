@@ -17,7 +17,7 @@ export async function POST(req) {
       return Response.json({ message: "sessionId, id, and userId are required", success: false }, { status: 400 });
     }
 
-    // Check if character is AICharacter or DFTcharacter
+  
     let bot = await prisma.aICharacter.findUnique({ where: { id } });
     let isDFT = false;
 
@@ -29,7 +29,7 @@ export async function POST(req) {
       isDFT = true;
     }
 
-    // Query messages based on correct character field
+
     const messages = await prisma.message.findMany({
       where: {
         chatSessionId: sessionId,
