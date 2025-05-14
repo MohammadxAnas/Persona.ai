@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 
 export default function Main() {
   return (
-    <main className="pt-24 pb-32 px-6 md:px-20 bg-white text-gray-800">
-      {/* Hero Section */}
+    <main className="pt-26 pb-32 px-6 md:px-20 bg-white text-gray-800">
+   
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -20,7 +20,6 @@ export default function Main() {
         </p>
       </motion.div>
 
-      {/* Section Template */}
       {[
         {
           title: "Meet the Built-In Characters",
@@ -62,31 +61,33 @@ export default function Main() {
         },
 
       ].map((section, i) => (
-        <motion.section
-          key={i}
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: i * 0.2 }}
-          viewport={{ once: true }}
-          className="mt-24 grid md:grid-cols-2 gap-10 items-center"
-        >
-          {/* Image */}
-          <div className={`order-${i % 2 === 0 ? "1" : "2"} md:order-1`}>
-           <div className="aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-gray-100">
-            <img
-                src={section.screenshot}
-                alt="Main Screenshot"
-                className="w-full h-full object-cover"
-            />
-            </div>
-          </div>
+         <motion.section
+    key={i}
+    initial={{ opacity: 0, y: 50 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6, delay: i * 0.2 }}
+    viewport={{ once: true }}
+    className="mt-24 grid md:grid-cols-2 gap-10 items-center"
+  >
+    {/* Image */}
+    <div
+      className={`${
+        i % 2 === 0 ? 'order-1' : 'order-2'
+      } md:order-1 aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-gray-100`}
+    >
+      <img
+        src={section.screenshot}
+        alt={`${section.title} Screenshot`}
+        className="w-full h-full object-cover"
+      />
+    </div>
 
-          {/* Text */}
-          <div className={`order-${i % 2 === 0 ? "2" : "1"} md:order-2`}>
-            <h2 className="text-2xl font-bold mb-3">{section.title}</h2>
-            <p className="text-gray-600 text-sm leading-relaxed">{section.description}</p>
-          </div>
-        </motion.section>
+    {/* Text */}
+    <div className={`${i % 2 === 0 ? 'order-2' : 'order-1'} md:order-2`}>
+      <h2 className="text-2xl font-bold mb-3">{section.title}</h2>
+      <p className="text-gray-600 text-sm leading-relaxed">{section.description}</p>
+    </div>
+  </motion.section>
       ))}
 
       {/* Ending Note */}
