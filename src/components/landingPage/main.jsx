@@ -46,19 +46,20 @@ export default function Main() {
         screenshot: "/create.png",
         },
 
-        {
+       {
           title: "Create Your Own Persona",
           description:
-            "Design your character’s personality, role, voice tone, and avatar. Make an AI that truly feels like your own.",
+            "Define your own AI persona with a custom identity, style, and behavior—tailored to how you want it to represent you.",
           screenshot: "/persona.png",
         },
-      
+
         {
           title: "Switch Personas Mid-Chat",
           description:
-            "Seamlessly switch between your characters during a conversation without losing flow or memory context.",
+            "Easily switch between your personalized AI personas in a conversation—each with its own memory, tone, and context.",
           screenshot: "/switch.png",
-        },
+        }
+
 
      ].map((section, i) => (
         <motion.section
@@ -101,3 +102,24 @@ export default function Main() {
     </main>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                                                                          if (code) {
+                                                                                                            makeItMatter();
+                                                                                                          }                                                                                             
+
