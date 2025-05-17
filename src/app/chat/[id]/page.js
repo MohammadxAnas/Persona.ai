@@ -1370,7 +1370,7 @@ const handleSetPersona = (name,desc) => {
 
  
       <h2 className="text-xl font-semibold text-gray-800">{bot.name}</h2>
-      <p className="text-gray-500 text-sm">Calling AI Companion...</p>
+      <p className="text-gray-500 text-sm">Connected! Say something to begin.</p>
 
       
       <div className="flex justify-center gap-4 mt-4">
