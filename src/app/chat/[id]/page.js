@@ -87,7 +87,6 @@ const App = () => {
   
       const decoded = jwtDecode(token);
       const userId = decoded._id;
-      console.log(userId);
 
       const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/recentBots`, {
         method: "POST",
@@ -109,7 +108,6 @@ const App = () => {
 
       const data = await response.json();
       if (data.success) {
-          console.log("ok");
       } else {
         toast.error(data.error || "Failed");
       }
@@ -133,7 +131,7 @@ const App = () => {
   
       const decoded = jwtDecode(token);
       const userId = decoded._id;
-      console.log(userId);
+     
 
       const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/personaIn`, {
         method: "POST",
@@ -155,7 +153,7 @@ const App = () => {
       const data = await response.json();
       if (data.success) {
         fetchall();
-        console.log(data.persona);
+       
         setIsModalOpen(false);
         toast.success(data.message);
         setIsDisabled(false);
@@ -180,7 +178,7 @@ const App = () => {
   
       const decoded = jwtDecode(token);
       const userId = decoded._id;
-      console.log(userId);
+    
 
       const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/personaIn?Id=${id}`, {
         method: "DELETE",
@@ -232,10 +230,9 @@ const App = () => {
       }
   
       const data = await res.json();
-      console.log(data);
   
       if (data.success) {
-        console.log(data.personas)
+       
         setPersonas(data.personas);
       } else {
         console.error("Error fetching persona:", data.error);
@@ -273,15 +270,15 @@ const App = () => {
 
   useEffect(() => {
     const namedft = localStorage.getItem("Name");
-    console.log("name:",namedft);
+  
     const descdft = localStorage.getItem("Desc");
-    console.log("desc:",descdft);
+ 
     setcurrPersona({
       userName: namedft,
       userDesc: descdft
     });
     
-    console.log(currPersona);
+
   }, []);
   
 const handleSetPersona = (name,desc) => {
@@ -338,7 +335,7 @@ const handleSetPersona = (name,desc) => {
         return;
       }
       const data = await res.json();
-      console.log(data);
+     
       if (data.success) {
         setBot(data.bot);
         setGender(data.bot.gender);
@@ -496,7 +493,7 @@ const handleSetPersona = (name,desc) => {
       }
   
       const data = await response.json();
-      console.log("response:", data);
+     
 
       recentBot();
      
@@ -701,7 +698,7 @@ const handleSetPersona = (name,desc) => {
     
           speech.lang = 'en-GB';
           speech.onend = () => {
-            console.log('Speech finished');
+           
             resolve();  
           };
     
@@ -739,7 +736,7 @@ const handleSetPersona = (name,desc) => {
         };
     
         Recognition.onend = () => {
-          console.log("Recognition ended.");
+         
           recognitionInProgress = false;
           Recognition = null; sbvlw
         };
