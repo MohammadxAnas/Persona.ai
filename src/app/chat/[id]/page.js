@@ -76,7 +76,6 @@ const App = () => {
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const [voices, setVoices] = useState([]);
 
 
   const recentBot = async () => {
@@ -243,23 +242,6 @@ const App = () => {
     }
   };
   
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      const synth = window.speechSynthesis;
-      
-      const loadVoices = () => {
-        const availableVoices = synth.getVoices();
-        if (availableVoices.length > 0) {
-          setVoices(availableVoices);
-        }
-      };
-
-      loadVoices();
-
-      synth.onvoiceschanged = loadVoices;
-    }
-  }, []);
 
   useEffect(() => {
     console.log("voice text:", Text);
