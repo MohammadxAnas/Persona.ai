@@ -8,10 +8,6 @@ export async function POST(req) {
 
       console.log("Email:", email);
       console.log("Code:", code);
-      console.log("Name:", name);
-      console.log("Password:", password);
-      console.log("Confirmation Code:", confirmationCode);
-      console.log("Code Expiry:", codeExpiresAt);
     
       if (!email || !code || !name || !password || !confirmationCode || !codeExpiresAt) {
         console.log("1 - Missing Fields");
@@ -24,7 +20,6 @@ export async function POST(req) {
                
               }
           
-              // Create user in the database
               const user = await prisma.user.create({
                 data: { name, email, password, confirmationCode, codeExpiresAt, isVerified: true},
               });

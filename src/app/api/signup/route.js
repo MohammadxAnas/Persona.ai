@@ -10,7 +10,7 @@ export async function POST(req) {
     const body = await req.json();
     const {  name, email, password } = body;
 
-    // Check if the user is already registered
+ 
     const find = await prisma.user.findUnique({
       where: { email: email },
     });
@@ -19,11 +19,11 @@ export async function POST(req) {
       return Response.json({ error: "User already registered" }, { status: 400 });
     }
 
-    // Generate confirmation code
+
     const confirmationCode = crypto.randomInt(100000, 999999).toString();
     const codeExpiresAt = new Date(Date.now() + 10 * 60 * 1000); // Code expires in 10 min
 
-    // Store user temporarily in database or use session (Redux can't be used in API)
+  
     const tempUser = {
       name,
       email,
@@ -34,7 +34,6 @@ export async function POST(req) {
 
     console.log(tempUser);
 
-    // Send verification email
     await sendConfirmationEmail(email, confirmationCode);
 
     return Response.json({ 
