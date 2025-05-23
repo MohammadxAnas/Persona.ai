@@ -13,7 +13,7 @@ export async function POST(req) {
     const body = await req.json();
     const {  userId, botId, type } = body;
 
-    console.log("-->>",)
+    console.log("-->>")
 
 if (!userId || !botId || !type) {
   throw new Error("Missing userId, botId, or type");
@@ -77,6 +77,7 @@ export async function GET(req) {
 
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId");
+  console.log(userId);
 
   if (!userId) {
     return NextResponse.json({ success: false, error: "User ID required" }, { status: 400 });
