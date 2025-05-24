@@ -16,40 +16,51 @@ export async function POST(req) {
     console.log("-->>")
 
 if (!userId || !botId || !type) {
+  console.log("err");
   throw new Error("Missing userId, botId, or type");
 }
 
 const now = new Date();
 
-let upsertData = {
-  where: {},
-  update: { viewedAt: now },
-  create: {
-    userId: userId,
-    viewedAt: now,
-  },
-};
+let upsertData;
 
 if (type === "USER") {
-  upsertData.where = {
-    userId_aiCharacterId: {
+  upsertData = {
+    where: {
+      userId_aiCharacterId: {
+        userId,
+        aiCharacterId: botId,
+      },
+    },
+    update: {
+      viewedAt: now,
+    },
+    create: {
       userId,
       aiCharacterId: botId,
+      viewedAt: now,
     },
   };
-  upsertData.create.aiCharacterId = botId;
 } else if (type === "DEFAULT") {
-  upsertData.where = {
-    userId_dftCharacterId: {
+  upsertData = {
+    where: {
+      userId_dftCharacterId: {
+        userId,
+        dftCharacterId: botId,
+      },
+    },
+    update: {
+      viewedAt: now,
+    },
+    create: {
       userId,
       dftCharacterId: botId,
+      viewedAt: now,
     },
   };
-  upsertData.create.dftCharacterId = botId;
 } else {
   throw new Error("Invalid bot type");
 }
-
 
 await prisma.recentBot.upsert(upsertData);
 
