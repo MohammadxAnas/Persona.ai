@@ -31,11 +31,19 @@ import {
 
 import {
   Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 
 import { Input } from "@/components/ui/input";
@@ -575,6 +583,11 @@ export default function Home() {
         body: JSON.stringify({ email: userEmail }),
       });
 
+        if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+  
       const result = await response.json();
       if (result.success) {
         
@@ -592,6 +605,47 @@ export default function Home() {
       }
     } catch (error) {
       toast.error("Something went wrong while logging out.");
+    } finally{
+      setLoading(false);
+    }
+  };
+
+    const handleRemoveAccount = async () => {
+    startLoading();
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return toast.error("No token found. Cannot logout.");
+
+      const response = await fetch(`${ process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+        if (response.status === 401) {
+        handleUnauthorized();
+        return;
+      }
+  
+      const result = await response.json();
+      if (result.success) {
+        
+        localStorage.removeItem("token");
+        localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("UserEmail");
+        localStorage.removeItem("Name");
+        localStorage.removeItem("Desc");
+        setUser("");          
+        setUserEmail(""); 
+        toast.success(result.message);
+        router.replace("/");  // Redirect immediately
+      } else {
+        toast.error(result.error || "Failed");
+      }
+    } catch (error) {
+      toast.error("Something went wrong.");
     } finally{
       setLoading(false);
     }
@@ -878,26 +932,59 @@ export default function Home() {
     <div className="flex-grow" />
 
   
-    <DropdownMenu>
-      <DropdownMenuTrigger className="text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
-        <span>{UserEmail}</span>
-        <ChevronsUpDown className="w-4 h-4 text-gray-500" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="mt-2 shadow-lg rounded-md">
-        <DropdownMenuItem className="px-3 py-2 hover:bg-gray-100 flex gap-2">
-          <User2 className="w-4 h-4" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="px-3 py-2 text-red-600 hover:bg-gray-100 flex gap-2"
-        >
-          <LogOut className="w-4 h-4" />
-          Log out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+ <DropdownMenu>
+  <DropdownMenuTrigger className="text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
+    <span>{UserEmail}</span>
+    <ChevronsUpDown className="w-4 h-4 text-gray-500" />
+  </DropdownMenuTrigger>
+
+  <DropdownMenuContent className="mt-2 shadow-lg rounded-md">
+    <DropdownMenuItem className="px-3 py-2 hover:bg-gray-100 flex gap-2">
+      <User2 className="w-4 h-4" />
+      Profile
+    </DropdownMenuItem>
+
+    <DropdownMenuSeparator />
+
+    <DropdownMenuItem
+      onClick={handleLogout}
+      className="px-3 py-2 hover:bg-gray-100 flex gap-2"
+    >
+      <LogOut className="w-4 h-4" />
+      Log out
+    </DropdownMenuItem>
+
+    <DropdownMenuSeparator />
+
+  <AlertDialog>
+  <AlertDialogTrigger asChild>
+    <div
+      role="menuitem"
+      className="px-3 py-2  hover:bg-gray-100 flex items-center gap-2 text-sm cursor-pointer"
+    >
+      <Trash2 className="w-4 h-4 text-gray-500" />
+      Remove Account
+    </div>
+  </AlertDialogTrigger>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This action cannot be undone. This will permanently delete your
+        account and remove your data from our servers.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={handleRemoveAccount}>Continue</AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+
+  </DropdownMenuContent>
+</DropdownMenu>
+
+
   </div>
 </div>
 
@@ -1610,7 +1697,6 @@ export default function Home() {
  {!Loading && Bots.length > 0 && (
         
         <>
-        {console.log("Bots:", Bots)}
          <div className="pl-4">
             <h1 className="text-xl font-bold text-indigo-700 mt-2">Your Characters</h1>
             <p className="text-gray-600 text-sm mt-1">

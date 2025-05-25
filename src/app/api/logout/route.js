@@ -1,9 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
+import validateSession from "@/middlewares/validateSession";
 
 export async function POST(req) {
     try {
-        const body = await req.json();  // Ensure JSON is properly parsed
+        const session = await validateSession(req);
+        if (session.status !== 200) {
+        return Response.json({ message: session.message, success: false }, { status: session.status });
+        }
+        
+        const body = await req.json();  
         const email = body.email;  
         console.log(email);
 
@@ -32,4 +38,30 @@ export async function POST(req) {
         console.error("Logout error:", error);
         return Response.json({ message: "Internal server error", success: false }, { status: 500 });
     }
+}
+
+
+export async function DELETE(req) {
+  try {
+    const session = await validateSession(req);
+    if (session.status !== 200) {
+      return Response.json({ message: session.message, success: false }, { status: session.status });
+    }
+
+    const userId = session.user.id;
+
+    await prisma.message.deleteMany({ where: { userId } });
+    await prisma.chatSession.deleteMany({ where: { userId } });
+    await prisma.recentBot.deleteMany({ where: { userId } });
+    await prisma.persona.deleteMany({ where: { userId } });
+    await prisma.AICharacter.deleteMany({ where: { userId } });
+
+  
+    await prisma.user.delete({ where: { id: userId } });
+
+    return Response.json({ success: true, message: "Account deleted successfully." });
+  } catch (error) {
+    console.error("Account deletion failed:", error);
+    return Response.json({ success: false, message: "Failed to delete account." }, { status: 500 });
+  }
 }
