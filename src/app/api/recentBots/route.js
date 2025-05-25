@@ -13,7 +13,7 @@ export async function POST(req) {
     const body = await req.json();
     const {  userId, botId, type } = body;
 
-    console.log("-->>")
+    console.log("-->>", userId, botId, type)
 
 if (!userId || !botId || !type) {
   console.log("err");
@@ -21,48 +21,55 @@ if (!userId || !botId || !type) {
 }
 
 const now = new Date();
-
-let upsertData;
+let recentBot;
 
 if (type === "USER") {
-  upsertData = {
+  recentBot = await prisma.recentBot.findFirst({
     where: {
-      userId_aiCharacterId: {
-        userId,
-        aiCharacterId: botId,
-      },
-    },
-    update: {
-      viewedAt: now,
-    },
-    create: {
       userId,
       aiCharacterId: botId,
-      viewedAt: now,
     },
-  };
-} else if (type === "DEFAULT") {
-  upsertData = {
-    where: {
-      userId_dftCharacterId: {
+  });
+
+  if (recentBot) {
+    await prisma.recentBot.update({
+      where: { id: recentBot.id },
+      data: { viewedAt: now },
+    });
+  } else {
+    await prisma.recentBot.create({
+      data: {
         userId,
-        dftCharacterId: botId,
+        aiCharacterId: botId,
+        viewedAt: now,
       },
-    },
-    update: {
-      viewedAt: now,
-    },
-    create: {
+    });
+  }
+
+} else if (type === "DEFAULT") {
+  recentBot = await prisma.recentBot.findFirst({
+    where: {
       userId,
       dftCharacterId: botId,
-      viewedAt: now,
     },
-  };
-} else {
-  throw new Error("Invalid bot type");
+  });
+
+  if (recentBot) {
+    await prisma.recentBot.update({
+      where: { id: recentBot.id },
+      data: { viewedAt: now },
+    });
+  } else {
+    await prisma.recentBot.create({
+      data: {
+        userId,
+        dftCharacterId: botId,
+        viewedAt: now,
+      },
+    });
+  }
 }
 
-await prisma.recentBot.upsert(upsertData);
 
     return Response.json({ 
       success: true, 

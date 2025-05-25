@@ -128,9 +128,7 @@ model RecentBot {
   @@index([userId])
   @@index([aiCharacterId])
   @@index([dftCharacterId])
-  @@unique([userId, aiCharacterId])
-  @@unique([userId, dftCharacterId])
-}
+ }
 
  
  enum Sender {
