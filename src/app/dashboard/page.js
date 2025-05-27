@@ -613,6 +613,7 @@ export default function Home() {
     const handleRemoveAccount = async () => {
     startLoading();
     try {
+      toast("Deleting account...");
       const token = localStorage.getItem("token");
       if (!token) return toast.error("No token found. Cannot logout.");
 
