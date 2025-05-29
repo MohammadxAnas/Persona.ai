@@ -126,7 +126,7 @@ export default function VerificationPage() {
                     </button>
                 </form>
                 <div className="mt-4 text-white/80 text-sm">
-                    <Link href="/" className="hover:underline">
+                    <Link href="/dashboard" className="hover:underline">
                         Go back
                     </Link>
                     <span className="mx-2">•</span>
