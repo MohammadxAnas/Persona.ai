@@ -730,7 +730,7 @@ const handleSetPersona = (name,desc) => {
     
     const disableMic = () => {
       if (Recognition && recognitionInProgress) {
-        Recognition.stop(); // async; onend will handle cleanup
+        Recognition.stop(); 
         console.log("Requested microphone to stop...");
       } else {
         console.log("No active microphone to disable.");
