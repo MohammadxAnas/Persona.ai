@@ -1462,7 +1462,7 @@ const handleSetPersona = (name,desc) => {
   
               <input
                 type="text"
-                placeholder="Ask anything..."
+                placeholder="What's on your mind?"
                 className="flex-grow px-3 py-2 text-sm md:text-base outline-none border-none bg-transparent"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
