@@ -28,7 +28,7 @@ export async function DELETE(req) {
     return NextResponse.json({ status: 200 });
 
   } catch (err) {
-    console.error("Error deleting bot:", err);
+    console.error("Error deleting session:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

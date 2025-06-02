@@ -36,8 +36,7 @@ export async function POST(req) {
         { status: 403 }
       );
     }
-
-    // Generate session token
+    
     const sessionToken = crypto.randomBytes(32).toString("hex");
 
     // Update session token in the database
