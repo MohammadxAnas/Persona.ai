@@ -894,7 +894,7 @@ const handleSetPersona = (name,desc) => {
 
     </div>
 
-    {/* Footer / Profile */}
+    {/* Footer Profile */}
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger className="mt-2 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg px-4 py-2 shadow hover:bg-gray-100 flex items-center justify-between w-full">
